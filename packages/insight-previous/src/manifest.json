@@ -1,0 +1,15 @@
+{
+  "name": "DeFi Blockchain Explorer",
+  "short_name": "DFI Explorer",
+  "start_url": "index.html",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "assets/img/logo.png",
+      "sizes": "250x250",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#5b10ff",
+  "theme_color": "#fff"
+}

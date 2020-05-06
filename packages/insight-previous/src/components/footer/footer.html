@@ -1,0 +1,15 @@
+<ion-footer>
+  <ion-toolbar fixed color="dark">
+    <div class="pages">
+      <a *ngIf="chainNetwork" (click)="openPage('broadcast-tx')">Broadcast Transaction</a>
+       &middot; 
+      <a *ngIf="chainNetwork" (click)="openPage('messages')">Verify Message</a>
+    </div>
+    <div class="about">
+      <a href="https://defichain.io" target="_blank">
+        <span class="logo">defichain.io</span>
+        <span class="version">v1.0</span>
+      </a>
+    </div>
+  </ion-toolbar>
+</ion-footer>

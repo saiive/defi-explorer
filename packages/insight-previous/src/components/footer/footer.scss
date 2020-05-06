@@ -1,0 +1,29 @@
+footer {
+  .toolbar {
+    padding: 0 10px;
+  }
+
+  .pages {
+    color: #dde;
+    float: left;
+    a {
+      color: white;
+      font-size: 0.8em;
+    }
+  }
+  .about {
+    float: right;
+    a {
+      text-decoration: none;
+    }
+    .version {
+      color: grey;
+      font-size: 0.9em;
+    }
+    .logo {
+      color: white;
+      font-weight: 700;
+      font-size: 0.8em;
+    }
+  }
+}

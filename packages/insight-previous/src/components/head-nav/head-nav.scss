@@ -1,0 +1,78 @@
+head-nav {
+
+  .icon-md-light {
+    color: rgba(255,255,255,.75);
+  }
+
+  .icon-md-dark {
+    color: rgba(255,255,255,.95);
+  }
+
+  .toolbar-content {
+    display: grid;
+    grid-template-columns: 20% 1fr 20%;
+    justify-items: stretch;
+    align-items: center;
+      ion-title {
+        justify-self: start;
+        &.logo-header {
+          .toolbar-title{
+            width: auto;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+            font-size: 2em;
+            padding-left: 0px;
+          }
+        }
+      }
+      ion-buttons {
+        justify-self: end;
+      }
+      .search{
+        justify-self: center;
+        @media (min-width: map-get($grid-breakpoints, lg)) {
+          display: inline-block;
+        }
+        
+        display: none;
+        
+        vertical-align: middle;
+        input {
+          width: 500px;
+          margin-top: 4px;
+          padding: 9px 12px;
+          color: rgba(255, 255, 255, 1);
+          background-color: color($colors, primary-light);
+          border: 0;
+          font-weight: 400;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+
+          &:focus {
+            border-bottom: 1px solid rgba(255, 255, 255, 1);
+          }
+        }
+        
+        ::-webkit-input-placeholder {
+          color: rgba(255, 255, 255, 0.6);
+          font-style: italic;
+          font-weight: 100;
+        }
+        
+        ::-moz-placeholder {
+          color: rgba(255, 255, 255, 0.6);
+          font-family: 'Ubuntu', sans-serif;
+          font-weight: 100;
+        }
+      }
+  }
+  .mobile-searchbar > .toolbar-content {
+    display: grid;
+    grid-template-columns: 100%;
+  }
+  .search-button {
+    @media (min-width: map-get($grid-breakpoints, lg)) {
+      display: none;
+    }
+  }
+}
