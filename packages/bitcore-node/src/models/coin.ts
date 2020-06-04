@@ -1,3 +1,5 @@
+var bitcore = require('bitcore-lib-dfi');
+
 import { LoggifyClass } from '../decorators/Loggify';
 import { BaseModel, MongoBound } from './base';
 import { ObjectID, CollectionAggregationOptions } from 'mongodb';
@@ -185,6 +187,49 @@ class CoinModel extends BaseModel<ICoin> {
       .toArray();
   }
 
+  getCustomTxOut(coin: Partial<MongoBound<ICoin>>): any {
+    var script = new bitcore.Script(coin.script.toString('hex'));
+    if (script.isDataOut()) {
+      const reader = new bitcore.encoding.BufferReader(script.getData());
+      reader.pos = 3;
+
+      reader.read(1).toString('utf8');
+
+      const typeRaw = reader.read(1).toString('utf8');
+      const type = typeRaw.replace('', '')
+
+      if (type === 'T') {
+
+        const size = reader.readUInt8();
+        console.log('size', size);
+
+        const symbol = reader.read(size).toString('utf8')
+
+        const size2 = reader.readUInt8();
+        const name = reader.read(size2).toString('utf8');
+
+        const decimal = reader.readUInt8();
+
+        const limit = reader.readUInt64BEBN();
+
+        const flags = reader.readUInt8();
+
+        return {
+          type,
+          symbol,
+          name,
+          decimal,
+          limit,
+          flags,
+        }
+      }
+      return {
+        type,
+      }
+    }
+    return null;
+  }
+
   _apiTransform(coin: Partial<MongoBound<ICoin>>, options?: { object: boolean }): any {
     const transform: CoinJSON = {
       _id: valueOrDefault(coin._id, new ObjectID()).toHexString(),
@@ -199,7 +244,8 @@ class CoinModel extends BaseModel<ICoin> {
       address: valueOrDefault(coin.address, ''),
       script: valueOrDefault(coin.script, Buffer.alloc(0)).toString('hex'),
       value: valueOrDefault(coin.value, -1),
-      confirmations: valueOrDefault(coin.confirmations, -1)
+      confirmations: valueOrDefault(coin.confirmations, -1),
+      customTxOut: valueOrDefault(this.getCustomTxOut(coin), null),
     };
     if (options && options.object) {
       return transform;

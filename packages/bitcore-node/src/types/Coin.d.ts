@@ -12,6 +12,7 @@ export interface CoinJSON {
   spentTxid: string;
   spentHeight: number;
   confirmations?: number;
+  customTxOut?: any,
 }
 
 export interface CoinListingJSON {
