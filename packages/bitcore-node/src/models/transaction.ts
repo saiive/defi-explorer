@@ -126,53 +126,58 @@ export class TransactionModel extends BaseModel<ITransaction> {
     network: string;
     initialSyncComplete: boolean;
   }) {
-    const mintOps = await this.getMintOps(params);
-    const spendOps = this.getSpendOps({ ...params, mintOps });
-    await this.pruneMempool({ ...params, mintOps, spendOps });
+    try {
+      const mintOps = await this.getMintOps(params);
+      const spendOps = this.getSpendOps({ ...params, mintOps });
+      await this.pruneMempool({ ...params, mintOps, spendOps });
 
-    logger.debug('Minting Coins', mintOps.length);
-    if (mintOps.length) {
-      await Promise.all(
-        partition(mintOps, mintOps.length / Config.get().maxPoolSize).map(mintBatch =>
-          CoinStorage.collection.bulkWrite(mintBatch, { ordered: false })
-        )
-      );
-    }
+      logger.debug('Minting Coins', mintOps.length);
+      if (mintOps.length) {
+        await Promise.all(
+          partition(mintOps, mintOps.length / Config.get().maxPoolSize).map(mintBatch =>
+            CoinStorage.collection.bulkWrite(mintBatch, { ordered: false })
+          )
+        );
+      }
 
-    logger.debug('Spending Coins', spendOps.length);
-    if (spendOps.length) {
-      await Promise.all(
-        partition(spendOps, spendOps.length / Config.get().maxPoolSize).map(spendBatch =>
-          CoinStorage.collection.bulkWrite(spendBatch, { ordered: false })
-        )
-      );
-    }
+      logger.debug('Spending Coins', spendOps.length);
+      if (spendOps.length) {
+        await Promise.all(
+          partition(spendOps, spendOps.length / Config.get().maxPoolSize).map(spendBatch =>
+            CoinStorage.collection.bulkWrite(spendBatch, { ordered: false })
+          )
+        );
+      }
 
-    if (mintOps) {
-      const txOps = await this.addTransactions({ ...params, mintOps });
-      logger.debug('Writing Transactions', txOps.length);
-      await Promise.all(
-        partition(txOps, txOps.length / Config.get().maxPoolSize).map(txBatch =>
-          this.collection.bulkWrite(txBatch, { ordered: false })
-        )
-      );
+      if (mintOps) {
+        const txOps = await this.addTransactions({ ...params, mintOps });
+        logger.debug('Writing Transactions', txOps.length);
+        await Promise.all(
+          partition(txOps, txOps.length / Config.get().maxPoolSize).map(txBatch =>
+            this.collection.bulkWrite(txBatch, { ordered: false })
+          )
+        );
 
-      // Create events for mempool txs
-      if (params.height < SpentHeightIndicators.minimum) {
-        for (let op of txOps) {
-          const filter = op.updateOne.filter;
-          const tx = { ...op.updateOne.update.$set, ...filter };
-          await EventStorage.signalTx(tx);
-          await mintOps
-            .filter(coinOp => coinOp.updateOne.filter.mintTxid === filter.txid)
-            .map(coinOp => {
-              const address = coinOp.updateOne.update.$set.address;
-              const coin = { ...coinOp.updateOne.update.$set, ...coinOp.updateOne.filter };
-              return () => EventStorage.signalAddressCoin({ address, coin }) as any;
-            })
-            .reduce((promises, promise) => promises.then(promise), Promise.resolve());
+        // Create events for mempool txs
+        if (params.height < SpentHeightIndicators.minimum) {
+          for (let op of txOps) {
+            const filter = op.updateOne.filter;
+            const tx = { ...op.updateOne.update.$set, ...filter };
+            await EventStorage.signalTx(tx);
+            await mintOps
+              .filter(coinOp => coinOp.updateOne.filter.mintTxid === filter.txid)
+              .map(coinOp => {
+                const address = coinOp.updateOne.update.$set.address;
+                const coin = { ...coinOp.updateOne.update.$set, ...coinOp.updateOne.filter };
+                return () => EventStorage.signalAddressCoin({ address, coin }) as any;
+              })
+              .reduce((promises, promise) => promises.then(promise), Promise.resolve());
+          }
         }
       }
+    } catch (e) {
+      logger.error('Unable to batch import');
+      throw new Error(e);
     }
   }
 

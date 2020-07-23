@@ -63,15 +63,20 @@ export class BlockModel extends BaseModel<IBlock> {
     chain: string;
     network: string;
   }) {
-    const { block, chain, network } = params;
-    const header = block.header.toObject();
+    try {
+      const { block, chain, network } = params;
+      const header = block.header.toObject();
 
-    const reorg = await this.handleReorg({ header, chain, network });
+      const reorg = await this.handleReorg({ header, chain, network });
 
-    if (reorg) {
-      return Promise.reject('reorg');
+      if (reorg) {
+        return Promise.reject('reorg');
+      }
+      return this.processBlock(params);
+    } catch (e) {
+      logger.error('Unable to add block');
+      throw new Error(e);
     }
-    return this.processBlock(params);
   }
 
   async processBlock(params: {
@@ -82,94 +87,105 @@ export class BlockModel extends BaseModel<IBlock> {
     chain: string;
     network: string;
   }) {
-    const { chain, network, block, parentChain, forkHeight, initialSyncComplete } = params;
-    const blockOp = await this.getBlockOp(params);
-    const convertedBlock = blockOp.updateOne.update.$set;
-    const { height, timeNormalized, time } = convertedBlock;
+    try {
+      const { chain, network, block, parentChain, forkHeight, initialSyncComplete } = params;
+      const blockOp = await this.getBlockOp(params);
+      const convertedBlock = blockOp.updateOne.update.$set;
+      const { height, timeNormalized, time } = convertedBlock;
 
-    const previousBlock = await this.collection.findOne({ hash: convertedBlock.previousBlockHash, chain, network });
+      const previousBlock = await this.collection.findOne({ hash: convertedBlock.previousBlockHash, chain, network });
 
-    await this.collection.bulkWrite([blockOp]);
-    if (previousBlock) {
-      await this.collection.updateOne(
-        { chain, network, hash: previousBlock.hash },
-        { $set: { nextBlockHash: convertedBlock.hash } }
-      );
-      logger.debug('Updating previous block.nextBlockHash ', convertedBlock.hash);
+      await this.collection.bulkWrite([blockOp]);
+      if (previousBlock) {
+        await this.collection.updateOne(
+          { chain, network, hash: previousBlock.hash },
+          { $set: { nextBlockHash: convertedBlock.hash } }
+        );
+        logger.debug('Updating previous block.nextBlockHash ', convertedBlock.hash);
+      }
+
+      await this.processAnchor({ txs: block.transactions, chain, network }).catch(e => logger.error(e));
+
+      await TransactionStorage.batchImport({
+        txs: block.transactions,
+        blockHash: convertedBlock.hash,
+        blockTime: new Date(time),
+        blockTimeNormalized: new Date(timeNormalized),
+        height,
+        chain,
+        network,
+        parentChain,
+        forkHeight,
+        initialSyncComplete
+      });
+
+      if (initialSyncComplete) {
+        EventStorage.signalBlock(convertedBlock);
+      }
+
+      await this.collection.updateOne({ hash: convertedBlock.hash, chain, network }, { $set: { processed: true } });
+      this.updateCachedChainTip({ block: convertedBlock, chain, network });
+    } catch (e) {
+      logger.error('Unable to process block');
+      throw new Error(e);
     }
-
-    await this.processAnchor({ txs: block.transactions, chain, network }).catch(e => logger.error(e));
-
-    await TransactionStorage.batchImport({
-      txs: block.transactions,
-      blockHash: convertedBlock.hash,
-      blockTime: new Date(time),
-      blockTimeNormalized: new Date(timeNormalized),
-      height,
-      chain,
-      network,
-      parentChain,
-      forkHeight,
-      initialSyncComplete
-    });
-
-    if (initialSyncComplete) {
-      EventStorage.signalBlock(convertedBlock);
-    }
-
-    await this.collection.updateOne({ hash: convertedBlock.hash, chain, network }, { $set: { processed: true } });
-    this.updateCachedChainTip({ block: convertedBlock, chain, network });
   }
 
   async getBlockOp(params: { block: Defichain.Block; chain: string; network: string }) {
-    const { block, chain, network } = params;
-    const header = block.header.toObject();
-    const blockTime = header.time * 1000;
+    try {
+      const { block, chain, network } = params;
+      const header = block.header.toObject();
+      const blockTime = header.time * 1000;
 
-    const previousBlock = await this.collection.findOne({ hash: header.prevHash, chain, network });
+      const previousBlock = await this.collection.findOne({ hash: header.prevHash, chain, network });
 
-    const blockTimeNormalized = (() => {
-      const prevTime = previousBlock ? previousBlock.timeNormalized : null;
-      if (prevTime && blockTime <= prevTime.getTime()) {
-        return prevTime.getTime() + 1;
-      } else {
-        return blockTime;
-      }
-    })();
+      const blockTimeNormalized = (() => {
+        const prevTime = previousBlock ? previousBlock.timeNormalized : null;
+        if (prevTime && blockTime <= prevTime.getTime()) {
+          return prevTime.getTime() + 1;
+        } else {
+          return blockTime;
+        }
+      })();
 
-    const height = (previousBlock && previousBlock.height + 1) || 1;
-    logger.debug('Setting blockheight', height);
+      const height = (previousBlock && previousBlock.height + 1) || 1;
+      logger.debug('Setting blockheight', height);
 
-    const convertedBlock: IBlock = {
-      chain,
-      network,
-      hash: block.hash,
-      height,
-      version: header.version,
-      nextBlockHash: '',
-      previousBlockHash: header.prevHash,
-      merkleRoot: header.merkleRoot,
-      time: new Date(blockTime),
-      timeNormalized: new Date(blockTimeNormalized),
-      bits: header.bits,
-      transactionCount: block.transactions.length,
-      size: block.toBuffer().length,
-      reward: block.transactions[0].outputAmount,
-      processed: false
-    };
-    return {
-      updateOne: {
-        filter: {
-          hash: header.hash,
-          chain,
-          network
-        },
-        update: {
-          $set: convertedBlock
-        },
-        upsert: true
-      }
-    };
+      const convertedBlock: IBlock = {
+        chain,
+        network,
+        hash: block.hash,
+        height,
+        version: header.version,
+        nextBlockHash: '',
+        previousBlockHash: header.prevHash,
+        merkleRoot: header.merkleRoot,
+        time: new Date(blockTime),
+        timeNormalized: new Date(blockTimeNormalized),
+        bits: header.bits,
+        transactionCount: block.transactions.length,
+        size: block.toBuffer().length,
+        reward: block.transactions[0].outputAmount,
+        processed: false
+      };
+      return {
+        updateOne: {
+          filter: {
+            hash: header.hash,
+            chain,
+            network
+          },
+          update: {
+            $set: convertedBlock
+          },
+          upsert: true
+        }
+      };
+    } catch (e) {
+      logger.error('Unable to get block ops')
+      throw new Error(e)
+    }
+
   }
 
   updateCachedChainTip(params: { block: IBlock; chain: string; network: string }) {
@@ -192,39 +208,44 @@ export class BlockModel extends BaseModel<IBlock> {
   }
 
   async handleReorg(params: { header?: Defichain.Block.HeaderObj; chain: string; network: string }): Promise<boolean> {
-    const { header, chain, network } = params;
-    let localTip = await this.getLocalTip(params);
-    if (header && localTip && localTip.hash === header.prevHash) {
-      return false;
-    }
-    if (!localTip || localTip.height === 0) {
-      return false;
-    }
-    if (header) {
-      const prevBlock = await this.collection.findOne({ chain, network, hash: header.prevHash });
-      if (prevBlock) {
-        localTip = prevBlock;
-        this.updateCachedChainTip({ chain, network, block: prevBlock });
-      } else {
-        delete this.chainTips[chain][network];
-        logger.error("Previous block isn't in the DB need to roll back until we have a block in common");
+    try {
+      const { header, chain, network } = params;
+      let localTip = await this.getLocalTip(params);
+      if (header && localTip && localTip.hash === header.prevHash) {
+        return false;
       }
-      logger.info(`Resetting tip to ${localTip.height - 1}`, { chain, network });
+      if (!localTip || localTip.height === 0) {
+        return false;
+      }
+      if (header) {
+        const prevBlock = await this.collection.findOne({ chain, network, hash: header.prevHash });
+        if (prevBlock) {
+          localTip = prevBlock;
+          this.updateCachedChainTip({ chain, network, block: prevBlock });
+        } else {
+          delete this.chainTips[chain][network];
+          logger.error("Previous block isn't in the DB need to roll back until we have a block in common");
+        }
+        logger.info(`Resetting tip to ${localTip.height - 1}`, { chain, network });
+      }
+      const reorgOps = [
+        this.collection.deleteMany({ chain, network, height: { $gte: localTip.height } }),
+        TransactionStorage.collection.deleteMany({ chain, network, blockHeight: { $gte: localTip.height } }),
+        CoinStorage.collection.deleteMany({ chain, network, mintHeight: { $gte: localTip.height } })
+      ];
+      await Promise.all(reorgOps);
+
+      await CoinStorage.collection.updateMany(
+        { chain, network, spentHeight: { $gte: localTip.height } },
+        { $set: { spentTxid: null, spentHeight: SpentHeightIndicators.unspent } }
+      );
+
+      logger.debug('Removed data from above blockHeight: ', localTip.height);
+      return true;
+    } catch (e) {
+      logger.error('Unable to handle Reorganization');
+      throw new Error(e);
     }
-    const reorgOps = [
-      this.collection.deleteMany({ chain, network, height: { $gte: localTip.height } }),
-      TransactionStorage.collection.deleteMany({ chain, network, blockHeight: { $gte: localTip.height } }),
-      CoinStorage.collection.deleteMany({ chain, network, mintHeight: { $gte: localTip.height } })
-    ];
-    await Promise.all(reorgOps);
-
-    await CoinStorage.collection.updateMany(
-      { chain, network, spentHeight: { $gte: localTip.height } },
-      { $set: { spentTxid: null, spentHeight: SpentHeightIndicators.unspent } }
-    );
-
-    logger.debug('Removed data from above blockHeight: ', localTip.height);
-    return true;
   }
 
   async processAnchor(props: { txs: Array<Defichain.Transaction>; chain: string; network: string }) {
