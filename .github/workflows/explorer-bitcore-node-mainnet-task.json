@@ -1,0 +1,164 @@
+{
+  "ipcMode": null,
+  "executionRoleArn": "arn:aws:iam::945309304280:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": null,
+      "environmentFiles": null,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": null,
+        "options": {
+          "awslogs-group": "/ecs/explorer-bitcore-node-mainnet",
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "entryPoint": null,
+      "portMappings": [
+        {
+          "hostPort": 3000,
+          "protocol": "tcp",
+          "containerPort": 3000
+        }
+      ],
+      "command": [
+        "bash",
+        "-c",
+        "printf '{\"bitcoreNode\":{\"services\":{\"api\":{\"wallets\":{\"allowCreationBeforeCompleteSync\":true}}},\"chains\":{\"DFI\":{\"mainnet\":{\"chainSource\":\"p2p\",\"trustedPeers\":[{\"host\":\"defichain-mainnet.explorer-sd\",\"port\":8555}],\"rpc\":{\"host\":\"defichain-mainnet.explorer-sd\",\"port\":8554,\"username\":\"<random_username>\",\"password\":\"<random_password>\"}}}}}}\n' > /usr/src/app/bitcore.config.json && cd ./packages/bitcore-node/; npm run tsc; node build/src/server.js"
+      ],
+      "linuxParameters": null,
+      "cpu": 0,
+      "environment": [
+        {
+          "name": "API_PORT",
+          "value": "3000"
+        },
+        {
+          "name": "API_PREFIX",
+          "value": "http://mainnet.defichain.io:5000/api"
+        },
+        {
+          "name": "BITCORE_NODE_FILE_LOG",
+          "value": "true"
+        },
+        {
+          "name": "BITCORE_NODE_SENTRY_DNS",
+          "value": "false"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "defichain-mainnet.explorer-sd"
+        },
+        {
+          "name": "HTTP_PORT",
+          "value": "5000"
+        },
+        {
+          "name": "NETWORK",
+          "value": "mainnet"
+        }
+      ],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
+      "mountPoints": [],
+      "workingDirectory": "/usr/src/app",
+      "secrets": null,
+      "dockerSecurityOptions": null,
+      "memory": null,
+      "memoryReservation": 300,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "945309304280.dkr.ecr.ap-southeast-1.amazonaws.com/defi-explorer-bitcore-node:9bc96b4d480e5ed61461696ce395c20f34ee6ab1",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null,
+      "name": "bitcore-node-mainnet"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "2048",
+  "taskRoleArn": null,
+  "compatibilities": ["EC2", "FARGATE"],
+  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:945309304280:task-definition/explorer-bitcore-node-mainnet:2",
+  "family": "explorer-bitcore-node-mainnet",
+  "requiresAttributes": [
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.task-eni"
+    }
+  ],
+  "pidMode": null,
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "revision": 2,
+  "status": "ACTIVE",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
+}

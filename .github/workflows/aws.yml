@@ -38,30 +38,41 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker --version
+          docker build  --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      - name: Fill in the new image ID in the Amazon ECS task definition for bitcore node
+      - name: Fill in the new image ID in the Amazon ECS task definition for Bitcore node
         id: bitcore-node-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: mainnet-task-definition.json
-          container-name: defi-explorer-bitcore-node-mainnet
+          task-definition: ./.github/workflows/explorer-bitcore-node-mainnet-task.json
+          container-name: bitcore-node-mainnet
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Fill in the new image ID in the Amazon ECS task definition for insight
+      - name: Fill in the new image ID in the Amazon ECS task definition for Insight
         id: insight-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.bitcore-node-task-def.outputs.task-definition }}
-          container-name: defi-explorer-insight
+          task-definition: ./.github/workflows/explorer-insight-mainnet-task.json
+          container-name: insight-mainnet
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition for mainnet
+      - name: Deploy Bitcore node on ECS task definition for mainnet
+        id: ecs-deploy-bitcore-node
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.bitcore-node-task-def.outputs.task-definition }}
+          service: explorer-bitcore-node-mainnet-service
+          cluster: defi-explorer-mainnet
+          wait-for-service-stability: true
+
+      - name: Deploy Insight on ECS task definition for mainnet
+        id: ecs-deploy-insight
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.insight-task-def.outputs.task-definition }}
-          service: defi-explorer-mainnet-service
+          service: explorer-insight-mainnet-service
           cluster: defi-explorer-mainnet
           wait-for-service-stability: true
