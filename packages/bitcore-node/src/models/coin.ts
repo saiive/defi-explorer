@@ -161,8 +161,9 @@ class CoinModel extends BaseModel<ICoin> {
 
     if (!totalCountCacheResult || !totalCountCacheResult.isRecent(CACHE_TTL_SECONDS)) {
       const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options).toArray();
-      setCache(totalCacheName, result.total);
-      response[totalCacheName] = result.total;
+      const totalRows = result.length && result[0].total ? result[0].total : 0;
+      setCache(totalCacheName, totalRows);
+      response[totalCacheName] = totalRows;
     } else {
       response[totalCacheName] = totalCountCacheResult.value;
     }
