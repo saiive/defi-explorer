@@ -78,6 +78,7 @@ class CoinModel extends BaseModel<ICoin> {
     const { pageNo } = params.query;
     const pageSize =
       !params.query.pageSize || params.query.pageSize === NaN ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
+    const cacheKey = `${pageNo}-${pageSize}`;
     const totalCacheName = 'total';
     const cacheResult = richListCache.get(pageNo);
     const totalCountCacheResult = richListCache.get(totalCacheName);
@@ -129,6 +130,7 @@ class CoinModel extends BaseModel<ICoin> {
 
     const fetchRichList = async (conditions) => {
       const result: any = await this.collection.aggregate(conditions, options).toArray();
+
       const updatedResult = await Promise.all(
         result.map(async (curr) => {
           const txIds = await this.getTransactionIdsForAddress({ query: { address: curr.address } });
@@ -143,6 +145,7 @@ class CoinModel extends BaseModel<ICoin> {
       const cache = new CacheItem(value);
       richListCache.set(key, cache);
     };
+
     // Have time stamp within the last 300 seconds, skip fetching again.
     if (!cacheResult || !cacheResult.isRecent(CACHE_TTL_SECONDS)) {
       const updatedConditions = [...baseCodition, ...additionalCondition];
@@ -150,16 +153,16 @@ class CoinModel extends BaseModel<ICoin> {
       const result: any = await fetchRichList(updatedConditions);
 
       // add data to cache
-      setCache(pageNo, result);
+      setCache(cacheKey, result);
       response['data'] = result;
     } else {
       response['data'] = cacheResult.value;
     }
 
     if (!totalCountCacheResult || !totalCountCacheResult.isRecent(CACHE_TTL_SECONDS)) {
-      const result = await fetchRichList(baseCodition);
-      setCache(totalCacheName, result.length);
-      response[totalCacheName] = result.length;
+      const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options).toArray();
+      setCache(totalCacheName, result.total);
+      response[totalCacheName] = result.total;
     } else {
       response[totalCacheName] = totalCountCacheResult.value;
     }
