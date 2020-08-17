@@ -66,7 +66,7 @@
       "memoryReservation": 300,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "945309304280.dkr.ecr.ap-southeast-1.amazonaws.com/defi-explorer-bitcore-node:82f37c1c7ed9d95798a9e1ab04963291fd27b5c3",
+      "image": "",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,

@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - master
+      - deployment/ecr-configuration
 
 name: Deploy to Amazon ECS
 
