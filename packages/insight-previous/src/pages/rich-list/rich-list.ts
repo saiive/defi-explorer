@@ -27,7 +27,7 @@ export class RichListPage implements AfterViewInit, AfterViewChecked {
   private chainNetwork: ChainNetwork;
   public network: string;
   public pageNum = 1;
-  public pageSize = 200;
+  public pageSize = 50;
   public enableInfiniteScroller = false;
   constructor(
     public nav: Nav,
@@ -58,7 +58,7 @@ export class RichListPage implements AfterViewInit, AfterViewChecked {
 
   public ngAfterViewChecked() {
     const { addressLists } = this.latestRichList;
-    this.enableInfiniteScroller = addressLists.length > 0;
+    this.enableInfiniteScroller = addressLists.length > 0 && addressLists.length < thresholdRichListElement;
   }
 
   public openPage(page: string): void {

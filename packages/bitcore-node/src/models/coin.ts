@@ -5,7 +5,6 @@ import { SpentHeightIndicators, CoinJSON } from '../types/Coin';
 import { valueOrDefault } from '../utils/check';
 import { StorageService } from '../services/storage';
 import { BlockStorage } from './block';
-import { TransactionStorage } from './transaction';
 import { RICH_LIST_PAGE_SIZE, CACHE_TTL_SECONDS } from '../constants/config';
 import { CacheItem } from '../CacheItem';
 
@@ -35,7 +34,7 @@ class CoinModel extends BaseModel<ICoin> {
 
   allowedPaging = [
     { key: 'mintHeight' as 'mintHeight', type: 'number' as 'number' },
-    { key: 'spentHeight' as 'spentHeight', type: 'number' as 'number' }
+    { key: 'spentHeight' as 'spentHeight', type: 'number' as 'number' },
   ];
 
   onConnect() {
@@ -45,8 +44,8 @@ class CoinModel extends BaseModel<ICoin> {
       {
         background: true,
         partialFilterExpression: {
-          spentHeight: { $lt: 0 }
-        }
+          spentHeight: { $lt: 0 },
+        },
       }
     );
     this.collection.createIndex({ address: 1 }, { background: true });
@@ -73,9 +72,15 @@ class CoinModel extends BaseModel<ICoin> {
       await this.collection.insert(coin);
     }
   }
-  
-  async getRichList(params: { query: any }, options: CollectionAggregationOptions = {}) {
+
+  async getRichList(params: { query: any }, options: CollectionAggregationOptions = {
+    allowDiskUse: true,
+    cursor: { batchSize: 100 },
+  }) {
     const { pageNo } = params.query;
+    const pageSize =
+      !params.query.pageSize || params.query.pageSize === NaN ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
+    const cacheKey = `${pageNo}-${pageSize}`;
     const totalCacheName = 'total';
     const cacheResult = richListCache.get(pageNo);
     const totalCountCacheResult = richListCache.get(totalCacheName);
@@ -84,67 +89,35 @@ class CoinModel extends BaseModel<ICoin> {
         $match: {
           address: { $ne: 'false' },
           spentHeight: { $lt: SpentHeightIndicators.minimum },
-          mintHeight: { $gt: SpentHeightIndicators.conflicting }
-        }
+          mintHeight: { $gt: SpentHeightIndicators.conflicting },
+        },
       },
       { $group: { _id: '$address', balance: { $sum: '$value' } } },
       {
         $project: {
           _id: 0,
           address: '$_id',
-          balance: 1
-        }
-      }
+          balance: 1,
+        },
+      },
     ];
 
-    const additionalCondition = [
-      { $sort: { balance: -1 } },
-      { $skip: RICH_LIST_PAGE_SIZE * (pageNo - 1) },
-      { $limit: RICH_LIST_PAGE_SIZE }
-    ];
+    const additionalCondition = [{ $sort: { balance: -1 } }, { $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }];
 
     const response = {};
 
-    const prepareRichListRow = async txIds => {
-      const data = {
-        txCount: '',
-        firstTxTime: '',
-        lastTxTime: ''
-      };
-      const tasks = [
-        TransactionStorage.getTransactionCount({ query: { txIds } }),
-        TransactionStorage.getFirstTransactionTime({
-          query: { txIds }
-        }),
-        TransactionStorage.getLastTransactionTime({
-          query: { txIds }
-        })
-      ];
-
-      const taskResult = await Promise.all(tasks);
-
-      Object.keys(data).forEach((item, ind) => {
-        data[item] = taskResult[ind];
-      });
-      return data;
-    };
-
-    const fetchRichList = async conditions => {
-      const result: any = await this.collection.aggregate(conditions, options).toArray();
-      const updatedResult = await Promise.all(
-        result.map(async curr => {
-          const txIds = await this.getTransactionIdsForAddress({ query: { address: curr.address } });
-          const data = await prepareRichListRow(txIds);
-          return Object.assign({}, curr, data);
-        })
-      );
-      return updatedResult || [];
+    const fetchRichList = async (conditions) => {
+      const result: any = await this.collection.aggregate(conditions, options)
+        .addCursorFlag('noCursorTimeout', true)
+        .toArray();
+      return result || [];
     };
 
     const setCache = (key, value) => {
       const cache = new CacheItem(value);
       richListCache.set(key, cache);
     };
+
     // Have time stamp within the last 300 seconds, skip fetching again.
     if (!cacheResult || !cacheResult.isRecent(CACHE_TTL_SECONDS)) {
       const updatedConditions = [...baseCodition, ...additionalCondition];
@@ -152,16 +125,19 @@ class CoinModel extends BaseModel<ICoin> {
       const result: any = await fetchRichList(updatedConditions);
 
       // add data to cache
-      setCache(pageNo, result);
+      setCache(cacheKey, result);
       response['data'] = result;
     } else {
       response['data'] = cacheResult.value;
     }
 
     if (!totalCountCacheResult || !totalCountCacheResult.isRecent(CACHE_TTL_SECONDS)) {
-      const result = await fetchRichList(baseCodition);
-      setCache(totalCacheName, result.length);
-      response[totalCacheName] = result.length;
+      const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options)
+        .addCursorFlag('noCursorTimeout', true)
+        .toArray();
+      const totalRows = result.length && result[0].total ? result[0].total : 0;
+      setCache(totalCacheName, totalRows);
+      response[totalCacheName] = totalRows;
     } else {
       response[totalCacheName] = totalCountCacheResult.value;
     }
@@ -187,18 +163,18 @@ class CoinModel extends BaseModel<ICoin> {
                 $cond: {
                   if: { $gte: ['$mintHeight', SpentHeightIndicators.minimum] },
                   then: 'confirmed',
-                  else: 'unconfirmed'
-                }
+                  else: 'unconfirmed',
+                },
               },
-              _id: 0
-            }
+              _id: 0,
+            },
           },
           {
             $group: {
               _id: '$status',
-              balance: { $sum: '$value' }
-            }
-          }
+              balance: { $sum: '$value' },
+            },
+          },
         ],
         options
       )
@@ -220,8 +196,8 @@ class CoinModel extends BaseModel<ICoin> {
         $query: {
           chain,
           network,
-          timeNormalized: { $lte: new Date(time) }
-        }
+          timeNormalized: { $lte: new Date(time) },
+        },
       })
       .limit(1)
       .sort({ timeNormalized: -1 })
@@ -231,7 +207,7 @@ class CoinModel extends BaseModel<ICoin> {
       {},
       {
         $or: [{ spentHeight: { $gt: blockHeight } }, { spentHeight: SpentHeightIndicators.unspent }],
-        mintHeight: { $lte: blockHeight }
+        mintHeight: { $lte: blockHeight },
       },
       query
     );
@@ -251,8 +227,8 @@ class CoinModel extends BaseModel<ICoin> {
             mintTxid: mintTxid.toLowerCase(),
             mintIndex: 0,
             ...(typeof chain === 'string' ? { chain } : {}),
-            ...(typeof network === 'string' ? { network } : {})
-          }
+            ...(typeof network === 'string' ? { network } : {}),
+          },
         },
         {
           $graphLookup: {
@@ -263,9 +239,9 @@ class CoinModel extends BaseModel<ICoin> {
             as: 'authheads',
             maxDepth: 1000000,
             restrictSearchWithMatch: {
-              mintIndex: 0
-            }
-          }
+              mintIndex: 0,
+            },
+          },
         },
         {
           $project: {
@@ -279,20 +255,20 @@ class CoinModel extends BaseModel<ICoin> {
                 cond: {
                   $and: [
                     {
-                      $lte: ['$$authhead.spentHeight', -1]
+                      $lte: ['$$authhead.spentHeight', -1],
                     },
                     {
-                      $eq: ['$$authhead.chain', '$chain']
+                      $eq: ['$$authhead.chain', '$chain'],
                     },
                     {
-                      $eq: ['$$authhead.network', '$network']
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
+                      $eq: ['$$authhead.network', '$network'],
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
       ])
       .toArray();
   }
@@ -311,7 +287,7 @@ class CoinModel extends BaseModel<ICoin> {
       address: valueOrDefault(coin.address, ''),
       script: valueOrDefault(coin.script, Buffer.alloc(0)).toString('hex'),
       value: valueOrDefault(coin.value, -1),
-      confirmations: valueOrDefault(coin.confirmations, -1)
+      confirmations: valueOrDefault(coin.confirmations, -1),
     };
     if (options && options.object) {
       return transform;
