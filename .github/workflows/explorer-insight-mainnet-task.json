@@ -32,7 +32,7 @@
       "environment": [
         {
           "name": "API_PREFIX",
-          "value": "http://explorer-bitcore-node-mainnet-439707705.ap-southeast-1.elb.amazonaws.com/api"
+          "value": "http://mainnet-api.defichain.io/api"
         },
         {
           "name": "BITCORE_CONFIG_PATH",
