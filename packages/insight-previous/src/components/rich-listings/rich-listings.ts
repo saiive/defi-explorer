@@ -32,7 +32,7 @@ export class RichListingsComponent implements OnDestroy {
     public apiProvider: ApiProvider,
     public ngZone: NgZone,
     public logger: Logger
-  ) {}
+  ) { }
 
   public onInitBase(pageNum: number = 1, pageSize: number = 50): void {
     this.loadAddressLists(pageNum, pageSize);

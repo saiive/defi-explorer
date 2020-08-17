@@ -5,7 +5,6 @@ import { SpentHeightIndicators, CoinJSON } from '../types/Coin';
 import { valueOrDefault } from '../utils/check';
 import { StorageService } from '../services/storage';
 import { BlockStorage } from './block';
-import { TransactionStorage } from './transaction';
 import { RICH_LIST_PAGE_SIZE, CACHE_TTL_SECONDS } from '../constants/config';
 import { CacheItem } from '../CacheItem';
 
@@ -74,7 +73,10 @@ class CoinModel extends BaseModel<ICoin> {
     }
   }
 
-  async getRichList(params: { query: any }, options: CollectionAggregationOptions = {}) {
+  async getRichList(params: { query: any }, options: CollectionAggregationOptions = {
+    allowDiskUse: true,
+    cursor: { batchSize: 100 },
+  }) {
     const { pageNo } = params.query;
     const pageSize =
       !params.query.pageSize || params.query.pageSize === NaN ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
@@ -104,41 +106,11 @@ class CoinModel extends BaseModel<ICoin> {
 
     const response = {};
 
-    const prepareRichListRow = async (txIds) => {
-      const data = {
-        txCount: '',
-        firstTxTime: '',
-        lastTxTime: '',
-      };
-      const tasks = [
-        TransactionStorage.getTransactionCount({ query: { txIds } }),
-        TransactionStorage.getFirstTransactionTime({
-          query: { txIds },
-        }),
-        TransactionStorage.getLastTransactionTime({
-          query: { txIds },
-        }),
-      ];
-
-      const taskResult = await Promise.all(tasks);
-
-      Object.keys(data).forEach((item, ind) => {
-        data[item] = taskResult[ind];
-      });
-      return data;
-    };
-
     const fetchRichList = async (conditions) => {
-      const result: any = await this.collection.aggregate(conditions, options).toArray();
-
-      const updatedResult = await Promise.all(
-        result.map(async (curr) => {
-          const txIds = await this.getTransactionIdsForAddress({ query: { address: curr.address } });
-          const data = await prepareRichListRow(txIds);
-          return Object.assign({}, curr, data);
-        })
-      );
-      return updatedResult || [];
+      const result: any = await this.collection.aggregate(conditions, options)
+        .addCursorFlag('noCursorTimeout', true)
+        .toArray();
+      return result || [];
     };
 
     const setCache = (key, value) => {
@@ -160,7 +132,9 @@ class CoinModel extends BaseModel<ICoin> {
     }
 
     if (!totalCountCacheResult || !totalCountCacheResult.isRecent(CACHE_TTL_SECONDS)) {
-      const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options).toArray();
+      const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options)
+        .addCursorFlag('noCursorTimeout', true)
+        .toArray();
       const totalRows = result.length && result[0].total ? result[0].total : 0;
       setCache(totalCacheName, totalRows);
       response[totalCacheName] = totalRows;
