@@ -24,7 +24,7 @@ export class CoinListComponent implements OnInit {
     private txsProvider: TxsProvider,
     private logger: Logger,
     private events: Events
-  ) {}
+  ) { }
 
   public ngOnInit(): void {
     if (this.txs && this.txs.length === 0) {
@@ -32,7 +32,7 @@ export class CoinListComponent implements OnInit {
       this.addrProvider.getAddressActivity(this.addrStr).subscribe(
         data => {
           const formattedData = data.map(this.txsProvider.toAppCoin);
-          this.txs = this.orderByHeight(formattedData);
+          this.txs = this.orderByHeight(formattedData)
           this.showTransactions = true;
           this.loading = false;
           this.events.publish('CoinList', { length: data.length });
@@ -49,19 +49,17 @@ export class CoinListComponent implements OnInit {
   orderByHeight(data) {
     const unconfirmedTxs = [];
     let confirmedTxs = [];
-
     data.forEach(tx => {
       const { mintHeight, mintTxid, value, spentHeight, spentTxid } = tx;
 
-      mintHeight < 0
-        ? unconfirmedTxs.push({ height: mintHeight, mintTxid, value })
-        : confirmedTxs.push({ height: mintHeight, mintTxid, value });
-
-      spentHeight < 0
-        ? unconfirmedTxs.push({ height: spentHeight, spentTxid, value })
-        : confirmedTxs.push({ height: spentHeight, spentTxid, value });
+      if (mintHeight < 0) {
+        unconfirmedTxs.push({ height: mintHeight, mintTxid, value });
+      } else if (spentHeight < 0) {
+        unconfirmedTxs.push({ height: spentHeight, spentTxid, value });
+      } else {
+        confirmedTxs.push({ height: mintHeight, mintTxid, value });
+      }
     });
-
     confirmedTxs = _.orderBy(confirmedTxs, ['height'], ['desc']);
     return unconfirmedTxs.concat(confirmedTxs);
   }
