@@ -82,17 +82,6 @@ export const getGenesisTransactionForTestnet = (txid: string, blockTime: Date, o
 };
 
 export const getAddressAndValueListForMainnet = () => {
-  // return [
-  //   { address: '8ZWWN1nX8drxJBSMG1VS9jH4ciBSvA9nxp', value: 0 },
-  //   { address: '8aGPBahDX4oAXx9okpGRzHPS3Td1pZaLgU', value: 0 },
-  //   { address: '8RGSkdaft9EmSXXp6b2UFojwttfJ5BY29r', value: 0 },
-  //   { address: '8L7qGjjHRa3Agks6incPomWCfLSMPYipmU', value: 0 },
-  //   { address: 'dcZ3NXrpbNWvx1rhiGvXStM6EQtHLc44c9', value: 0 },
-  //   { address: 'dMty9CfknKEaXqJuSgYkvvyF6UB6ffrZXG', value: 0 },
-  //   { address: 'dZcY1ZNm5bkquz2J74smKqokuPoVpPvGWu', value: 0 },
-  //   { address: 'dP8dvN5pnwbsxFcfN9DyqPVZi1fVHicDd2', value: 0 },
-  //   { address: 'dMs1xeSGZbGnTJWqTwjR4mcjp2egpEXG6M', value: 0 },
-  // ];
   return [
     { address: '8ZWWN1nX8drxJBSMG1VS9jH4ciBSvA9nxp', value: 5880000000000000 },
     { address: '8aGPBahDX4oAXx9okpGRzHPS3Td1pZaLgU', value: 4410000000000000 },
@@ -107,11 +96,6 @@ export const getAddressAndValueListForMainnet = () => {
 };
 
 export const getAddressAndValueListForTestnet = () => {
-  // return [
-  //   { address: 'te7wgg1X9HDJvMbrP2S51uz2Gxm2LPW4Gr', value: 0 },
-  //   { address: 'tmYVkwmcv73Hth7hhHz15mx5K8mzC1hSef', value: 0 },
-  //   { address: 'tahuMwb9eX83eJhf2vXL6NPzABy3Ca8DHi', value: 0 },
-  // ];
   return [
     { address: 'te7wgg1X9HDJvMbrP2S51uz2Gxm2LPW4Gr', value: 10000000000000000 },
     { address: 'tmYVkwmcv73Hth7hhHz15mx5K8mzC1hSef', value: 10000000000000000 },
