@@ -128,6 +128,9 @@ export declare namespace CSP {
     req: Request;
     res: Response;
   };
+  export type GetStatsParams = ChainNetwork
+  export type GetHealthParams = ChainNetwork
+
 
   export type Provider<T> = { get(params: { chain: string }): T };
   export type ChainStateProvider = Provider<IChainStateService> & IChainStateService;
@@ -155,6 +158,7 @@ export declare namespace CSP {
     getAuthhead(params: StreamTransactionParams): Promise<AuthheadJSON | undefined>;
     getDailyTransactions(params: { chain: string; network: string }): Promise<DailyTransactionsJSON>;
     getStats(params: GetStatsParams): Promise<any>;
+    getHealth(params: GetHealthParams): Promise<any>;
     getTransaction(params: StreamTransactionParams): Promise<TransactionJSON | string | undefined>;
     streamWalletAddresses(params: StreamWalletAddressesParams): any;
     walletCheck(params: WalletCheckParams): any;
@@ -162,7 +166,7 @@ export declare namespace CSP {
     streamWalletUtxos(params: StreamWalletUtxosParams): any;
     streamMissingWalletAddresses(params: StreamWalletMissingAddressesParams);
     getCoinsForTx(params: { chain: string; network: string; txid: string }): Promise<CoinListingJSON>;
-    getLatestTrnasactions(params: GetLatestTransactionsParams): Promise<any>;
+    getLatestTransactions(params: GetLatestTransactionsParams): Promise<any>;
     getLocalTip(params): Promise<any>;
     getLocatorHashes(params): Promise<any>;
   }
