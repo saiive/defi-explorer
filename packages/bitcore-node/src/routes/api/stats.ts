@@ -2,10 +2,20 @@ import { Request, Response } from 'express';
 import { ChainStateProvider } from '../../providers/chain-state';
 const router = require('express').Router({ mergeParams: true });
 
-router.get('/', async function(req: Request, res: Response) {
+router.get('/', async function (req: Request, res: Response) {
   try {
     const { chain, network } = req.params;
-    const result = await ChainStateProvider.getStats({ chain, network});
+    const result = await ChainStateProvider.getStats({ chain, network });
+    return res.send(result);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
+router.get('/total-coin', async function (req: Request, res: Response) {
+  try {
+    const { chain, network } = req.params;
+    const result = await ChainStateProvider.getCoinCalculation({ chain, network });
     return res.send(result);
   } catch (err) {
     return res.status(500).send(err);
@@ -14,7 +24,7 @@ router.get('/', async function(req: Request, res: Response) {
 
 let cacheThroughTruncatedDate;
 let cachedDailyTransactions;
-router.get('/daily-transactions', async function(req: Request, res: Response) {
+router.get('/daily-transactions', async function (req: Request, res: Response) {
   const { chain, network } = req.params;
   const truncatedUTC = new Date().toISOString().split('T')[0];
   if (truncatedUTC === cacheThroughTruncatedDate) {

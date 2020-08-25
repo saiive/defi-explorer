@@ -557,6 +557,21 @@ export class InternalStateProvider implements CSP.IChainStateService {
     return result.data;
   }
 
+  async getCoinCalculation({ chain, network }) {
+    const result = await CoinStorage.collection.aggregate([
+      {
+        $match: {
+          chain: chain,
+          network: network,
+          address: { $ne: 'false' },
+          spentHeight: { $lt: SpentHeightIndicators.minimum },
+          mintHeight: { $gt: SpentHeightIndicators.conflicting },
+        },
+      },
+      { $group: { _id: null, balance: { $sum: '$value' } } }]).toArray();
+    return result[0];
+  }
+
   async getLocalTip({ chain, network }) {
     if (BlockStorage.chainTips[chain] && BlockStorage.chainTips[chain][network]) {
       return BlockStorage.chainTips[chain][network];
@@ -570,16 +585,16 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const query =
       startHeight && endHeight
         ? {
-            processed: true,
-            chain,
-            network,
-            height: { $gt: startHeight, $lt: endHeight },
-          }
+          processed: true,
+          chain,
+          network,
+          height: { $gt: startHeight, $lt: endHeight },
+        }
         : {
-            processed: true,
-            chain,
-            network,
-          };
+          processed: true,
+          chain,
+          network,
+        };
     const locatorBlocks = await BlockStorage.collection
       .find(query, { sort: { height: -1 }, limit: 30 })
       .addCursorFlag('noCursorTimeout', true)

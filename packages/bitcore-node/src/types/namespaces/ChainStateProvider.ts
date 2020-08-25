@@ -129,6 +129,8 @@ export declare namespace CSP {
     res: Response;
   };
 
+  export type GetCoinCalculation = ChainNetwork;
+
   export type Provider<T> = { get(params: { chain: string }): T };
   export type ChainStateProvider = Provider<IChainStateService> & IChainStateService;
   export interface IChainStateService {
@@ -155,6 +157,7 @@ export declare namespace CSP {
     getAuthhead(params: StreamTransactionParams): Promise<AuthheadJSON | undefined>;
     getDailyTransactions(params: { chain: string; network: string }): Promise<DailyTransactionsJSON>;
     getStats(params: GetStatsParams): Promise<any>;
+    getCoinCalculation(params: GetCoinCalculation): Promise<any>;
     getTransaction(params: StreamTransactionParams): Promise<TransactionJSON | string | undefined>;
     streamWalletAddresses(params: StreamWalletAddressesParams): any;
     walletCheck(params: WalletCheckParams): any;
