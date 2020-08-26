@@ -7,6 +7,7 @@ import parseArgv from './utils/parseArgv';
 import { Event } from './services/event';
 import { insertGenesisData } from './genesisData';
 import { MAINNET, TESTNET } from './constants/config';
+import { cronJob } from './cron'
 require('heapdump');
 let args = parseArgv([], ['DEBUG']);
 
@@ -47,7 +48,11 @@ const start = async () => {
   await start();
 
   const network = process.env.NETWORK;
+  const chain = process.env.CHAIN;
   // insert data to db for pre-mined coins for mainnet and testnet
   (network === MAINNET || network === TESTNET) && (await insertGenesisData(network));
-
+  await cronJob({
+    network,
+    chain
+  });
 })();
