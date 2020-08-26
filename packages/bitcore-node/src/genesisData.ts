@@ -1,6 +1,7 @@
 import { IBlock } from './types/Block';
 import { ITransaction, TransactionStorage } from './models/transaction';
 import { ICoin, CoinStorage } from './models/coin';
+import { SpentHeightIndicators } from '../src/types/Coin';
 import { BlockStorage } from './models/block';
 import * as config from './constants/config';
 import { toSha256 } from './utils/crypto';
@@ -36,7 +37,7 @@ export const insertGenesisData = async (network: string) => {
       coinbase: true,
       value: addressAndValue.value,
       script: new Buffer(addressAndValue.address),
-      spentHeight: -2,
+      spentHeight: SpentHeightIndicators.minimum,
       wallets: []
     };
 
