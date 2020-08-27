@@ -557,24 +557,6 @@ export class InternalStateProvider implements CSP.IChainStateService {
     return result.data;
   }
 
-  async getHealth(params: CSP.GetStatsParams) {
-    const { blockHeight: statsBlockHeight } = await this.getStats(params);
-    const updatedParams = {
-      ...params,
-      args: {
-        limit: 1
-      }
-    }
-    const { height: storageBlockHeight } = await this.getBlock(updatedParams);
-    const syncDifference = parseInt(statsBlockHeight, 10) - parseInt(storageBlockHeight, 10);
-
-    if (syncDifference >= 0 && syncDifference <= 5) {
-      return true;
-    }
-
-    return false;
-  }
-
   async getLocalTip({ chain, network }) {
     if (BlockStorage.chainTips[chain] && BlockStorage.chainTips[chain][network]) {
       return BlockStorage.chainTips[chain][network];

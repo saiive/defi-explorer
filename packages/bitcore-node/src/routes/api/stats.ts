@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ChainStateProvider } from '../../providers/chain-state';
+import HealthCheck from '../../healthCheckCron'
 const router = require('express').Router({ mergeParams: true });
 
 router.get('/', async function (req: Request, res: Response) {
@@ -14,16 +15,10 @@ router.get('/', async function (req: Request, res: Response) {
 
 
 router.get('/health', async function (req: Request, res: Response) {
-  try {
-    const { chain, network } = req.params;
-    const result = await ChainStateProvider.getHealth({ chain, network });
-    if (result) {
-      return res.status(200).send("Healthy")
-    } else {
-      return res.status(500).send('Critical');
-    }
-  } catch (err) {
-    return res.status(500).send(err);
+  if (HealthCheck.isCritical) {
+    return res.status(500).send('Critical');
+  } else {
+    return res.status(200).send("Healthy")
   }
 });
 

@@ -129,7 +129,6 @@ export declare namespace CSP {
     res: Response;
   };
   export type GetStatsParams = ChainNetwork
-  export type GetHealthParams = ChainNetwork
 
 
   export type Provider<T> = { get(params: { chain: string }): T };
@@ -158,7 +157,6 @@ export declare namespace CSP {
     getAuthhead(params: StreamTransactionParams): Promise<AuthheadJSON | undefined>;
     getDailyTransactions(params: { chain: string; network: string }): Promise<DailyTransactionsJSON>;
     getStats(params: GetStatsParams): Promise<any>;
-    getHealth(params: GetHealthParams): Promise<any>;
     getTransaction(params: StreamTransactionParams): Promise<TransactionJSON | string | undefined>;
     streamWalletAddresses(params: StreamWalletAddressesParams): any;
     walletCheck(params: WalletCheckParams): any;
