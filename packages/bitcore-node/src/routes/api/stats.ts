@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ChainStateProvider } from '../../providers/chain-state';
 import HealthCheck from '../../healthCheckCron'
+import { HEATHCHECK_CRITICAL_THRESHOLD } from '../../constants/config'
 const router = require('express').Router({ mergeParams: true });
 
 router.get('/', async function (req: Request, res: Response) {
@@ -15,10 +16,10 @@ router.get('/', async function (req: Request, res: Response) {
 
 
 router.get('/health', async function (req: Request, res: Response) {
-  if (HealthCheck.isCritical) {
-    return res.status(500).send('Critical');
+  if (HealthCheck.criticalCount < HEATHCHECK_CRITICAL_THRESHOLD) {
+    return res.status(200).send("Healthy");
   } else {
-    return res.status(200).send("Healthy")
+    return res.status(500).send('Critical');
   }
 });
 

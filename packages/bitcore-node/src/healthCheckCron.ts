@@ -5,7 +5,7 @@ import { HEATHCHECK_TIME } from './constants/config'
 
 
 class HealthCheck {
-  public isCritical = false
+  public criticalCount: number = 0; //0 shows healthy status of BE
   private previous: any = {};
   private isAlreadyRunning = false; // to make sure only single instance of this is running
 
@@ -21,13 +21,13 @@ class HealthCheck {
       });
 
       if (!_.isEqual(this.previous, latestBlock)) {
-        this.isCritical = false
+        this.criticalCount = 0;
         this.previous = latestBlock;
       } else {
-        this.isCritical = true;
+        this.criticalCount += 1;
       }
     } catch (err) {
-      this.isCritical = true;
+      this.criticalCount += 1;
       logger.info(err)
     } finally {
       setTimeout(async () => {
@@ -37,8 +37,10 @@ class HealthCheck {
   }
 
   public startJob = (chain, network) => {
-    if (!this.isAlreadyRunning) {
-      this.cronJob({ chain, network })
+    if (!(process.env.DISABLE_HEALTH_CRON === 'true')) {
+      if (!this.isAlreadyRunning) {
+        this.cronJob({ chain, network })
+      }
     }
   }
 }

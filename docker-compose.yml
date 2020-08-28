@@ -44,6 +44,7 @@ services:
       - BITCORE_CONFIG_PATH=bitcore.config.json
       - BITCORE_NODE_FILE_LOG=${BITCORE_NODE_FILE_LOG:-false}
       - BITCORE_NODE_SENTRY_DNS=${BITCORE_NODE_SENTRY_DNS:-false}
+      - DISABLE_HEALTH_CRON=${DISABLE_HEALTH_CRON:-false}
     ports:
       - ${API_PORT}:3000
     volumes:
