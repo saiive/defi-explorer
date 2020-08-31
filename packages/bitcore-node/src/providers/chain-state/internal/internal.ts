@@ -484,7 +484,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     };
   }
 
-  async getLatestTrnasactions(params: CSP.GetLatestTransactionsParams) {
+  async getLatestTransactions(params: CSP.GetLatestTransactionsParams) {
     const { chain, network } = params;
     const query = {
       chain,
@@ -588,16 +588,16 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const query =
       startHeight && endHeight
         ? {
-            processed: true,
-            chain,
-            network,
-            height: { $gt: startHeight, $lt: endHeight },
-          }
+          processed: true,
+          chain,
+          network,
+          height: { $gt: startHeight, $lt: endHeight },
+        }
         : {
-            processed: true,
-            chain,
-            network,
-          };
+          processed: true,
+          chain,
+          network,
+        };
     const locatorBlocks = await BlockStorage.collection
       .find(query, { sort: { height: -1 }, limit: 30 })
       .addCursorFlag('noCursorTimeout', true)

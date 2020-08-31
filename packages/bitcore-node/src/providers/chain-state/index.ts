@@ -123,7 +123,7 @@ class ChainStateProxy implements CSP.ChainStateProvider {
   }
 
   async getLatestTransactions(params: CSP.GetLatestTransactionsParams) {
-    return this.get(params).getLatestTrnasactions(params);
+    return this.get(params).getLatestTransactions(params);
   }
 
   async getLocalTip(params) {
