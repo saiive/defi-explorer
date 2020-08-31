@@ -14,6 +14,16 @@ router.get('/', async function (req: Request, res: Response) {
   }
 });
 
+router.get('/total-coin', async function (req: Request, res: Response) {
+  try {
+    const { chain, network } = req.params;
+    const result = await ChainStateProvider.getCoinCalculation({ chain, network });
+    return res.send(result);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
 
 router.get('/health', async function (req: Request, res: Response) {
   if (HealthCheck.criticalCount < HEATHCHECK_CRITICAL_THRESHOLD) {

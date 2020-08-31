@@ -58,7 +58,7 @@ export class RichListPage implements AfterViewInit, AfterViewChecked {
 
   public ngAfterViewChecked() {
     const { addressLists } = this.latestRichList;
-    this.enableInfiniteScroller = addressLists.length > 0;
+    this.enableInfiniteScroller = addressLists.length > 0 && addressLists.length < thresholdRichListElement;
   }
 
   public openPage(page: string): void {
