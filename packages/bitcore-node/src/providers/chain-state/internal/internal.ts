@@ -557,6 +557,24 @@ export class InternalStateProvider implements CSP.IChainStateService {
     return result.data;
   }
 
+  async getCoinCalculation({ chain, network }) {
+    const result = await CoinStorage.collection
+      .aggregate([
+        {
+          $match: {
+            chain: chain,
+            network: network,
+            address: { $ne: 'false' },
+            spentHeight: { $lt: SpentHeightIndicators.minimum },
+            mintHeight: { $gt: SpentHeightIndicators.conflicting },
+          },
+        },
+        { $group: { _id: null, total: { $sum: '$value' } } },
+      ])
+      .toArray();
+    return result[0] || { total: 0 };
+  }
+
   async getLocalTip({ chain, network }) {
     if (BlockStorage.chainTips[chain] && BlockStorage.chainTips[chain][network]) {
       return BlockStorage.chainTips[chain][network];
