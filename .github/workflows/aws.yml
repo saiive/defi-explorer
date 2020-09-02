@@ -1,8 +1,6 @@
 on:
-  push:
-    branches:
-      - master
-      - deployment/ecr-configuration
+  release:
+    types: [created]
 
 name: Deploy to Amazon ECS
 
