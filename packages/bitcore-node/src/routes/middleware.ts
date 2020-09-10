@@ -74,6 +74,8 @@ function isWhiteListed(whitelist: Array<string> = [], ip: string) {
 export function RateLimiter(method: string, perSecond: number, perMinute: number, perHour: number) {
   return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      // TODO Add rate limiter later
+      return next(); // Bypassing ratelimiter
       const identifier = req.header('CF-Connecting-IP') || req.socket.remoteAddress || '';
       const rateLimiter = Config.for('api').rateLimiter;
       const whitelist = rateLimiter && rateLimiter.whitelist;
