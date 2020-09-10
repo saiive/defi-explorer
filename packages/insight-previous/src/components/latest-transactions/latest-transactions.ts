@@ -40,6 +40,7 @@ export class LatestTransactionsComponent implements OnInit {
           const data = response;
           this.transactions = data.reverse();
           this.transactionsLatest = response;
+          this.errorMessage = '';
         }
         else {
           this.errorMessage = 'No transaction found';
@@ -62,7 +63,8 @@ export class LatestTransactionsComponent implements OnInit {
           if (this.transactions.length >= this.rowLimit) {
             this.transactions.shift();
           }
-          this.insertTrx(response.data)
+          this.insertTrx(response.data);
+          this.errorMessage = '';
           this.loading = false;
         }
       },

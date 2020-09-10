@@ -22,7 +22,7 @@ export class AboutComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.loadQuickStats();
-    const seconds = 15;
+    const seconds = 60;
     this.ngZone.runOutsideAngular(() => {
       this.reloadInterval = setIntervalSynchronous(() => {
         this.ngZone.run(() => {
@@ -40,6 +40,7 @@ export class AboutComponent implements OnInit, OnDestroy {
     this.apiProvider.getStats().subscribe(
       response => {
         this.quickStats = this.processResponse(response);
+        this.errorMessage = '';
         this.loading = false;
       },
       err => {

@@ -63,6 +63,7 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
           );
           this.blocks = blocks;
           this.loading = false;
+          this.errorMessage = '';
         },
         err => {
           this.subscriber.unsubscribe();
