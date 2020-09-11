@@ -116,4 +116,9 @@ export class BlocksProvider {
     const url: string = this.api.getUrl() + '/block/' + hash;
     return this.httpClient.get<ApiBlock>(url);
   }
+
+  public getTotalAnchoredBlocks(): Observable<any> {
+    const url: string = this.api.getUrl() + '/block/total-anchored-blocks'
+    return this.httpClient.get<ApiBlock>(url);
+  }
 }

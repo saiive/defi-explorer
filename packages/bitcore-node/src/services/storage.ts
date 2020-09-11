@@ -220,7 +220,7 @@ export class StorageService {
     res: Response,
     transform?: (data: T) => string | Buffer
   ) {
-    const { query, options } = this.getFindOptions(model, originalOptions);
+    const { query, options } = this.getFindOptions(model, originalOptions);    
     const finalQuery = Object.assign({}, originalQuery, query);
     let cursor = model.collection
       .find(finalQuery, options)
