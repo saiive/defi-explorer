@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiProvider } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { DefaultProvider } from '../../providers/default/default';
-import { TxsProvider } from '../../providers/transactions/transactions'
+import { TxsProvider } from '../../providers/transactions/transactions';
 import { Logger } from '../../providers/logger/logger';
 import { RedirProvider } from '../../providers/redir/redir';
 import { WebsocketProvider } from '../../providers/websocket/websocketProvider';
@@ -40,8 +40,8 @@ export class LatestTransactionsComponent implements OnInit {
           const data = response;
           this.transactions = data.reverse();
           this.transactionsLatest = response;
-        }
-        else {
+          this.errorMessage = '';
+        } else {
           this.errorMessage = 'No transaction found';
         }
         this.loading = false;
@@ -50,9 +50,10 @@ export class LatestTransactionsComponent implements OnInit {
       err => {
         this.loading = false;
         this.logger.error(err);
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loadTransactions();
-      })
+      }
+    );
   }
 
   private loadTransactions(): void {
@@ -62,13 +63,14 @@ export class LatestTransactionsComponent implements OnInit {
           if (this.transactions.length >= this.rowLimit) {
             this.transactions.shift();
           }
-          this.insertTrx(response.data)
+          this.insertTrx(response.data);
+          this.errorMessage = '';
           this.loading = false;
         }
       },
       err => {
         this.logger.error(err);
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loading = false;
       }
     );

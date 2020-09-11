@@ -7,7 +7,7 @@ import { TxsProvider } from '../../providers/transactions/transactions';
 
 @Component({
   selector: 'coin-list',
-  templateUrl: 'coin-list.html'
+  templateUrl: 'coin-list.html',
 })
 export class CoinListComponent implements OnInit {
   @Input()
@@ -24,20 +24,20 @@ export class CoinListComponent implements OnInit {
     private txsProvider: TxsProvider,
     private logger: Logger,
     private events: Events
-  ) { }
+  ) {}
 
   public ngOnInit(): void {
     if (this.txs && this.txs.length === 0) {
       this.loading = true;
       this.addrProvider.getAddressActivity(this.addrStr).subscribe(
-        data => {
+        (data) => {
           const formattedData = data.map(this.txsProvider.toAppCoin);
-          this.txs = this.orderByHeight(formattedData)
+          this.txs = this.orderByHeight(formattedData);
           this.showTransactions = true;
           this.loading = false;
           this.events.publish('CoinList', { length: data.length });
         },
-        err => {
+        (err) => {
           this.logger.error(err);
           this.loading = false;
           this.showTransactions = false;
@@ -49,16 +49,15 @@ export class CoinListComponent implements OnInit {
   orderByHeight(data) {
     const unconfirmedTxs = [];
     let confirmedTxs = [];
-    data.forEach(tx => {
+    data.forEach((tx) => {
       const { mintHeight, mintTxid, value, spentHeight, spentTxid } = tx;
 
-      if (mintHeight < 0) {
-        unconfirmedTxs.push({ height: mintHeight, mintTxid, value });
-      } else if (spentHeight < 0) {
-        unconfirmedTxs.push({ height: spentHeight, spentTxid, value });
-      } else {
-        confirmedTxs.push({ height: mintHeight, mintTxid, value });
-      }
+      mintHeight < 0
+        ? unconfirmedTxs.push({ height: mintHeight, mintTxid, value })
+        : confirmedTxs.push({ height: mintHeight, mintTxid, value });
+
+      spentHeight > 0 &&
+        confirmedTxs.push({ height: spentHeight, spentTxid, value });
     });
     confirmedTxs = _.orderBy(confirmedTxs, ['height'], ['desc']);
     return unconfirmedTxs.concat(confirmedTxs);

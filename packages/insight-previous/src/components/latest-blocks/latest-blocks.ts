@@ -43,7 +43,7 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.loadBlocks();
-    const seconds = 15;
+    const seconds = 60;
     this.ngZone.runOutsideAngular(() => {
       this.reloadInterval = setInterval(() => {
         this.ngZone.run(() => {
@@ -63,12 +63,13 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
           );
           this.blocks = blocks;
           this.loading = false;
+          this.errorMessage = '';
         },
         err => {
           this.subscriber.unsubscribe();
           clearInterval(this.reloadInterval);
           this.logger.error(err.message);
-          this.errorMessage = err.message;
+          this.errorMessage = err.error || err.message;
           this.loading = false;
         }
       );
@@ -92,7 +93,7 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
         },
         err => {
           this.logger.error(err.message);
-          this.errorMessage = err.message;
+          this.errorMessage = err.error || err.message;
           this.loading = false;
         }
       );

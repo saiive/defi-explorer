@@ -1,8 +1,8 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { ApiProvider } from '../../providers/api/api'
+import { ApiProvider } from '../../providers/api/api';
 import { DefaultProvider } from '../../providers/default/default';
 import { RedirProvider } from '../../providers/redir/redir';
-import { setIntervalSynchronous } from '../../utils/utility'
+import { setIntervalSynchronous } from '../../utils/utility';
 
 @Component({
   selector: 'about',
@@ -17,12 +17,12 @@ export class AboutComponent implements OnInit, OnDestroy {
     private defaultProvider: DefaultProvider,
     private redirProvider: RedirProvider,
     private apiProvider: ApiProvider,
-    private ngZone: NgZone,
-  ) { }
+    private ngZone: NgZone
+  ) {}
 
   public ngOnInit(): void {
     this.loadQuickStats();
-    const seconds = 15;
+    const seconds = 60;
     this.ngZone.runOutsideAngular(() => {
       this.reloadInterval = setIntervalSynchronous(() => {
         this.ngZone.run(() => {
@@ -40,10 +40,11 @@ export class AboutComponent implements OnInit, OnDestroy {
     this.apiProvider.getStats().subscribe(
       response => {
         this.quickStats = this.processResponse(response);
+        this.errorMessage = '';
         this.loading = false;
       },
       err => {
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loading = false;
       }
     );
