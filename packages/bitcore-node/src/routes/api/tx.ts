@@ -23,7 +23,7 @@ router.get('/', function (req, res) {
     network,
     req,
     res,
-    args: { limit, since, direction, paging }
+    args: { limit, since, direction, paging },
   };
 
   if (blockHeight !== undefined) {
@@ -59,7 +59,11 @@ router.get('/:txId', async (req, res) => {
   try {
     const tx = await ChainStateProvider.getTransaction({ chain, network, txId });
     if (!tx) {
-      return res.status(404).send(`The requested txid ${txId} could not be found.`);
+      return res
+        .status(404)
+        .send(
+          `The requested txid ${txId} could not be found, it is most likely still being confirmed, please try again in a few minutes.`
+        );
     } else {
       const tip = await ChainStateProvider.getLocalTip({ chain, network });
       if (tx && tip.height - (<TransactionJSON>tx).blockHeight > 100) {
@@ -99,7 +103,7 @@ router.get('/:txid/coins', (req, res, next) => {
     chain = chain.toUpperCase();
     network = network.toLowerCase();
     ChainStateProvider.getCoinsForTx({ chain, network, txid })
-      .then(coins => {
+      .then((coins) => {
         res.setHeader('Content-Type', 'application/json');
         return res.status(200).send(JSON.stringify(coins));
       })
@@ -116,7 +120,7 @@ router.post('/send', async function (req, res) {
     let txid = await ChainStateProvider.broadcastTransaction({
       chain,
       network,
-      rawTx
+      rawTx,
     });
     return res.send({ txid });
   } catch (err) {
@@ -127,5 +131,5 @@ router.post('/send', async function (req, res) {
 
 module.exports = {
   router: router,
-  path: '/tx'
+  path: '/tx',
 };

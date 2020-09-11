@@ -17,7 +17,7 @@ router.get('/:target', CacheMiddleware(CacheTimes.Second), async (req: Request, 
   try {
     let fee = await ChainStateProvider.getFee({ chain, network, target });
     if (!fee) {
-      return res.status(404).send('not available right now');
+      return res.status(404).send('Not available right now');
     }
     feeCache[`${chain}:${network}:${target}`] = { fee, date: Date.now() };
     return res.json(fee);
@@ -28,5 +28,5 @@ router.get('/:target', CacheMiddleware(CacheTimes.Second), async (req: Request, 
 
 module.exports = {
   router: router,
-  path: '/fee'
+  path: '/fee',
 };

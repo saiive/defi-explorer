@@ -19,10 +19,9 @@ import { TxsProvider } from '../../providers/transactions/transactions';
   templateUrl: 'block-detail.html'
 })
 export class BlockDetailPage {
-  
   static btcExplorers = {
     testnet: 'https://live.blockcypher.com/btc-testnet/tx/',
-    mainnet: 'https://live.blockcypher.com/btc/tx/',
+    mainnet: 'https://live.blockcypher.com/btc/tx/'
   };
 
   public loading = true;
@@ -72,7 +71,7 @@ export class BlockDetailPage {
       },
       err => {
         this.logger.error(err.message);
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loading = false;
       }
     );

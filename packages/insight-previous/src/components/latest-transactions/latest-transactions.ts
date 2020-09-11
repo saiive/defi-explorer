@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiProvider } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { DefaultProvider } from '../../providers/default/default';
-import { TxsProvider } from '../../providers/transactions/transactions'
+import { TxsProvider } from '../../providers/transactions/transactions';
 import { Logger } from '../../providers/logger/logger';
 import { RedirProvider } from '../../providers/redir/redir';
 import { WebsocketProvider } from '../../providers/websocket/websocketProvider';
@@ -41,8 +41,7 @@ export class LatestTransactionsComponent implements OnInit {
           this.transactions = data.reverse();
           this.transactionsLatest = response;
           this.errorMessage = '';
-        }
-        else {
+        } else {
           this.errorMessage = 'No transaction found';
         }
         this.loading = false;
@@ -51,9 +50,10 @@ export class LatestTransactionsComponent implements OnInit {
       err => {
         this.loading = false;
         this.logger.error(err);
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loadTransactions();
-      })
+      }
+    );
   }
 
   private loadTransactions(): void {
@@ -70,7 +70,7 @@ export class LatestTransactionsComponent implements OnInit {
       },
       err => {
         this.logger.error(err);
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loading = false;
       }
     );
