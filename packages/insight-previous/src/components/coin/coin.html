@@ -1,6 +1,20 @@
 <ion-grid>
   <ion-row *ngIf="coin?.mintTxid">
-    <ion-col col-7>
+    <ion-col col-1 *ngIf="coin.height >= 0">
+      <ion-icon
+        name="md-arrow-dropdown"
+        color="dark"
+        *ngIf="!collapse"
+        (click)="collapsible()"
+      ></ion-icon>
+      <ion-icon
+        name="md-arrow-dropup"
+        *ngIf="collapse"
+        (click)="collapsible()"
+      >
+      </ion-icon>
+    </ion-col>
+    <ion-col col-6>
       <div class="ellipsis">
         <span *ngIf="coin.height >= 0">
           <a (click)="goToTx(coin.mintTxid)">{{ coin.mintTxid }}</a>
@@ -20,29 +34,45 @@
   </ion-row>
 
   <ion-row *ngIf="coin?.spentTxid || coin?.spentTxid == ''">
-    <ion-col col-7>
+    <ion-col col-1 *ngIf="coin.height >= -1">
+      <ion-icon
+        name="md-arrow-dropdown"
+        color="dark"
+        *ngIf="!collapse"
+        (click)="collapsible()"
+      ></ion-icon>
+      <ion-icon
+        name="md-arrow-dropup"
+        *ngIf="collapse"
+        (click)="collapsible()"
+      ></ion-icon>
+    </ion-col>
+    <ion-col col-6>
       <div class="ellipsis">
         <span *ngIf="coin.height >= -1">
           <a (click)="goToTx(coin.spentTxid)">{{ coin.spentTxid }}</a>
         </span>
-        <span *ngIf="coin.height === -2">
-          Unspent
-        </span>
+        <span *ngIf="coin.height === -2"> Unspent </span>
         <span ion-text color="danger" *ngIf="coin.height === -3">
           Invalid
         </span>
-        <span ion-text color="danger" *ngIf="coin.height === -4">
-          Error
-        </span>
+        <span ion-text color="danger" *ngIf="coin.height === -4"> Error </span>
       </div>
     </ion-col>
     <ion-col col-5 text-right>
       <span ion-text [color]="!coin.spentTxid ? 'default':'dark-light'">
-        <ion-icon name="md-remove-circle" [color]="!coin.spentTxid ? 'default':'dark-light'" *ngIf="coin.height >= 0">
+        <ion-icon
+          name="md-remove-circle"
+          [color]="!coin.spentTxid ? 'default':'dark-light'"
+          *ngIf="coin.height >= 0"
+        >
         </ion-icon>
         {{ currencyProvider.getConvertedNumber(coin.value) | number:'1.0-8' }}
         {{ currencyProvider.currencySymbol }}
       </span>
     </ion-col>
   </ion-row>
+  <div *ngIf="coin.height >= -1 && collapse">
+    <show-transaction-info [coin]="coin"></show-transaction-info>
+  </div>
 </ion-grid>
