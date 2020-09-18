@@ -605,7 +605,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
       txid: tx.txid || '',
       network: tx.network || '',
       chain: tx.chain || '',
-      blockHeight: tx.blockHeight || -1,
+      blockHeight: tx.blockHeight === undefined ? -1 : tx.blockHeight ,
       blockHash: tx.blockHash || '',
       blockTime: tx.blockTime ? tx.blockTime.toISOString() : '',
       blockTimeNormalized: tx.blockTimeNormalized ? tx.blockTimeNormalized.toISOString() : '',
