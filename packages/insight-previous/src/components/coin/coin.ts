@@ -10,6 +10,7 @@ import { AppCoin } from '../../providers/transactions/transactions';
 export class CoinComponent {
   @Input()
   public coin: AppCoin | {} = {};
+  @Input()
   public collapse: boolean = false;
 
   constructor(
