@@ -5,11 +5,13 @@ import { RedirProvider } from '../../providers/redir/redir';
 import { AppCoin } from '../../providers/transactions/transactions';
 @Component({
   selector: 'coin',
-  templateUrl: 'coin.html'
+  templateUrl: 'coin.html',
 })
 export class CoinComponent {
   @Input()
   public coin: AppCoin | {} = {};
+  @Input()
+  public collapse: boolean = false;
 
   constructor(
     public apiProvider: ApiProvider,
@@ -21,7 +23,11 @@ export class CoinComponent {
     this.redirProvider.redir('transaction', {
       txId,
       chain: this.apiProvider.networkSettings.value.selectedNetwork.chain,
-      network: this.apiProvider.networkSettings.value.selectedNetwork.network
+      network: this.apiProvider.networkSettings.value.selectedNetwork.network,
     });
+  }
+
+  public collapsible() {
+    this.collapse = !this.collapse;
   }
 }

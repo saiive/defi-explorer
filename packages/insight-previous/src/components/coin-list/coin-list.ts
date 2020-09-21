@@ -18,6 +18,7 @@ export class CoinListComponent implements OnInit {
   public loading;
   public limit = 10;
   public chunkSize = 100;
+  public openCollapse = false;
 
   constructor(
     private addrProvider: AddressProvider,
@@ -30,14 +31,17 @@ export class CoinListComponent implements OnInit {
     if (this.txs && this.txs.length === 0) {
       this.loading = true;
       this.addrProvider.getAddressActivity(this.addrStr).subscribe(
-        (data) => {
+        data => {
           const formattedData = data.map(this.txsProvider.toAppCoin);
           this.txs = this.orderByHeight(formattedData);
+          if (this.txs.length <= 10) {
+            this.openCollapse = true;
+          }
           this.showTransactions = true;
           this.loading = false;
           this.events.publish('CoinList', { length: data.length });
         },
-        (err) => {
+        err => {
           this.logger.error(err);
           this.loading = false;
           this.showTransactions = false;
@@ -49,7 +53,7 @@ export class CoinListComponent implements OnInit {
   orderByHeight(data) {
     const unconfirmedTxs = [];
     let confirmedTxs = [];
-    data.forEach((tx) => {
+    data.forEach(tx => {
       const { mintHeight, mintTxid, value, spentHeight, spentTxid } = tx;
 
       mintHeight < 0
