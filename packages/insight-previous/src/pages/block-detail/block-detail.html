@@ -62,7 +62,7 @@
                   Previous Block
                   <ion-note item-end>
                     <a (click)="goToPreviousBlock()"
-                      [ngClass]="{'disabled-link': block.height - 1 === 0 }">{{ block.height - 1 }}</a>
+                      [ngClass]="{'disabled-link': block.height - 1 < 0 }">{{ block.height>0? block.height-1:'-' }}</a>
                   </ion-note>
                 </ion-item>
               </ion-col>
