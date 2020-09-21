@@ -34,6 +34,10 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return this.get(params).getBalanceForAddress(params);
   }
 
+  async getRichList(params: CSP.GetRichListParams) {
+    return this.get(params).getRichList(params);
+  }
+
   async getBlock(params: CSP.GetBlockParams) {
     return this.get(params).getBlock(params);
   }
@@ -52,6 +56,14 @@ class ChainStateProxy implements CSP.ChainStateProvider {
 
   getDailyTransactions(params: { chain: string; network: string }) {
     return this.get(params).getDailyTransactions(params);
+  }
+
+  getStats(params: CSP.GetStatsParams) {
+    return this.get(params).getStats(params);
+  }
+
+  getCoinCalculation(params: CSP.GetCoinCalculation) {
+    return this.get(params).getCoinCalculation(params);
   }
 
   getTransaction(params: CSP.StreamTransactionParams) {
@@ -108,6 +120,10 @@ class ChainStateProxy implements CSP.ChainStateProvider {
 
   async getCoinsForTx(params: { chain: string; network: string; txid: string }) {
     return this.get(params).getCoinsForTx(params);
+  }
+
+  async getLatestTransactions(params: CSP.GetLatestTransactionsParams) {
+    return this.get(params).getLatestTransactions(params);
   }
 
   async getLocalTip(params) {

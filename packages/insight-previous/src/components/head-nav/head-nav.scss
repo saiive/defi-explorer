@@ -1,10 +1,10 @@
 head-nav {
   .icon-md-light {
-    color: rgba(255,255,255,.75);
+    color: rgba(255, 255, 255, .75);
   }
 
   .icon-md-dark {
-    color: rgba(255,255,255,.95);
+    color: rgba(255, 255, 255, .95);
   }
 
   .toolbar-md {
@@ -16,21 +16,31 @@ head-nav {
     grid-template-columns: 15% 1fr 15%;
     justify-items: stretch;
     align-items: center;
-      ion-title {
-        justify-self: start;
-        &.logo-header {
-          .toolbar-title{
-            width: auto;
-            cursor: pointer;
-            color: white;
-            font-weight: 700;
-            font-size: 2em;
-            padding-left: 0px;
-          }
+
+    ion-title {
+      justify-self: start;
+
+      &.logo-header {
+        .toolbar-title {
+          width: auto;
+          cursor: pointer;
+          color: white;
+          font-weight: 700;
+          font-size: 2em;
+          padding-left: 0px;
         }
       }
-      ion-buttons {
-        justify-self: end;
+    }
+
+    ion-buttons {
+      justify-self: end;
+    }
+
+    .search {
+      justify-self: center;
+
+      @media (min-width: map-get($grid-breakpoints, lg)) {
+        display: inline-block;
       }
       .search{
         justify-self: center;
@@ -68,11 +78,26 @@ head-nav {
           font-weight: 400;
         }
       }
+
+      ::-webkit-input-placeholder {
+        color: rgba(255, 255, 255, 0.5);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      ::-moz-placeholder {
+        color: rgba(255, 255, 255, 0.5);
+        font-style: italic;
+        font-weight: 400;
+      }
+    }
   }
-  .mobile-searchbar > .toolbar-content {
+
+  .mobile-searchbar>.toolbar-content {
     display: grid;
     grid-template-columns: 100%;
   }
+
   .search-button {
     @media (min-width: map-get($grid-breakpoints, lg)) {
       display: none;

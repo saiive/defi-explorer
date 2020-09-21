@@ -6,16 +6,16 @@ services:
     networks:
       - default
     ports:
-    - 27017
+      - 27017
     volumes:
-    - db_data:/data/db
+      - db_data:/data/db
     restart: unless-stopped
 
   defichain:
-    build: ./defichain
-    networks: 
+    image: defi/defichain:1.0.0
+    networks:
       - default
-    environment: 
+    environment:
       - NETWORK=${NETWORK:?NETWORK env required}
     ports:
       - 8555
@@ -42,6 +42,9 @@ services:
       - DB_HOST=database
       - CHAIN=DFI
       - BITCORE_CONFIG_PATH=bitcore.config.json
+      - BITCORE_NODE_FILE_LOG=${BITCORE_NODE_FILE_LOG:-false}
+      - BITCORE_NODE_SENTRY_DNS=${BITCORE_NODE_SENTRY_DNS:-false}
+      - DISABLE_HEALTH_CRON=${DISABLE_HEALTH_CRON:-false}
     ports:
       - ${API_PORT}:3000
     volumes: 

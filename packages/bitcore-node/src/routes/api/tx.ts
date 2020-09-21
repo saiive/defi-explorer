@@ -7,7 +7,7 @@ import { TransactionJSON } from '../../types/Transaction';
 import { CacheTimes } from '../middleware';
 const router = Router({ mergeParams: true });
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
   let { chain, network } = req.params;
   let { blockHeight, blockHash, limit, since, direction, paging } = req.query;
   if (!chain || !network) {
@@ -23,7 +23,7 @@ router.get('/', function(req, res) {
     network,
     req,
     res,
-    args: { limit, since, direction, paging }
+    args: { limit, since, direction, paging },
   };
 
   if (blockHeight !== undefined) {
@@ -33,6 +33,20 @@ router.get('/', function(req, res) {
     payload.args.blockHash = blockHash;
   }
   return ChainStateProvider.streamTransactions(payload);
+});
+
+router.get('/latest', async function (req, res) {
+  try {
+    let { chain, network } = req.params;
+    chain = chain.toUpperCase();
+    network = network.toLowerCase();
+
+    const latestTxs = await ChainStateProvider.getLatestTransactions({ chain, network });
+    return res.send(latestTxs || []);
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).send(err.message);
+  }
 });
 
 router.get('/:txId', async (req, res) => {
@@ -45,7 +59,11 @@ router.get('/:txId', async (req, res) => {
   try {
     const tx = await ChainStateProvider.getTransaction({ chain, network, txId });
     if (!tx) {
-      return res.status(404).send(`The requested txid ${txId} could not be found.`);
+      return res
+        .status(404)
+        .send(
+          `The requested txid ${txId} could not be found, it is most likely still being confirmed, please try again in a few minutes.`
+        );
     } else {
       const tip = await ChainStateProvider.getLocalTip({ chain, network });
       if (tx && tip.height - (<TransactionJSON>tx).blockHeight > 100) {
@@ -85,7 +103,7 @@ router.get('/:txid/coins', (req, res, next) => {
     chain = chain.toUpperCase();
     network = network.toLowerCase();
     ChainStateProvider.getCoinsForTx({ chain, network, txid })
-      .then(coins => {
+      .then((coins) => {
         res.setHeader('Content-Type', 'application/json');
         return res.status(200).send(JSON.stringify(coins));
       })
@@ -93,7 +111,7 @@ router.get('/:txid/coins', (req, res, next) => {
   }
 });
 
-router.post('/send', async function(req, res) {
+router.post('/send', async function (req, res) {
   try {
     let { chain, network } = req.params;
     let { rawTx } = req.body;
@@ -102,7 +120,7 @@ router.post('/send', async function(req, res) {
     let txid = await ChainStateProvider.broadcastTransaction({
       chain,
       network,
-      rawTx
+      rawTx,
     });
     return res.send({ txid });
   } catch (err) {
@@ -113,5 +131,5 @@ router.post('/send', async function(req, res) {
 
 module.exports = {
   router: router,
-  path: '/tx'
+  path: '/tx',
 };

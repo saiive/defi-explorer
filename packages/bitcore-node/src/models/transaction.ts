@@ -106,6 +106,13 @@ export class TransactionModel extends BaseModel<ITransaction> {
     );
   }
 
+  async insertGenesisTransaction(transaction: ITransaction, txid: string) {
+    const count = await this.collection.find({ txid }).count();
+    if (count === 0) {
+      await this.collection.insert(transaction);
+    }
+  }
+
   async batchImport(params: {
     txs: Array<Defichain.Transaction>;
     height: number;
@@ -530,6 +537,66 @@ export class TransactionModel extends BaseModel<ITransaction> {
     const { query, options } = Storage.getFindOptions(this, params.options);
     const finalQuery = Object.assign({}, originalQuery, query);
     return this.collection.find(finalQuery, options).addCursorFlag('noCursorTimeout', true);
+  }
+
+  async getTransactionCount(params: { query: any }) {
+    const { txIds } = params.query;
+
+    return this.collection
+      .find({
+        blockTime: {
+          $gte: new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000)
+        },
+        txid: {
+          $in: txIds
+        }
+      })
+      .addCursorFlag('noCursorTimeout', true)
+      .count();
+  }
+
+  async getFirstTransactionTime(params: { query: any }) {
+    const { txIds } = params.query;
+
+    const firstTransactionTime = await this.collection
+      .find({
+        txid: {
+          $in: txIds
+        }
+      })
+      .addCursorFlag('noCursorTimeout', true)
+      .sort({ blockTime: 1 })
+      .limit(1)
+      .toArray();
+
+    return firstTransactionTime[0].blockTime;
+  }
+
+  async getLastTransactionTime(params: { query: any }) {
+    const { txIds } = params.query;
+
+    const lastTransactionTime = await this.collection
+      .find({
+        txid: {
+          $in: txIds
+        }
+      })
+      .addCursorFlag('noCursorTimeout', true)
+      .sort({ blockTime: -1 })
+      .limit(1)
+      .toArray();
+
+    return lastTransactionTime[0].blockTime;
+  }
+
+  async getLatestTransactions(params: { query: any }) {
+    const latestTxs = await this.collection
+      .find()
+      .addCursorFlag('noCursorTimeout', true)
+      .sort({ blockTime: -1 })
+      .limit(10)
+      .toArray();
+    return latestTxs;
   }
 
   _apiTransform(tx: Partial<MongoBound<ITransaction>>, options?: TransformOptions): TransactionJSON | string {

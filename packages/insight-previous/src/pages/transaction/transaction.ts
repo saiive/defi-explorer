@@ -73,7 +73,7 @@ export class TransactionPage {
       },
       err => {
         this.logger.error(err.message);
-        this.errorMessage = err.message;
+        this.errorMessage = err.error || err.message;
         this.loading = false;
       }
     );

@@ -21,7 +21,7 @@ export interface NetworkSettings {
 export class ApiProvider {
   public defaultNetwork = {
     chain: this.defaults.getDefault('%CHAIN%'),
-    network: this.defaults.getDefault('%NETWORK%')
+    network: this.defaults.getDefault('%NETWORK%'),
   };
   public networkSettings = new BehaviorSubject<NetworkSettings>({
     availableNetworks: [this.defaultNetwork],
@@ -86,5 +86,13 @@ export class ApiProvider {
       availableNetworks,
       selectedNetwork: network
     });
+  }
+
+  public getStats(): Observable<any> {
+    const quickStatsApi = this.defaults.getDefault('%QUICK_STATS_API%');
+    const network = this.defaults.getDefault('%NETWORK%');
+    return this.httpClient.get<any>(
+      `${quickStatsApi}?network=${network}`
+    )
   }
 }

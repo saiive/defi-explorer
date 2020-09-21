@@ -32,6 +32,13 @@ export declare namespace CSP {
     address: string;
   };
 
+  export type GetRichListParams = ChainNetwork & {
+    pageNo: number;
+    pageSize: number;
+  };
+
+  export type GetLatestTransactionsParams = ChainNetwork;
+
   export type GetBlockParams = ChainNetwork & {
     blockId?: string;
     sinceBlock?: number | string;
@@ -119,6 +126,10 @@ export declare namespace CSP {
     req: Request;
     res: Response;
   };
+  export type GetStatsParams = ChainNetwork
+
+
+  export type GetCoinCalculation = ChainNetwork;
 
   export type Provider<T> = { get(params: { chain: string }): T };
   export type ChainStateProvider = Provider<IChainStateService> & IChainStateService;
@@ -126,6 +137,7 @@ export declare namespace CSP {
     getBalanceForAddress(
       params: GetBalanceForAddressParams
     ): Promise<{ confirmed: number; unconfirmed: number; balance: number }>;
+    getRichList(params: GetRichListParams): Promise<any>;
     getBlock(params: GetBlockParams): Promise<IBlock | string>;
     streamBlocks(params: StreamBlocksParams): any;
     getFee(params: GetEstimateSmartFeeParams): any;
@@ -144,6 +156,8 @@ export declare namespace CSP {
     streamTransactions(params: StreamTransactionsParams): any;
     getAuthhead(params: StreamTransactionParams): Promise<AuthheadJSON | undefined>;
     getDailyTransactions(params: { chain: string; network: string }): Promise<DailyTransactionsJSON>;
+    getStats(params: GetStatsParams): Promise<any>;
+    getCoinCalculation(params: GetCoinCalculation): Promise<{ total: number }>;
     getTransaction(params: StreamTransactionParams): Promise<TransactionJSON | string | undefined>;
     streamWalletAddresses(params: StreamWalletAddressesParams): any;
     walletCheck(params: WalletCheckParams): any;
@@ -151,6 +165,7 @@ export declare namespace CSP {
     streamWalletUtxos(params: StreamWalletUtxosParams): any;
     streamMissingWalletAddresses(params: StreamWalletMissingAddressesParams);
     getCoinsForTx(params: { chain: string; network: string; txid: string }): Promise<CoinListingJSON>;
+    getLatestTransactions(params: GetLatestTransactionsParams): Promise<any>;
     getLocalTip(params): Promise<any>;
     getLocatorHashes(params): Promise<any>;
   }

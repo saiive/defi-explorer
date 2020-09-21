@@ -48,6 +48,13 @@ export class BlockModel extends BaseModel<IBlock> {
     }
   }
 
+  async insertGenesisBlock(block: IBlock, height: number) {
+    const count = await this.collection.find({ height }).count();
+    if (count === 0) {
+      await this.collection.insert(block);
+    }
+  }
+
   async addBlock(params: {
     block: Defichain.Block;
     parentChain?: string;
