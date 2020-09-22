@@ -14,9 +14,7 @@
             (click)="toggleExpanded()"
           ></ion-icon>
         </span>
-        <span>
-          <a (click)="goToTx(tx.txid)">{{ tx.txid }}</a>
-        </span>
+        <span> <a (click)="goToTx(tx.txid)">{{ tx.txid }}</a> </span>
       </div>
     </ion-col>
     <ion-col col-5 text-right>
@@ -24,7 +22,9 @@
         <span translate>first seen at</span>
         <time>{{ tx.firstSeenTs * 1000 | date:'medium' }}</time>
       </ion-note>
-      <ion-note [hidden]="!tx.blocktime && tx.firstSeenTs">
+      <ion-note
+        [hidden]="(!tx.blocktime && tx.firstSeenTs) || tx.blockheight === 0"
+      >
         <span translate>mined</span>
         <time>{{ tx.time * 1000 | date:'MMM d, y' }}</time>
         <time>{{ tx.time * 1000 | date:'hh:mm:ss a' }}</time>
@@ -35,24 +35,16 @@
   <ion-row align-items-end class="small" *ngIf="!showCoins">
     <ion-col col-12 text-right text-uppercase>
       <ion-chip item-end color="danger" *ngIf="confirmations === -3">
-        <ion-label>
-          Invalid
-        </ion-label>
+        <ion-label> Invalid </ion-label>
       </ion-chip>
       <ion-chip item-end color="warning" *ngIf="confirmations === -1">
-        <ion-label>
-          Unconfirmed
-        </ion-label>
+        <ion-label> Unconfirmed </ion-label>
       </ion-chip>
       <ion-chip item-end color="brand" *ngIf="confirmations === 1">
-        <ion-label>
-          1 Confirmation
-        </ion-label>
+        <ion-label> 1 Confirmation </ion-label>
       </ion-chip>
       <ion-chip item-end color="primary" *ngIf="confirmations > 1">
-        <ion-label>
-          {{ confirmations }} Confirmations
-        </ion-label>
+        <ion-label> {{ confirmations }} Confirmations </ion-label>
       </ion-chip>
       <ion-chip item-end color="default">
         <ion-label>
@@ -66,9 +58,7 @@
   <ion-row *ngIf="showCoins" align-items-start>
     <ion-col col-12 col-md-5>
       <ion-list [hidden]="!tx.isCoinBase">
-        <ion-item>
-          No Inputs (Newly Generated Coins)
-        </ion-item>
+        <ion-item> No Inputs (Newly Generated Coins) </ion-item>
       </ion-list>
 
       <ion-list [hidden]="tx.isCoinBase">
@@ -97,9 +87,7 @@
             <p *ngIf="confirmations > 0">
               <b>Confirmations</b> {{ confirmations }}
             </p>
-            <p>
-              <b>Unlocking Script</b>
-            </p>
+            <p><b>Unlocking Script</b></p>
             <div *ngFor="let item of vin.items">
               <div *ngIf="item.scriptSig">
                 <div class="unlocking-script">
@@ -157,16 +145,9 @@
               </div>
             </div>
             <div *ngIf="expanded">
-              <p>
-                <b>Script Template</b>
-                <i>{{ vout.script.type }}</i>
-              </p>
-              <p>
-                <b>Locking Script</b>
-              </p>
-              <div class="locking-script">
-                <p>{{ vout.script.asm }}</p>
-              </div>
+              <p><b>Script Template</b> <i>{{ vout.script.type }}</i></p>
+              <p><b>Locking Script</b></p>
+              <div class="locking-script"><p>{{ vout.script.asm }}</p></div>
             </div>
           </div>
 

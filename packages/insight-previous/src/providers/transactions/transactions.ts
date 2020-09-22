@@ -181,7 +181,7 @@ export class TxsProvider {
 
   public getConfirmations(blockheight: number): Observable<number> {
     return this.blocksProvider.getCurrentHeight().map(data => {
-      return blockheight > 0 ? data.height - blockheight + 1 : blockheight;
+      return blockheight >= 0 ? data.height - blockheight : blockheight;
     });
   }
 
