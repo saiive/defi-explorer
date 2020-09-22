@@ -42,40 +42,23 @@ head-nav {
       @media (min-width: map-get($grid-breakpoints, lg)) {
         display: inline-block;
       }
-      .search{
-        justify-self: center;
-        @media (min-width: map-get($grid-breakpoints, lg)) {
-          display: inline-block;
-        }
-        
-        display: none;
-        
-        vertical-align: middle;
-        input {
-          width: 650px;
-          margin-top: -2px;
-          padding: 8px 12px;
-          color: rgba(255, 255, 255, 1);
-          background-color: rgba(0, 0, 0, 0);
-          border: 0;
-          font-weight: 400;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 
-          &:hover {
-            border-bottom: 1px solid rgba(255, 255, 255, 1);
-          }
-        }
-        
-        ::-webkit-input-placeholder {
-          color: rgba(255, 255, 255, 0.5);
-          font-style: italic;
-          font-weight: 400;
-        }
-        
-        ::-moz-placeholder {
-          color: rgba(255, 255, 255, 0.5);
-          font-style: italic;
-          font-weight: 400;
+      display: none;
+
+      vertical-align: middle;
+
+      input {
+        width: 650px;
+        margin-top: -2px;
+        padding: 8px 12px;
+        color: rgba(255, 255, 255, 1);
+        background-color: rgba(0, 0, 0, 0);
+        border: 0;
+        font-weight: 400;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+
+        &:hover {
+          border-bottom: 1px solid rgba(255, 255, 255, 1);
         }
       }
 
@@ -102,7 +85,16 @@ head-nav {
     @media (min-width: map-get($grid-breakpoints, lg)) {
       display: none;
     }
+
     width: 120px;
     margin: 0 auto;
+  }
+
+  .popover-md.test {
+    .popover-wrapper {
+      .popover-content {
+        width: 100px;
+      }
+    }
   }
 }
