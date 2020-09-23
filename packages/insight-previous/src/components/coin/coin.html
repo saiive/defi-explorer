@@ -18,13 +18,7 @@
         </ion-col>
       </ion-row>
     </ion-col>
-    <ion-col col-3>
-      <span style="vertical-align: middle;" text-center>
-        <time>{{ blockTime * 1000 | date:'MMM d, y' }}</time>
-        <time>{{ blockTime * 1000 | date:'hh:mm:ss a' }}</time>
-      </span>
-    </ion-col>
-    <ion-col col-3 text-right>
+    <ion-col col-6 text-right>
       <span ion-text style="vertical-align: middle;">
         <ion-icon name="md-add-circle" color="dark"></ion-icon>
         {{ currencyProvider.getConvertedNumber(coin.value) | number:'1.0-8' }}
@@ -55,13 +49,7 @@
         </ion-col>
       </ion-row>
     </ion-col>
-    <ion-col col-3>
-      <span style="vertical-align: middle;" text-center>
-        <time>{{ blockTime * 1000 | date:'MMM d, y' }}</time>
-        <time>{{ blockTime * 1000 | date:'hh:mm:ss a' }}</time>
-      </span>
-    </ion-col>
-    <ion-col col-3 text-right>
+    <ion-col col-6 text-right>
       <span ion-text [color]="!coin.spentTxid ? 'default':'dark-light'" style="vertical-align: middle;">
         <ion-icon name="md-remove-circle" [color]="!coin.spentTxid ? 'default':'dark-light'" *ngIf="coin.height >= 0">
         </ion-icon>

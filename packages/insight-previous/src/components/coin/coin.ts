@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ApiProvider } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { RedirProvider } from '../../providers/redir/redir';
@@ -8,15 +8,11 @@ import { AppCoin, TxsProvider } from '../../providers/transactions/transactions'
   selector: 'coin',
   templateUrl: 'coin.html',
 })
-export class CoinComponent implements OnInit {
+export class CoinComponent {
   @Input()
   public coin: AppCoin | any = {};
   @Input()
   public collapse: boolean = false;
-  @Input()
-  public txInfo: any = {};
-  @Input()
-  public blockTime: any = {};
 
   constructor(
     public apiProvider: ApiProvider,
@@ -24,17 +20,6 @@ export class CoinComponent implements OnInit {
     public redirProvider: RedirProvider,
     public txsProvider: TxsProvider
   ) { }
-
-  public ngOnInit(): void {
-    const { mintTxid, spentTxid } = this.coin;
-    this.txsProvider.getTx(mintTxid || spentTxid)
-      .subscribe(
-        response => {
-          this.txInfo = response;
-          this.blockTime = new Date(response.blockTime).getTime() / 1000;
-        }
-      );;
-  }
 
   public goToTx(txId: string): void {
     this.redirProvider.redir('transaction', {
