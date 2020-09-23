@@ -2,22 +2,24 @@ import { Component, Input } from '@angular/core';
 import { ApiProvider } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { RedirProvider } from '../../providers/redir/redir';
-import { AppCoin } from '../../providers/transactions/transactions';
+import { AppCoin, TxsProvider } from '../../providers/transactions/transactions';
+
 @Component({
   selector: 'coin',
   templateUrl: 'coin.html',
 })
 export class CoinComponent {
   @Input()
-  public coin: AppCoin | {} = {};
+  public coin: AppCoin | any = {};
   @Input()
   public collapse: boolean = false;
 
   constructor(
     public apiProvider: ApiProvider,
     public currencyProvider: CurrencyProvider,
-    public redirProvider: RedirProvider
-  ) {}
+    public redirProvider: RedirProvider,
+    public txsProvider: TxsProvider
+  ) { }
 
   public goToTx(txId: string): void {
     this.redirProvider.redir('transaction', {
