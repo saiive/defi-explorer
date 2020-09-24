@@ -289,7 +289,6 @@ class CoinModel extends BaseModel<ICoin> {
       if (type === 'T') {
 
         const size = reader.readUInt8();
-        console.log('size', size);
 
         const symbol = reader.read(size).toString('utf8')
 
@@ -333,7 +332,7 @@ class CoinModel extends BaseModel<ICoin> {
       script: valueOrDefault(coin.script, Buffer.alloc(0)).toString('hex'),
       value: valueOrDefault(coin.value, -1),
       confirmations: valueOrDefault(coin.confirmations, -1),
-      customTxOut: valueOrDefault(this.getCustomTxOut(coin), null),
+      customTxOut: valueOrDefault(CoinStorage.getCustomTxOut(coin), null),
     };
     if (options && options.object) {
       return transform;
