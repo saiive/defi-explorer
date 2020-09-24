@@ -25,7 +25,7 @@
       <ion-note
         [hidden]="(!tx.blocktime && tx.firstSeenTs) || tx.blockheight === 0"
       >
-        <span translate>mined</span>
+        <span translate>Mined</span>
         <time>{{ tx.time * 1000 | date:'MMM d, y' }}</time>
         <time>{{ tx.time * 1000 | date:'hh:mm:ss a' }}</time>
       </ion-note>

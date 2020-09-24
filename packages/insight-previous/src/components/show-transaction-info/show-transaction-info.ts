@@ -21,6 +21,7 @@ export class ShowTransactionInfo implements OnInit {
   private COIN = 100000000;
   public aggregateVinData:any[] = [];
   public aggregateVoutData:any[] = [];
+  public blockTime: number;
 
   constructor(
     public apiProvider: ApiProvider,
@@ -43,7 +44,7 @@ export class ShowTransactionInfo implements OnInit {
           this.tx = this.txProvider.toAppTx(data);
           this.loading = false;
           this.getCoins();
-          
+          this.blockTime =new Date(data.blockTime).getTime() / 1000;;
         },
         (err) => {
           this.errorMessage = err.error || err.message;
