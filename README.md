@@ -6,9 +6,10 @@ An insight-based blockchain explorer that's built for the DeFi Blockchain ([defi
 
 The default setup uses docker and docker-compose to enable a single command deployment with an env file.
 
-By default there are two env files in the repo: 
+By default there are 3 env files in the repo: 
 - `.env.testnet`
 - `.env.mainnet`
+- `.env.example` 
 
 These files target `testnet.defichain.io` and `mainnet.defichain.io` deployments. To do a local deployment, create `.env` file that has the `NETWORK` and `API_PREFIX` variables as given in these files.
 
