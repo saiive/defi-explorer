@@ -313,7 +313,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
       through2(
         { objectMode: true },
         async (spentCoin: MongoBound<ICoin>, _, done) => {
-          if (!seen[spentCoin.spentTxid]) {
+          if (spentCoin.spentTxid && !seen[spentCoin.spentTxid]) {
             seen[spentCoin.spentTxid] = true;
             // find coins that were spent with my coins
             const spends = await CoinStorage.collection
@@ -557,7 +557,8 @@ export class InternalStateProvider implements CSP.IChainStateService {
     return result.data;
   }
 
-  async getCoinCalculation({ chain, network }) {
+  async getCoinCalculation(params: CSP.GetCoinCalculation) {
+    const { chain, network } = params;
     const result = await CoinStorage.collection
       .aggregate([
         {
