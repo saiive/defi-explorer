@@ -151,7 +151,7 @@ Output.fromBufferReader = function(br, version) {
   } else {
     obj.script = new buffer.Buffer([]);
   }
-  if (version > 2) {
+  if (version > 3) {
     obj.tokenId = br.readVarintNum();
   }
   return new Output(obj);
