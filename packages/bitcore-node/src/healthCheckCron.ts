@@ -19,7 +19,7 @@ class HealthCheck {
         },
       });
 
-      if (latestBlock && this.previous < latestBlock.height) {
+      if (latestBlock && typeof latestBlock != "string" && this.previous < latestBlock.height) {
         this.criticalCount = 0;
         this.previous = latestBlock.height;
       } else {

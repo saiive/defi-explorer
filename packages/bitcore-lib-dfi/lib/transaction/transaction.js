@@ -367,7 +367,7 @@ Transaction.prototype.fromBufferReader = function(reader) {
 
   var sizeTxOuts = reader.readVarintNum();
   for (var j = 0; j < sizeTxOuts; j++) {
-    this.outputs.push(Output.fromBufferReader(reader));
+    this.outputs.push(Output.fromBufferReader(reader, this.version));
   }
 
   if (hasWitnesses) {

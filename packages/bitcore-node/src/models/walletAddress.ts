@@ -159,7 +159,7 @@ export class WalletAddressModel extends BaseModel<IWalletAddress> {
             this.txids[coin.mintTxid] = true;
             this.push({ txid: coin.mintTxid });
           }
-          if (!this.txids[coin.spentTxid]) {
+          if (coin.spentTxid && !this.txids[coin.spentTxid]) {
             this.txids[coin.spentTxid] = true;
             this.push({ txid: coin.spentTxid });
           }
