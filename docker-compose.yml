@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
 
   defichain:
-    image: defi/defichain:1.0.0
+    image: defi/defichain:1.2.0
     networks:
       - default
     environment:
