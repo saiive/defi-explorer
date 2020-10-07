@@ -56,8 +56,8 @@ export type MintOp = {
         wallets?: Array<ObjectID>;
       };
       $setOnInsert: {
-        spentHeight: SpentHeightIndicators;
-        wallets: Array<ObjectID>;
+        spentHeight?: SpentHeightIndicators;
+        wallets?: Array<ObjectID>;
       };
     };
     upsert: true;
@@ -262,14 +262,16 @@ export class TransactionModel extends BaseModel<ITransaction> {
       }, {});
 
       const groupedSpends = spent.reduce<CoinGroup>((agg, coin) => {
-        if (!agg[coin.spentTxid]) {
-          agg[coin.spentTxid] = {
-            total: coin.value,
-            wallets: coin.wallets || []
-          };
-        } else {
-          agg[coin.spentTxid].total += coin.value;
-          agg[coin.spentTxid].wallets.push(...coin.wallets);
+        if (coin.spentTxid) {
+          if (!agg[coin.spentTxid]) {
+            agg[coin.spentTxid] = {
+              total: coin.value,
+              wallets: coin.wallets || []
+            };
+          } else {
+            agg[coin.spentTxid].total += coin.value;
+            agg[coin.spentTxid].wallets.push(...coin.wallets);
+          }
         }
         return agg;
       }, {});
@@ -510,7 +512,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
         },
         { projection: { spentTxid: 1 } }
       );
-      if (coin) {
+      if (coin && coin.spentTxid) {
         prunedTxs[coin.spentTxid] = true;
       }
     }
@@ -589,7 +591,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     return lastTransactionTime[0].blockTime;
   }
 
-  async getLatestTransactions(params: { query: any }) {
+  async getLatestTransactions(_: { query: any }) {
     const latestTxs = await this.collection
       .find()
       .addCursorFlag('noCursorTimeout', true)

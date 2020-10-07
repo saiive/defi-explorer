@@ -46,6 +46,7 @@ export interface ApiCoin {
   mintHeight: number;
   spentHeight: number;
   value: number;
+  customTxOut: any;
 }
 
 export interface AppCoin {

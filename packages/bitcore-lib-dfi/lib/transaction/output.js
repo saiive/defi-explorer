@@ -142,7 +142,7 @@ Output.prototype.inspect = function() {
   return '<Output (' + this.satoshis + ' sats) ' + scriptStr + '>';
 };
 
-Output.fromBufferReader = function(br) {
+Output.fromBufferReader = function(br, version) {
   var obj = {};
   obj.satoshis = br.readUInt64LEBN();
   var size = br.readVarintNum();
@@ -150,6 +150,9 @@ Output.fromBufferReader = function(br) {
     obj.script = br.read(size);
   } else {
     obj.script = new buffer.Buffer([]);
+  }
+  if (version > 3) {
+    obj.tokenId = br.readVarintNum();
   }
   return new Output(obj);
 };

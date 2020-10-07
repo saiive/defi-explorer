@@ -154,8 +154,8 @@ export class HeadNavComponent implements OnInit {
       if (!data) {
         return;
       } else if (
-        data.chainNetwork.chain !== this.config.chain ||
-        data.chainNetwork.network !== this.config.network
+          data.chainNetwork.chain !== this.config.chain ||
+          data.chainNetwork.network !== this.config.network
       ) {
         this.apiProvider.changeNetwork(data.chainNetwork);
         this.config = this.apiProvider.getConfig();

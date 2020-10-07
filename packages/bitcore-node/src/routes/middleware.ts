@@ -78,8 +78,8 @@ export function RateLimiter(method: string, perSecond: number, perMinute: number
       return next(); // Bypassing ratelimiter
       const identifier = req.header('CF-Connecting-IP') || req.socket.remoteAddress || '';
       const rateLimiter = Config.for('api').rateLimiter;
-      const whitelist = rateLimiter && rateLimiter.whitelist;
-      const isDisabled = rateLimiter && rateLimiter.disabled;
+      const whitelist = rateLimiter!.whitelist;
+      const isDisabled = rateLimiter!.disabled;
       if ( isDisabled || isWhiteListed(whitelist, identifier)) {
         return next();
       }

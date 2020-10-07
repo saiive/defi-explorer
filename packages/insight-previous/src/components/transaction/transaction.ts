@@ -58,6 +58,83 @@ export class TransactionComponent implements OnInit {
     return v.address;
   }
 
+  public isCustomOut(v: ApiCoin): boolean {
+    if (v.customTxOut) {
+      return true
+    }
+
+    return false;
+  }
+
+  public isCreateToken(v: ApiCoin): boolean {
+    if (v.customTxOut.type === 'T') {
+      return true;
+    }
+    return false;
+  }
+
+  public getSymbolCustomOut(v: ApiCoin): string {
+    if (v.customTxOut.type === 'T') {
+      return v.customTxOut.symbol;
+    }
+    return '';
+  }
+
+  public getLimitCustomOut(v: ApiCoin): string {
+    if (v.customTxOut.type === 'T') {
+      return v.customTxOut.limit;
+    }
+    return '';
+  }
+
+  public getFlagsCustomOut(v: ApiCoin): string {
+    if (v.customTxOut.type === 'T') {
+      return v.customTxOut.flags;
+    }
+    return '';
+  }
+
+  public getDecimalCustomOut(v: ApiCoin): string {
+    if (v.customTxOut.type === 'T') {
+      return v.customTxOut.decimal;
+    }
+    return '';
+  }
+
+  public getNameCustomOut(v: ApiCoin): string {
+    if (v.customTxOut.type === 'T') {
+      return v.customTxOut.name;
+    }
+    return '';
+  }
+
+
+
+  public getTypeCustomOut(v: ApiCoin): string {
+    if (v.customTxOut.type === 'T') {
+      return 'Create Token';
+    }
+
+    if (v.customTxOut.type === 'M') {
+      return 'Mint Token';
+    }
+
+    if (v.customTxOut.type === 'D') {
+      return 'Destroy Token';
+    }
+
+    if (v.customTxOut.type === 'C') {
+      return 'Create Masternode';
+    }
+
+    if (v.customTxOut.type === 'R') {
+      return 'Resign Masternode';
+    }
+
+    return 'None';
+  }
+
+
   public getConfirmations() {
     this.txProvider
       .getConfirmations(this.tx.blockheight)

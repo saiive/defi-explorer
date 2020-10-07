@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3.3'
 
 services:
   database:
@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
 
   defichain:
-    image: defi/defichain:1.0.0
+    image: defi/defichain:1.2.0
     networks:
       - default
     environment:
@@ -47,7 +47,7 @@ services:
       - DISABLE_HEALTH_CRON=${DISABLE_HEALTH_CRON:-false}
     ports:
       - ${API_PORT}:3000
-    volumes:
+    volumes: 
       - ./bitcore.${NETWORK}.config.json:/usr/src/app/bitcore.config.json
     depends_on:
       - database
@@ -60,7 +60,7 @@ services:
     # network_mode: host
     networks:
       - default
-    command: ['npm', 'run', 'insight-previous:prod']
+    command: ["npm", "run", "insight-previous:prod"]
     environment:
       - NETWORK=${NETWORK:?NETWORK env required}
       - API_PREFIX=${API_PREFIX:?API_PREFIX env required}
@@ -70,12 +70,12 @@ services:
       - BITCORE_CONFIG_PATH=bitcore.config.json
     ports:
       - ${HTTP_PORT}:5000
-    volumes:
+    volumes: 
       - ./bitcore.${NETWORK}.config.json:/usr/src/app/bitcore.config.json
     depends_on:
       - bitcore-node
     restart: unless-stopped
 
-volumes:
+volumes: 
   db_data:
   node_data:

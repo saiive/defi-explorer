@@ -121,6 +121,28 @@
                   >{{ getAddress(vout) }}</a
                 >
               </p>
+              <div *ngIf="isCustomOut(vout)">
+                <div class="typeCustomeOut">
+                  <strong>{{ getTypeCustomOut(vout) }}</strong>
+                </div>
+                <div *ngIf="isCreateToken(vout)" class="listParams">
+                  <div class="symbolCustomeOut">
+                    symbol: {{ getSymbolCustomOut(vout) }}
+                  </div>
+                  <div class="nameCustomeOut">
+                    name: {{ getNameCustomOut(vout) }}
+                  </div>
+                  <div class="decimalCustomeOut">
+                    decimal: {{ getDecimalCustomOut(vout) }}
+                  </div>
+                  <div class="limitCustomeOut">
+                    limit: {{ getLimitCustomOut(vout) }}
+                  </div>
+                  <div class="limitCustomeOut">
+                    flags: {{ getFlagsCustomOut(vout) }}
+                  </div>
+                </div>
+              </div>
             </div>
             <div *ngIf="expanded">
               <p><b>Script Template</b> <i>{{ vout.script.type }}</i></p>

@@ -25,7 +25,7 @@ router.get('/total-coin', async function (req: Request, res: Response) {
 });
 
 
-router.get('/health', async function (req: Request, res: Response) {
+router.get('/health', async function (_: Request, res: Response) {
   if (HealthCheck.criticalCount < HEATHCHECK_CRITICAL_THRESHOLD) {
     return res.status(200).send("Healthy");
   } else {
