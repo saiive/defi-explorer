@@ -18,6 +18,7 @@ function Output(args) {
   }
   if (_.isObject(args)) {
     this.satoshis = args.satoshis;
+    this.tokenId = args.tokenId;
     if (bufferUtil.isBuffer(args.script)) {
       this._scriptBuffer = args.script;
     } else {
@@ -73,6 +74,17 @@ Object.defineProperty(Output.prototype, 'satoshis', {
       JSUtil.isNaturalNumber(this._satoshis),
       'Output satoshis is not a natural number'
     );
+  }
+});
+
+Object.defineProperty(Output.prototype, 'tokenId', {
+  configurable: false,
+  enumerable: true,
+  get: function() {
+    return this._tokenId;
+  },
+  set: function(num) {
+    this._tokenId = num;
   }
 });
 
@@ -157,7 +169,7 @@ Output.fromBufferReader = function(br, version) {
   return new Output(obj);
 };
 
-Output.prototype.toBufferWriter = function(writer) {
+Output.prototype.toBufferWriter = function(writer, version) {
   if (!writer) {
     writer = new BufferWriter();
   }
@@ -165,6 +177,9 @@ Output.prototype.toBufferWriter = function(writer) {
   var script = this._scriptBuffer;
   writer.writeVarintNum(script.length);
   writer.write(script);
+  if (version > 3) {
+    writer.writeVarintNum(this._tokenId);
+  }
   return writer;
 };
 
