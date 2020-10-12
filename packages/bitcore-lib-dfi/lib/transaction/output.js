@@ -11,6 +11,7 @@ var $ = require('../util/preconditions');
 var errors = require('../errors');
 
 var MAX_SAFE_INTEGER = 0x1fffffffffffff;
+var MIN_VERSION_NO_TOKENS = 3;
 
 function Output(args) {
   if (!(this instanceof Output)) {
@@ -163,7 +164,7 @@ Output.fromBufferReader = function(br, version) {
   } else {
     obj.script = new buffer.Buffer([]);
   }
-  if (version > 3) {
+  if (version > MIN_VERSION_NO_TOKENS) {
     obj.tokenId = br.readVarintNum();
   }
   return new Output(obj);
@@ -177,7 +178,7 @@ Output.prototype.toBufferWriter = function(writer, version) {
   var script = this._scriptBuffer;
   writer.writeVarintNum(script.length);
   writer.write(script);
-  if (version > 3) {
+  if (version > MIN_VERSION_NO_TOKENS) {
     writer.writeVarintNum(this._tokenId);
   }
   return writer;
