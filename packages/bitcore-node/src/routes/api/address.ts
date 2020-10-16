@@ -3,7 +3,7 @@ const router = express.Router({ mergeParams: true });
 import { ChainStateProvider } from '../../providers/chain-state';
 import queue from '../../worker/queue';
 
-router.get('/:address/txs', function(req, res) {
+router.get('/:address/txs', function (req, res) {
   let { address, chain, network } = req.params;
   let { unspent, limit = 10 } = req.query;
   let payload = {
@@ -12,12 +12,41 @@ router.get('/:address/txs', function(req, res) {
     address,
     req,
     res,
-    args: { unspent, limit }
+    args: { unspent, limit },
   };
   ChainStateProvider.streamAddressTransactions(payload);
 });
 
-router.get('/:address', function(req, res) {
+router.get('/:address/newtxs', function (req, res) {
+  let { address, chain, network } = req.params;
+  let payload = {
+    chain,
+    network,
+    address,
+    req,
+    res,
+    args: req.query,
+  };
+  ChainStateProvider.streamAddressTransactionsNew(payload);
+});
+
+router.get('/:address/newtxs/total', async function (req, res) {
+  try {
+    let { address, chain, network } = req.params;
+    let payload = {
+      chain,
+      network,
+      address,
+      args: req.query,
+    };
+    const total = await ChainStateProvider.streamAddressTransactionsTotal(payload);
+    res.send({ total });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
+router.get('/:address', function (req, res) {
   let { address, chain, network } = req.params;
   let { unspent, limit = 10 } = req.query;
   let payload = {
@@ -26,18 +55,18 @@ router.get('/:address', function(req, res) {
     address,
     req,
     res,
-    args: { unspent, limit }
+    args: { unspent, limit },
   };
   ChainStateProvider.streamAddressUtxos(payload);
 });
 
-router.get('/:address/balance', async function(req, res) {
+router.get('/:address/balance', async function (req, res) {
   let { address, chain, network } = req.params;
   try {
     let result = await ChainStateProvider.getBalanceForAddress({
       chain,
       network,
-      address
+      address,
     });
     return res.send(result || { confirmed: 0, unconfirmed: 0, balance: 0 });
   } catch (err) {
@@ -45,7 +74,7 @@ router.get('/:address/balance', async function(req, res) {
   }
 });
 
-router.get('/stats/rich-list', async function(req, res) {
+router.get('/stats/rich-list', async function (req, res) {
   const { chain, network } = req.params;
   let { pageno, pagesize } = req.query;
   try {
@@ -57,7 +86,7 @@ router.get('/stats/rich-list', async function(req, res) {
     queue.push(
       {
         methodName: ChainStateProvider.getRichList.bind(ChainStateProvider),
-        params: [{ chain, network, pageNo: pageno, pageSize: pagesize }]
+        params: [{ chain, network, pageNo: pageno, pageSize: pagesize }],
       },
       (err, result) => {
         if (err) {
@@ -73,5 +102,5 @@ router.get('/stats/rich-list', async function(req, res) {
 
 module.exports = {
   router: router,
-  path: '/address'
+  path: '/address',
 };

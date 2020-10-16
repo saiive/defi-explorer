@@ -30,6 +30,15 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return this.get(params).streamAddressTransactions(params);
   }
 
+  streamAddressTransactionsNew(params: CSP.StreamAddressUtxosParamsNew) {
+    return this.get(params).streamAddressTransactionsNew(params);
+  }
+
+  streamAddressTransactionsTotal(params: CSP.StreamAddressUtxosTotalParams){
+    return this.get(params).streamAddressTransactionsTotal(params);
+
+  }
+
   async getBalanceForAddress(params: CSP.GetBalanceForAddressParams) {
     return this.get(params).getBalanceForAddress(params);
   }

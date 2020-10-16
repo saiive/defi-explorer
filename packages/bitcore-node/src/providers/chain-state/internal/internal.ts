@@ -37,7 +37,9 @@ export class InternalStateProvider implements CSP.IChainStateService {
     return new RPC(username, password, host, port);
   }
 
-  private getAddressQuery(params: CSP.StreamAddressUtxosParams) {
+  private getAddressQuery(
+    params: CSP.StreamAddressUtxosParams | CSP.StreamAddressUtxosParamsNew | CSP.StreamAddressUtxosTotalParams
+  ) {
     const { chain, network, address, args } = params;
     if (typeof address !== 'string' || !chain || !network) {
       throw 'Missing required param';
@@ -60,6 +62,18 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const { req, res } = params;
     const query = this.getAddressQuery(params);
     Storage.apiStreamingFind(CoinStorage, query, {}, req, res);
+  }
+
+  async streamAddressTransactionsNew(params: CSP.StreamAddressUtxosParamsNew) {
+    const { req, res, args } = params;
+    const query = this.getAddressQuery(params);
+    Storage.apiStreamingFind(CoinStorage, query, args, req, res);
+  }
+
+  async streamAddressTransactionsTotal(params: CSP.StreamAddressUtxosTotalParams) {
+    const query = this.getAddressQuery(params);
+    const total = await CoinStorage.collection.count(query);
+    return total;
   }
 
   async getBalanceForAddress(params: CSP.GetBalanceForAddressParams) {
@@ -589,16 +603,16 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const query =
       startHeight && endHeight
         ? {
-          processed: true,
-          chain,
-          network,
-          height: { $gt: startHeight, $lt: endHeight },
-        }
+            processed: true,
+            chain,
+            network,
+            height: { $gt: startHeight, $lt: endHeight },
+          }
         : {
-          processed: true,
-          chain,
-          network,
-        };
+            processed: true,
+            chain,
+            network,
+          };
     const locatorBlocks = await BlockStorage.collection
       .find(query, { sort: { height: -1 }, limit: 30 })
       .addCursorFlag('noCursorTimeout', true)

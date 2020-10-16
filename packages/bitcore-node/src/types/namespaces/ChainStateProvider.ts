@@ -10,6 +10,7 @@ import { ITransaction } from '../../models/transaction';
 import { AuthheadJSON } from '../Authhead';
 import { CoinListingJSON } from '../Coin';
 import { DailyTransactionsJSON } from '../stats';
+import { ICoin } from '../../models/coin';
 export declare namespace CSP {
   export type StreamWalletTransactionsArgs = {
     startBlock: number;
@@ -23,6 +24,11 @@ export declare namespace CSP {
     unspent: boolean;
     limit: number;
   };
+
+  export type StreamAddressUtxosArgsNew = {
+    unspent: boolean;
+    limit: number;
+  } & StreamingFindOptions<ICoin>;
 
   export type GetBlockArgs = { limit: null | number };
 
@@ -43,17 +49,19 @@ export declare namespace CSP {
     blockId?: string;
     sinceBlock?: number | string;
     anchorsOnly?: boolean;
-    args?: Partial<{
-      startDate: Date;
-      endDate: Date;
-      date: Date;
-    } & StreamingFindOptions<IBlock>>;
+    args?: Partial<
+      {
+        startDate: Date;
+        endDate: Date;
+        date: Date;
+      } & StreamingFindOptions<IBlock>
+    >;
   };
   export type StreamBlocksParams = ChainNetwork & {
     blockId?: string;
     sinceBlock: number | string;
     anchorsOnly: boolean;
-    args?: Partial<{ startDate: Date; endDate: Date; date: Date; } & StreamingFindOptions<IBlock>>;
+    args?: Partial<{ startDate: Date; endDate: Date; date: Date } & StreamingFindOptions<IBlock>>;
     req: Request;
     res: Response;
   };
@@ -85,6 +93,18 @@ export declare namespace CSP {
     req: Request;
     res: Response;
     args: StreamAddressUtxosArgs;
+  };
+
+  export type StreamAddressUtxosTotalParams = ChainNetwork & {
+    address: string;
+    args: StreamAddressUtxosArgs;
+  };
+
+  export type StreamAddressUtxosParamsNew = ChainNetwork & {
+    address: string;
+    req: Request;
+    res: Response;
+    args: StreamAddressUtxosArgsNew;
   };
 
   export type StreamTransactionsParams = ChainNetwork & {
@@ -126,8 +146,7 @@ export declare namespace CSP {
     req: Request;
     res: Response;
   };
-  export type GetStatsParams = ChainNetwork
-
+  export type GetStatsParams = ChainNetwork;
 
   export type GetCoinCalculation = ChainNetwork;
 
@@ -153,6 +172,8 @@ export declare namespace CSP {
     ): Promise<{ confirmed: number; unconfirmed: number; balance: number }>;
     streamAddressUtxos(params: StreamAddressUtxosParams): any;
     streamAddressTransactions(params: StreamAddressUtxosParams): any;
+    streamAddressTransactionsNew(params: StreamAddressUtxosParamsNew): any;
+    streamAddressTransactionsTotal(params: StreamAddressUtxosTotalParams): any;
     streamTransactions(params: StreamTransactionsParams): any;
     getAuthhead(params: StreamTransactionParams): Promise<AuthheadJSON | undefined>;
     getDailyTransactions(params: { chain: string; network: string }): Promise<DailyTransactionsJSON>;
