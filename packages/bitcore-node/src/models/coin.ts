@@ -275,7 +275,7 @@ class CoinModel extends BaseModel<ICoin> {
       .toArray();
   }
 
-  getCustomTxOut(coin: Partial<MongoBound<ICoin>>): any {
+  getCustomTxOut(coin: MongoBound<ICoin>): any {
     var script = new bitcore.Script(coin.script.toString('hex'));
     if (script.isDataOut()) {
       const reader = new bitcore.encoding.BufferReader(script.getData());
@@ -317,7 +317,7 @@ class CoinModel extends BaseModel<ICoin> {
     return null;
   }
 
-  _apiTransform(coin: Partial<MongoBound<ICoin>>, options?: { object: boolean }): any {
+  _apiTransform(coin: MongoBound<ICoin>, options?: { object: boolean }): any {
     const transform: CoinJSON = {
       _id: valueOrDefault(coin._id, new ObjectID()).toHexString(),
       chain: valueOrDefault(coin.chain, ''),

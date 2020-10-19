@@ -408,7 +408,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
       }
       mintOpsAddresses = Object.keys(mintOpsAddresses);
       let wallets = await WalletAddressStorage.collection
-        .find({ address: { $in: mintOpsAddresses }, chain, network }, { batchSize: 100 })
+        .find({ address: { $in: mintOpsAddresses as string[] }, chain, network }, { batchSize: 100 })
         .project({ wallet: 1, address: 1 })
         .toArray();
       if (wallets.length) {
@@ -520,12 +520,12 @@ export class TransactionModel extends BaseModel<ITransaction> {
       prunedTxs = Object.keys(prunedTxs);
       await Promise.all([
         this.collection.update(
-          { txid: { $in: prunedTxs } },
+          { txid: { $in: prunedTxs as string[] } },
           { $set: { blockHeight: SpentHeightIndicators.conflicting } },
           { w: 0, j: false, multi: true }
         ),
         CoinStorage.collection.update(
-          { mintTxid: { $in: prunedTxs } },
+          { mintTxid: { $in: prunedTxs as string[] } },
           { $set: { mintHeight: SpentHeightIndicators.conflicting } },
           { w: 0, j: false, multi: true }
         )

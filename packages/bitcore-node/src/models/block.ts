@@ -231,7 +231,7 @@ export class BlockModel extends BaseModel<IBlock> {
 
     await CoinStorage.collection.updateMany(
       { chain, network, spentHeight: { $gte: localTip.height } },
-      { $set: { spentTxid: null, spentHeight: SpentHeightIndicators.unspent } }
+      { $set: { spentTxid: '', spentHeight: SpentHeightIndicators.unspent } }
     );
 
     logger.debug('Removed data from above blockHeight: ', localTip.height);
