@@ -45,8 +45,7 @@
             </div>
 
             <div item-end>
-              {{ currencyProvider.getConvertedNumber(vin.value) | number:'1.0-8'
-              }} {{ currencyProvider.currencySymbol }}
+              {{ currencyProvider.getConvertedNumber(vin.value) | number:'1.0-8' }} {{ currencyProvider.currencySymbol }}
             </div>
           </ion-item>
         </ion-list>
@@ -81,8 +80,7 @@
             </div>
 
             <div item-end>
-              {{ currencyProvider.getConvertedNumber(vout.value) | number:'1.0-8'
-              }} {{ currencyProvider.currencySymbol }}
+              {{ currencyProvider.getConvertedNumber(vout.value) | number:'1.0-8' }} {{ currencyProvider.currencySymbol }}
               <span [hidden]="!vout.spentTxid">(S)</span>
               <span [hidden]="vout.spentTxid">(U)</span>
             </div>
@@ -101,8 +99,7 @@
         <div *ngIf="!tx.isCoinBase && currencyProvider.getConvertedNumber(tx.fee) >= 0">
           <ion-chip>
             <ion-label>Fee
-              <span text-nowrap>{{ currencyProvider.getConvertedNumber(tx.fee) | number:'1.0-8'
-                }} {{ currencyProvider.currencySymbol }}</span>
+              <span text-nowrap>{{ currencyProvider.getConvertedNumber(tx.fee) | number:'1.0-8' }} {{ currencyProvider.currencySymbol }}</span>
             </ion-label>
           </ion-chip>
         </div>
@@ -121,8 +118,7 @@
           <ion-label>{{ confirmations }} Confirmations </ion-label>
         </ion-chip>
         <ion-chip color="default">
-          <ion-label>{{ currencyProvider.getConvertedNumber(tx.valueOut) | number:'1.0-8'
-            }} {{ currencyProvider.currencySymbol }}
+          <ion-label>{{ currencyProvider.getConvertedNumber(tx.valueOut) | number:'1.0-8' }} {{ currencyProvider.currencySymbol }}
           </ion-label>
         </ion-chip>
       </ion-col>
