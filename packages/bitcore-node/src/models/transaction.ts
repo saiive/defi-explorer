@@ -536,6 +536,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
 
   getTransactions(params: { query: any; options: StreamingFindOptions<ITransaction> }) {
     let originalQuery = params.query;
+    // @ts-ignore
     const { query, options } = Storage.getFindOptions(this, params.options);
     const finalQuery = Object.assign({}, originalQuery, query);
     return this.collection.find(finalQuery, options).addCursorFlag('noCursorTimeout', true);
