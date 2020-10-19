@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { HttpProvider, WebsocketProvider } from 'web3-core';
 
 if (Symbol['asyncIterator'] === undefined) (Symbol as any)['asyncIterator'] = Symbol.for('asyncIterator');
 
@@ -52,7 +53,7 @@ export class ParityRPC {
 
   scan(fromHeight: number, toHeight: number, address: string) {
     return new Promise<Array<ParityTraceResponse>>(resolve =>
-      this.web3.eth.currentProvider.send(
+      (this.web3.eth.currentProvider as HttpProvider | WebsocketProvider).send(
         {
           method: 'trace_filter',
           params: [
@@ -65,7 +66,7 @@ export class ParityRPC {
           jsonrpc: '2.0',
           id: 0
         },
-        (_, data) => resolve(data.result as Array<ParityTraceResponse>)
+        (_, data) => resolve(data?.result as Array<ParityTraceResponse>)
       )
     );
   }

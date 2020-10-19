@@ -4,6 +4,7 @@ import { CSP } from '../../../types/namespaces/ChainStateProvider';
 import { InternalStateProvider } from '../internal/internal';
 import { ObjectID } from 'mongodb';
 import Web3 from 'web3';
+import { HttpProvider, WebsocketProvider } from 'web3-core';
 import { Storage } from '../../../services/storage';
 import { Readable } from 'stream';
 import { ParityRPC, ParityTraceResponse } from './parityRpc';
@@ -50,14 +51,14 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
     const web3 = this.getWeb3(network);
 
     return new Promise<Array<ParityTraceResponse>>(resolve =>
-      web3.eth.currentProvider.send(
+      (web3.eth.currentProvider as HttpProvider | WebsocketProvider).send(
         {
           method: 'trace_block',
           params: [web3.utils.toHex(parseInt(blockId!))],
           jsonrpc: '2.0',
           id: 0
         },
-        (_, data) => resolve(data.result)
+        (_, data) => resolve(data?.result)
       )
     );
   }
