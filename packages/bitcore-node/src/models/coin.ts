@@ -110,6 +110,7 @@ class CoinModel extends BaseModel<ICoin> {
 
     const fetchRichList = async (conditions) => {
       const result: any = await this.collection.aggregate(conditions, options)
+        // @ts-ignore
         .addCursorFlag('noCursorTimeout', true)
         .toArray();
       return result || [];
@@ -135,6 +136,7 @@ class CoinModel extends BaseModel<ICoin> {
 
     if (!totalCountCacheResult || !totalCountCacheResult.isRecent(CACHE_TTL_SECONDS)) {
       const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options)
+        // @ts-ignore
         .addCursorFlag('noCursorTimeout', true)
         .toArray();
       const totalRows = result.length && result[0].total ? result[0].total : 0;
