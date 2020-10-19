@@ -189,6 +189,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     }
     const tip = await this.getLocalTip(params);
     const tipHeight = tip ? tip.height : 0;
+    // @ts-ignore
     return Storage.apiStreamingFind(TransactionStorage, query, args, req, res, (t) => {
       let confirmations = 0;
       if (t.blockHeight !== undefined && t.blockHeight >= 0) {
