@@ -12,7 +12,7 @@ export class CoinComponent {
   @Input()
   public coin: AppCoin | any = {};
   @Input()
-  public collapse: boolean = false;
+  public collapse = false;
 
   constructor(
     public apiProvider: ApiProvider,
