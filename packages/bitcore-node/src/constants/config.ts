@@ -1,3 +1,4 @@
+
 export const GENESIS_BLOCK_HASH_MAINNET = '279b1a87aedc7b9471d4ad4e5f12967ab6259926cd097ade188dfcf22ebfe72a';
 export const PREVIOUS_BLOCK_HASH_MAINNET = '0000000000000000000000000000000000000000000000000000000000000000';
 export const NEXT_BLOCK_HASH_MAINNET = '70401fb9d5c6b3b2b00b3dbff65678486358529e22cc135bb6f85e17134288b0';
@@ -15,6 +16,7 @@ export const MAINNET = 'mainnet';
 export const TESTNET = 'testnet';
 export const REGTEST = 'regtest';
 export const RICH_LIST_PAGE_SIZE = 200;
+export const QUEUE_CONCURRENCY = 1;
 export const CACHE_TTL_SECONDS = 300;
 export const CACHE_CLEAR_INTERVAL = 600000;
 export const STATS_URL = 'https://api.defichain.io/v1/stats';
