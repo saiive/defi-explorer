@@ -2,10 +2,10 @@ import { Config } from '../../services/config';
 import { Request, Response, Router } from 'express';
 import { ChainNetwork } from '../../types/ChainNetwork';
 import { IWallet } from '../../models/wallet';
-import { RequestHandler } from 'express-serve-static-core';
 import { ChainStateProvider } from '../../providers/chain-state';
 import logger from '../../logger';
 import { MongoBound } from '../../models/base';
+import { CSP } from '../../types/namespaces/ChainStateProvider';
 const router = Router({ mergeParams: true });
 const secp256k1 = require('secp256k1');
 const bitcoreLib = require('bitcore-lib');
@@ -17,13 +17,14 @@ type VerificationPayload = {
 };
 type SignedApiRequest = ChainNetwork & VerificationPayload;
 
-type PreAuthRequest = {
+type PreAuthRequest<Q = any> = {
   params: SignedApiRequest;
+  query: Q;
 } & Request;
 
-type AuthenticatedRequest = {
+type AuthenticatedRequest<Q = any> = {
   wallet?: MongoBound<IWallet>;
-} & PreAuthRequest;
+} & PreAuthRequest<Q>;
 
 const verifyRequestSignature = (params: VerificationPayload): boolean => {
   const { message, pubKey, signature } = params;
@@ -36,7 +37,7 @@ const verifyRequestSignature = (params: VerificationPayload): boolean => {
   }
 };
 
-const authenticate: RequestHandler = async (req: PreAuthRequest, res: Response, next: any) => {
+const authenticate = async (req: PreAuthRequest, res: Response, next: any) => {
   const { chain, network, pubKey } = req.params as SignedApiRequest;
   logger.debug('Authenticating request with pubKey: ', pubKey);
   let wallet;
@@ -114,7 +115,7 @@ router.get('/:pubKey/addresses/missing', authenticate, async (req: Authenticated
   }
 });
 
-router.get('/:pubKey/addresses', authenticate, async (req: AuthenticatedRequest, res) => {
+router.get('/:pubKey/addresses', authenticate, async (req: AuthenticatedRequest<{ limit: number }>, res) => {
   try {
     const { wallet } = req;
     let { chain, network } = req.params;
@@ -173,7 +174,7 @@ router.post('/:pubKey', authenticate, async (req: AuthenticatedRequest, res) => 
   }
 });
 
-router.get('/:pubKey/transactions', authenticate, async (req: AuthenticatedRequest, res) => {
+router.get('/:pubKey/transactions', authenticate, async (req: AuthenticatedRequest<CSP.StreamWalletTransactionsArgs>, res) => {
   let { chain, network } = req.params;
   try {
     return ChainStateProvider.streamWalletTransactions({
@@ -218,7 +219,7 @@ router.get('/:pubKey/balance/:time', authenticate, async (req: AuthenticatedRequ
   }
 });
 
-router.get('/:pubKey/utxos', authenticate, async (req: AuthenticatedRequest, res) => {
+router.get('/:pubKey/utxos', authenticate, async (req: AuthenticatedRequest<Partial<CSP.StreamWalletUtxosArgs> &  { limit: number }>, res) => {
   let { chain, network } = req.params;
   let { limit } = req.query;
   try {
