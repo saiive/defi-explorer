@@ -1,5 +1,4 @@
 import queue from 'async/queue';
-// @ts-ignore
 import { QUEUE_CONCURRENCY } from '../../constants/config';
 
 const worker = (task, callback) => {
