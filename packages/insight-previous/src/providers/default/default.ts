@@ -15,7 +15,7 @@ export class DefaultProvider {
     '%NETWORK%': process.env.NETWORK || 'mainnet',
     '%NUM_BLOCKS%': process.env.NUM_BLOCKS || '20',
     '%NUM_TRX_BLOCKS%': process.env.NUM_TRX_BLOCKS || '10',
-    '%QUICK_STATS_API%': process.env.QUICK_STATS_API || 'https://api.defichain.io/v1/stats',
+    '%QUICK_STATS_API%': process.env.QUICK_STATS_API || 'http://localhost/v1/stats',
   };
 
   constructor() {}
