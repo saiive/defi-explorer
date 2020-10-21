@@ -18,17 +18,17 @@ import { PriceProvider } from '../../providers/price/price';
 })
 export class AnchoredBlocksPage {
   public loading = true;
-  public blocks;
-
+  public totalBlocks = 0;
+  public errorMessage;
   private chainNetwork: ChainNetwork;
 
   constructor(
     public navParams: NavParams,
     private apiProvider: ApiProvider,
-    private blocksProvider: BlocksProvider,
     private logger: Logger,
-    private currencyProvider: CurrencyProvider,
-    private priceProvider: PriceProvider
+    private blocksProvider: BlocksProvider,
+    public currencyProvider: CurrencyProvider,
+    private priceProvider: PriceProvider,
   ) {
     const chain: string =
       navParams.get('chain') || this.apiProvider.getConfig().chain;
@@ -38,18 +38,21 @@ export class AnchoredBlocksPage {
       chain,
       network
     };
-
     this.apiProvider.changeNetwork(this.chainNetwork);
     this.currencyProvider.setCurrency();
     this.priceProvider.setCurrency();
-
-    this.blocksProvider.getBlocks(10, true).subscribe(
-      blocks => {
-        this.blocks = blocks;
+  }
+  
+  public ionViewWillLoad(): void {
+    this.blocksProvider.getTotalAnchoredBlocks().subscribe(
+      data => {
+        this.totalBlocks = data.total;
         this.loading = false;
+        this.errorMessage = '';
       },
       err => {
-        this.logger.error(err);
+        this.logger.error(err.message);
+        this.errorMessage = err.error || err.message;
         this.loading = false;
       }
     );

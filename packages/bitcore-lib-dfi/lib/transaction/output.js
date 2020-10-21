@@ -11,6 +11,7 @@ var $ = require('../util/preconditions');
 var errors = require('../errors');
 
 var MAX_SAFE_INTEGER = 0x1fffffffffffff;
+var MIN_VERSION_NO_TOKENS = 3;
 
 function Output(args) {
   if (!(this instanceof Output)) {
@@ -18,6 +19,7 @@ function Output(args) {
   }
   if (_.isObject(args)) {
     this.satoshis = args.satoshis;
+    this.tokenId = args.tokenId;
     if (bufferUtil.isBuffer(args.script)) {
       this._scriptBuffer = args.script;
     } else {
@@ -73,6 +75,17 @@ Object.defineProperty(Output.prototype, 'satoshis', {
       JSUtil.isNaturalNumber(this._satoshis),
       'Output satoshis is not a natural number'
     );
+  }
+});
+
+Object.defineProperty(Output.prototype, 'tokenId', {
+  configurable: false,
+  enumerable: true,
+  get: function() {
+    return this._tokenId;
+  },
+  set: function(num) {
+    this._tokenId = num;
   }
 });
 
@@ -151,13 +164,13 @@ Output.fromBufferReader = function(br, version) {
   } else {
     obj.script = new buffer.Buffer([]);
   }
-  if (version > 3) {
+  if (version > MIN_VERSION_NO_TOKENS) {
     obj.tokenId = br.readVarintNum();
   }
   return new Output(obj);
 };
 
-Output.prototype.toBufferWriter = function(writer) {
+Output.prototype.toBufferWriter = function(writer, version) {
   if (!writer) {
     writer = new BufferWriter();
   }
@@ -165,6 +178,9 @@ Output.prototype.toBufferWriter = function(writer) {
   var script = this._scriptBuffer;
   writer.writeVarintNum(script.length);
   writer.write(script);
+  if (version > MIN_VERSION_NO_TOKENS) {
+    writer.writeVarintNum(this._tokenId);
+  }
   return writer;
 };
 

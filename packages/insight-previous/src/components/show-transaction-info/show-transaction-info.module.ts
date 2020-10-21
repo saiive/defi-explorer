@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { IonicModule } from 'ionic-angular';
-import { ShowTransactionInfo } from './show-transaction-info';
+import { ShowTransactionInfoComponent } from './show-transaction-info';
 
 @NgModule({
-  declarations: [ShowTransactionInfo],
+  declarations: [ShowTransactionInfoComponent],
   imports: [IonicModule],
-  exports: [ShowTransactionInfo]
+  exports: [ShowTransactionInfoComponent]
 })
 export class ShowTransactionInfoComponentModule {}

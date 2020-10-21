@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ApiProvider } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { DefaultProvider } from '../../providers/default/default';
-import { TxsProvider } from '../../providers/transactions/transactions';
 import { Logger } from '../../providers/logger/logger';
 import { RedirProvider } from '../../providers/redir/redir';
+import { TxsProvider } from '../../providers/transactions/transactions';
 import { WebsocketProvider } from '../../providers/websocket/websocketProvider';
 
 @Component({
@@ -35,7 +35,7 @@ export class LatestTransactionsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.txsProvider.getLatestTransaction().subscribe(
-      (response: Array<any>) => {
+      (response: any[]) => {
         if (response.length > 0) {
           const data = response;
           this.transactions = data.reverse();

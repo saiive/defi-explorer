@@ -39,7 +39,7 @@ export class CoinListComponent implements OnInit {
           }
           this.showTransactions = true;
           this.loading = false;
-          this.events.publish('CoinList', { length: data.length });
+          this.events.publish('CoinList', { length: this.txs ? this.txs.length : 0 });
         },
         err => {
           this.logger.error(err);
@@ -59,9 +59,9 @@ export class CoinListComponent implements OnInit {
       mintHeight < 0
         ? unconfirmedTxs.push({ height: mintHeight, mintTxid, value })
         : confirmedTxs.push({ height: mintHeight, mintTxid, value });
-
-      spentHeight > 0 &&
+      if (spentHeight > 0) {
         confirmedTxs.push({ height: spentHeight, spentTxid, value });
+      }
     });
     confirmedTxs = _.orderBy(confirmedTxs, ['height'], ['desc']);
     return unconfirmedTxs.concat(confirmedTxs);

@@ -33,7 +33,9 @@ export class AboutComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    if (this.reloadInterval) this.reloadInterval();
+    if (this.reloadInterval) {
+      this.reloadInterval();
+    }
   }
 
   private loadQuickStats() {

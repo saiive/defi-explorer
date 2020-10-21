@@ -58,7 +58,7 @@ function Transaction(serialized) {
     this._newTransaction();
   }
 }
-var CURRENT_VERSION = 1;
+var CURRENT_VERSION = 4;
 var DEFAULT_NLOCKTIME = 0;
 var MAX_BLOCK_SIZE = 1000000;
 
@@ -321,9 +321,10 @@ Transaction.prototype.toBufferWriter = function(writer, noWitness) {
     input.toBufferWriter(writer);
   });
 
+  var version = this.version;
   writer.writeVarintNum(this.outputs.length);
   _.each(this.outputs, function(output) {
-    output.toBufferWriter(writer);
+    output.toBufferWriter(writer, version);
   });
 
   if (hasWitnesses && !noWitness) {

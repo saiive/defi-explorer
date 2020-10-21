@@ -27,7 +27,7 @@ router.get('/', function (req, res) {
   };
 
   if (blockHeight !== undefined) {
-    payload.args.blockHeight = parseInt(blockHeight);
+    payload.args.blockHeight = parseInt(blockHeight as string);
   }
   if (blockHash !== undefined) {
     payload.args.blockHash = blockHash;

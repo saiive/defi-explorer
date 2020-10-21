@@ -1,9 +1,10 @@
 import express = require('express');
 const router = express.Router({ mergeParams: true });
+import { ParamsDictionary } from 'express-serve-static-core';
 import { ChainStateProvider } from '../../providers/chain-state';
 import queue from '../../worker/queue';
 
-router.get('/:address/txs', function(req, res) {
+router.get('/:address/txs', function(req: express.Request<ParamsDictionary, any, any, any>, res) {
   let { address, chain, network } = req.params;
   let { unspent, limit = 10 } = req.query;
   let payload = {
@@ -17,7 +18,7 @@ router.get('/:address/txs', function(req, res) {
   ChainStateProvider.streamAddressTransactions(payload);
 });
 
-router.get('/:address', function(req, res) {
+router.get('/:address', function(req: express.Request<ParamsDictionary, any, any, any>, res) {
   let { address, chain, network } = req.params;
   let { unspent, limit = 10 } = req.query;
   let payload = {
@@ -45,19 +46,22 @@ router.get('/:address/balance', async function(req, res) {
   }
 });
 
+// @ts-ignore
 router.get('/stats/rich-list', async function(req, res) {
   const { chain, network } = req.params;
-  let { pageno, pagesize } = req.query;
+  const { pageno, pagesize } = req.query;
+  let pageNo = 0;
+  let pageSize = 0;
   try {
     if (pageno) {
-      pageno = parseInt(pageno);
-      pagesize = parseInt(pagesize);
+      pageNo = parseInt(pageno as string);
+      pageSize = parseInt(pagesize as string);
     }
 
     queue.push(
       {
         methodName: ChainStateProvider.getRichList.bind(ChainStateProvider),
-        params: [{ chain, network, pageNo: pageno, pageSize: pagesize }]
+        params: [{ chain, network, pageNo, pageSize }]
       },
       (err, result) => {
         if (err) {

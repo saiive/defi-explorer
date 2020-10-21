@@ -29,7 +29,7 @@ export type ICoin = {
 export const richListCache = new Map();
 
 @LoggifyClass
-class CoinModel extends BaseModel<ICoin> {
+export class CoinModel extends BaseModel<ICoin> {
   constructor(storage?: StorageService) {
     super('coins', storage);
   }
@@ -110,6 +110,7 @@ class CoinModel extends BaseModel<ICoin> {
 
     const fetchRichList = async (conditions) => {
       const result: any = await this.collection.aggregate(conditions, options)
+        // @ts-ignore
         .addCursorFlag('noCursorTimeout', true)
         .toArray();
       return result || [];
@@ -135,6 +136,7 @@ class CoinModel extends BaseModel<ICoin> {
 
     if (!totalCountCacheResult || !totalCountCacheResult.isRecent(CACHE_TTL_SECONDS)) {
       const result = await this.collection.aggregate([...baseCodition, { $count: 'total' }], options)
+        // @ts-ignore
         .addCursorFlag('noCursorTimeout', true)
         .toArray();
       const totalRows = result.length && result[0].total ? result[0].total : 0;
@@ -275,7 +277,7 @@ class CoinModel extends BaseModel<ICoin> {
       .toArray();
   }
 
-  getCustomTxOut(coin: Partial<MongoBound<ICoin>>): any {
+  getCustomTxOut(coin: MongoBound<ICoin>): any {
     var script = new bitcore.Script(coin.script.toString('hex'));
     if (script.isDataOut()) {
       const reader = new bitcore.encoding.BufferReader(script.getData());
@@ -317,7 +319,7 @@ class CoinModel extends BaseModel<ICoin> {
     return null;
   }
 
-  _apiTransform(coin: Partial<MongoBound<ICoin>>, options?: { object: boolean }): any {
+  _apiTransform(coin: MongoBound<ICoin>, options?: { object: boolean }): any {
     const transform: CoinJSON = {
       _id: valueOrDefault(coin._id, new ObjectID()).toHexString(),
       chain: valueOrDefault(coin.chain, ''),
