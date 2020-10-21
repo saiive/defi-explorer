@@ -9,7 +9,7 @@ import { RedirProvider } from '../../providers/redir/redir';
 
 @Component({
   selector: 'latest-blocks',
-  templateUrl: 'latest-blocks.html'
+  templateUrl: 'latest-blocks.html',
 })
 export class LatestBlocksComponent implements OnInit, OnDestroy {
   @Input()
@@ -22,10 +22,13 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
   public showTimeAs: string;
   @Input()
   public showAnchoredBlocksButton = false;
+  @Input()
+  public totalBlocks: number = 0;
   public loading = true;
   public blocks: AppBlock[] = [];
   public subscriber: Subscription;
   public errorMessage: string;
+  public enableInfiniteLoader = true;
 
   private reloadInterval: any;
 
@@ -43,29 +46,36 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.loadBlocks();
-    const seconds = 60;
-    this.ngZone.runOutsideAngular(() => {
-      this.reloadInterval = setInterval(() => {
-        this.ngZone.run(() => {
-          this.loadBlocks.call(this);
-        });
-      }, 1000 * seconds);
-    });
+    if(!this.showAnchoredBlocksButton) {
+      const seconds = 60;
+      this.ngZone.runOutsideAngular(() => {
+        this.reloadInterval = setInterval(() => {
+          this.ngZone.run(() => {
+            this.loadBlocks.call(this);
+          });
+        }, 1000 * seconds);
+      });
+    } else {
+      this.loadBlocks.call(this);
+    }
   }
 
   private loadBlocks(): void {
     this.subscriber = this.blocksProvider
       .getBlocks(this.numBlocks, this.showAnchoredBlocksButton)
       .subscribe(
-        response => {
-          const blocks = response.map(block =>
+        (response) => {
+          const blocks = response.map((block) =>
             this.blocksProvider.toAppBlock(block)
           );
           this.blocks = blocks;
+          if(this.showAnchoredBlocksButton) {
+            this.enableInfiniteLoader = this.blocks.length <= this.totalBlocks;
+          }
           this.loading = false;
           this.errorMessage = '';
         },
-        err => {
+        (err) => {
           this.subscriber.unsubscribe();
           clearInterval(this.reloadInterval);
           this.logger.error(err.message);
@@ -79,19 +89,21 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
     clearInterval(this.reloadInterval);
     const since: number =
       this.blocks.length > 0 ? this.blocks[this.blocks.length - 1].height : 0;
-
     return this.blocksProvider
       .pageBlocks(since, this.numBlocks, this.showAnchoredBlocksButton)
       .subscribe(
-        response => {
-          const blocks = response.map(block =>
+        (response) => {
+          const blocks = response.map((block) =>
             this.blocksProvider.toAppBlock(block)
           );
           this.blocks = this.blocks.concat(blocks);
+          if(this.showAnchoredBlocksButton) {
+            this.enableInfiniteLoader = this.blocks.length <= this.totalBlocks;
+          }
           this.loading = false;
           infiniteScroll.complete();
         },
-        err => {
+        (err) => {
           this.logger.error(err.message);
           this.errorMessage = err.error || err.message;
           this.loading = false;
@@ -103,14 +115,14 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
     this.redirProvider.redir('block-detail', {
       blockHash,
       chain: this.apiProvider.networkSettings.value.selectedNetwork.chain,
-      network: this.apiProvider.networkSettings.value.selectedNetwork.network
+      network: this.apiProvider.networkSettings.value.selectedNetwork.network,
     });
   }
 
   public goToBlocks(): void {
     this.redirProvider.redir('blocks', {
       chain: this.apiProvider.networkSettings.value.selectedNetwork.chain,
-      network: this.apiProvider.networkSettings.value.selectedNetwork.network
+      network: this.apiProvider.networkSettings.value.selectedNetwork.network,
     });
   }
 
@@ -128,14 +140,14 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
     this.redirProvider.redir('address', {
       addrStr,
       chain: this.apiProvider.networkSettings.value.selectedNetwork.chain,
-      network: this.apiProvider.networkSettings.value.selectedNetwork.network
+      network: this.apiProvider.networkSettings.value.selectedNetwork.network,
     });
   }
 
   public goToAnchoredBlocks(): void {
     this.redirProvider.redir('anchored-blocks', {
       chain: this.apiProvider.networkSettings.value.selectedNetwork.chain,
-      network: this.apiProvider.networkSettings.value.selectedNetwork.network
+      network: this.apiProvider.networkSettings.value.selectedNetwork.network,
     });
   }
 }

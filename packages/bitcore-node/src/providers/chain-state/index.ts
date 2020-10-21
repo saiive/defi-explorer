@@ -90,6 +90,10 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return this.get(params).updateWallet(params);
   }
 
+  async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
+    return this.get(params).getTotalAnchoredBlocks(params);
+  }
+
   streamWalletTransactions(params: CSP.StreamWalletTransactionsParams) {
     return this.get(params).streamWalletTransactions(params);
   }

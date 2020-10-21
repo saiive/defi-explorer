@@ -96,6 +96,17 @@ export class InternalStateProvider implements CSP.IChainStateService {
     Storage.apiStreamingFind(BlockStorage, query, options, req, res);
   }
 
+  async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
+    const {chain, network} = params;
+    const total = await BlockStorage.collection.count({
+      chain,
+      network,
+      processed: true,
+      btcTxHash: { '$exists': true }
+    })
+    return { total }
+  }
+
   async getBlocks(params: CSP.GetBlockParams) {
     const { query, options } = this.getBlocksQuery(params);
     let cursor = BlockStorage.collection.find<IBlock>(query, options).addCursorFlag('noCursorTimeout', true);

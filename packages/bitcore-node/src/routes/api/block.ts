@@ -28,6 +28,16 @@ router.get('/', async function (req: Request<ParamsDictionary, any, any, any>, r
   }
 });
 
+router.get('/total-anchored-blocks', async function (req: Request, res: Response) {
+  let { chain, network } = req.params;
+  try {
+    let result = await ChainStateProvider.getTotalAnchoredBlocks({ chain, network });
+    return res.json(result);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
 router.get('/tip', async function (req: Request, res: Response) {
   let { chain, network } = req.params;
   try {
