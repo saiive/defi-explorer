@@ -3,20 +3,20 @@ import { ApiProvider } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { RedirProvider } from '../../providers/redir/redir';
 import {
-  TxsProvider,
   ApiCoin,
+  TxsProvider,
 } from '../../providers/transactions/transactions';
 
 @Component({
   selector: 'show-transaction-info',
   templateUrl: 'show-transaction-info.html',
 })
-export class ShowTransactionInfo implements OnInit {
+export class ShowTransactionInfoComponent implements OnInit {
   @Input()
   public coin: any = {};
   public tx: any = {};
-  public loading: boolean = true;
-  public errorMessage: string = '';
+  public loading = true;
+  public errorMessage = '';
   public confirmations: number;
   private COIN = 100000000;
   public aggregateVinData:any[] = [];
@@ -92,13 +92,13 @@ export class ShowTransactionInfo implements OnInit {
       if (!items) {
         return [];
       }
-  
+
       const l: number = items.length;
-  
+
       const ret: any[] = [];
       const tmp: any = {};
       let u = 0;
-  
+
       for (let i = 0; i < l; i++) {
         let notAddr = false;
         // non standard input
@@ -107,25 +107,25 @@ export class ShowTransactionInfo implements OnInit {
           items[i].notAddr = true;
           notAddr = true;
         }
-  
+
         // non standard output
         if (items[i].scriptPubKey && !items[i].scriptPubKey.addresses) {
           items[i].scriptPubKey.addresses = ['Unparsed address [' + u++ + ']'];
           items[i].notAddr = true;
           notAddr = true;
         }
-  
+
         // multiple addr at output
         if (items[i].scriptPubKey && items[i].scriptPubKey.addresses.length > 1) {
           items[i].address = items[i].scriptPubKey.addresses.join(',');
           ret.push(items[i]);
           continue;
         }
-  
+
         const address: string =
           items[i].address ||
           (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
-  
+
         if (!tmp[address]) {
           tmp[address] = {};
           tmp[address].valueSat = 0;
@@ -135,7 +135,7 @@ export class ShowTransactionInfo implements OnInit {
           tmp[address].items = [];
         }
         tmp[address].isSpent = items[i].spentTxId;
-  
+
         tmp[address].doubleSpentTxID =
           tmp[address].doubleSpentTxID || items[i].doubleSpentTxID;
         tmp[address].doubleSpentIndex =
@@ -145,28 +145,29 @@ export class ShowTransactionInfo implements OnInit {
         tmp[address].value += items[i].value;
         tmp[address].items.push(items[i]);
         tmp[address].notAddr = notAddr;
-  
+
         if (items[i].unconfirmedInput) {
           tmp[address].unconfirmedInput = true;
         }
-  
+
         tmp[address].count++;
       }
-  
+
       for (const v of Object.keys(tmp)) {
         const obj: any = tmp[v];
         obj.value = obj.value || parseInt(obj.valueSat, 10) / this.COIN;
         ret.push(obj);
       }
-  
-      return ret; 
+
+      return ret;
     }
     return [];
   }
 
   public aggregateVout(items: any[]): any[] {
-    if (Array.isArray(items))
+    if (Array.isArray(items)) {
       return items.filter((ele) => ele.address !== 'false');
+    }
     return [];
   }
 

@@ -20,21 +20,21 @@ export class WebsocketSetup {
     this.network = this.defaultProvider.getDefault('%NETWORK%');
     this.socket = io(this.wsUrl, { transports: ['websocket'] });
 
-    const observable = new Observable(observer => {
+    const observable = new Observable(subscribe => {
       this.socket.on('connect', () => {
         this.socket.emit('room', `/${this.chain}/${this.network}/inv`);
       });
 
       this.socket.on('tx', data => {
-        observer.next({ type: 'tx', data });
+        subscribe.next({ type: 'tx', data });
       });
 
       this.socket.on('block', data => {
-        observer.next({ type: 'block', data });
+        subscribe.next({ type: 'block', data });
       });
 
       this.socket.on('coin', data => {
-        observer.next({ type: 'coin', data });
+        subscribe.next({ type: 'coin', data });
       });
 
       return () => {

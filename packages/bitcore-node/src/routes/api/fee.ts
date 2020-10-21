@@ -2,10 +2,11 @@ import { CacheTimes } from '../middleware';
 import { Request, Response } from 'express';
 import { ChainStateProvider } from '../../providers/chain-state';
 import { CacheMiddleware } from '../middleware';
+import { CSP } from '../../types/namespaces/ChainStateProvider';
 const router = require('express').Router({ mergeParams: true });
 const feeCache = {};
 
-router.get('/:target', CacheMiddleware(CacheTimes.Second), async (req: Request, res: Response) => {
+router.get('/:target', CacheMiddleware(CacheTimes.Second), async (req: Request<CSP.GetEstimateSmartFeeParams>, res: Response) => {
   let { target, chain, network } = req.params;
   if (target < 0 || target > 100) {
     return res.status(400).send('invalid target specified');

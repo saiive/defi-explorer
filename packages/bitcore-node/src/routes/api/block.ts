@@ -1,14 +1,16 @@
 import { Request, Response } from 'express';
+import { ParamsDictionary } from 'express-serve-static-core';
 import { ChainStateProvider } from '../../providers/chain-state';
 import { IBlock } from '../../types/Block';
 import { SetCache, CacheTimes } from '../middleware';
 const router = require('express').Router({ mergeParams: true });
 
-router.get('/', async function (req: Request, res: Response) {
+router.get('/', async function (req: Request<ParamsDictionary, any, any, any>, res: Response) {
   let { chain, network } = req.params;
-  let { sinceBlock, date, limit, since, direction, paging, anchorsOnly } = req.query;
+  const { sinceBlock, date, limit, since, direction, paging, anchorsOnly } = req.query;
+  let limitNum = 0;
   if (limit) {
-    limit = parseInt(limit);
+    limitNum = parseInt(limit as string);
   }
   try {
     let payload = {
@@ -16,7 +18,7 @@ router.get('/', async function (req: Request, res: Response) {
       network,
       sinceBlock,
       anchorsOnly: anchorsOnly === 'true',
-      args: { date, limit, since, direction, paging },
+      args: { date, limit: limitNum, since, direction, paging },
       req,
       res,
     };
