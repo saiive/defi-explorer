@@ -15,7 +15,7 @@ export interface ApiAddr {
 export interface ApiRichList {
   address: string;
   txCount?: number;
-  balance: string;
+  balance: number;
   firstTxTime?: Date;
   lastTxTime?: Date;
 }

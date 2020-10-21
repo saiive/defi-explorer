@@ -352,6 +352,7 @@ export class P2pWorker {
     this.isSyncing = false;
     await StateStorage.collection.findOneAndUpdate(
       {},
+      // @ts-ignore
       { $addToSet: { initialSyncComplete: `${chain}:${network}` } },
       { upsert: true }
     );
