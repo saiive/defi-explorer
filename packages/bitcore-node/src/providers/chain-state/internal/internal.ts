@@ -64,10 +64,61 @@ export class InternalStateProvider implements CSP.IChainStateService {
     Storage.apiStreamingFind(CoinStorage, query, {}, req, res);
   }
 
-  async streamAddressTransactionsNew(params: CSP.StreamAddressUtxosParamsNew) {
-    const { req, res, args } = params;
-    const query = this.getAddressQuery(params);
-    Storage.apiStreamingFind(CoinStorage, query, args, req, res);
+  async streamAddressTransactionsInfo(params: CSP.StreamAddressUtxosParamsNew) {
+    const {
+      args: { limit, skip },
+    } = params;
+    const { chain, network, address } = this.getAddressQuery(params);
+    const result = await CoinStorage.collection
+      .aggregate([
+        {
+          $match: {
+            chain,
+            network,
+            address,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            chain: 1,
+            mintIndex: 1,
+            mintTxid: 1,
+            spentTxid: 1,
+            network: 1,
+            address: 1,
+            mintHeight: 1,
+            coinbase: 1,
+            value: 1,
+            script: 1,
+            spentHeight: 1,
+            wallets: 1,
+            transactions: ["$mintTxid", "$spentTxid"],
+          },
+        },
+        {
+          $lookup: {
+            from: "transactions",
+            localField: "transactions",
+            foreignField: "txid",
+            as: "transactions",
+          },
+        },
+        {
+          $unwind: { path: "$transactions", preserveNullAndEmptyArrays: true },
+        },
+        {
+          $match: {
+            "transactions.blockHeight": { $gte: 0 },
+          },
+        },
+        { $skip : parseInt(skip, 10) },
+        {
+          $limit: parseInt(limit, 10),
+        },
+      ])
+      .toArray();
+    return result;
   }
 
   async streamAddressTransactionsTotal(params: CSP.StreamAddressUtxosTotalParams) {

@@ -17,17 +17,24 @@ router.get('/:address/txs', function (req, res) {
   ChainStateProvider.streamAddressTransactions(payload);
 });
 
-router.get('/:address/newtxs', function (req, res) {
-  let { address, chain, network } = req.params;
-  let payload = {
-    chain,
-    network,
-    address,
-    req,
-    res,
-    args: req.query,
-  };
-  ChainStateProvider.streamAddressTransactionsNew(payload);
+router.get('/:address/transactions', async function (req, res) {
+  try {
+    let { address, chain, network } = req.params;
+    let { limit = 10, skip = 0 } = req.query;
+    let payload = {
+      chain,
+      network,
+      address,
+      args: {
+        limit,
+        skip,
+      },
+    };
+    const result = await ChainStateProvider.streamAddressTransactionsInfo(payload);
+    res.send(result);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 });
 
 router.get('/:address/newtxs/total', async function (req, res) {

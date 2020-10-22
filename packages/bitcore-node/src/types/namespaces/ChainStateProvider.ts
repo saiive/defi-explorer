@@ -102,9 +102,11 @@ export declare namespace CSP {
 
   export type StreamAddressUtxosParamsNew = ChainNetwork & {
     address: string;
-    req: Request;
-    res: Response;
-    args: StreamAddressUtxosArgsNew;
+    args: {
+      limit: number;
+      unspent?: boolean;
+      skip?: number;
+    };
   };
 
   export type StreamTransactionsParams = ChainNetwork & {
@@ -172,7 +174,7 @@ export declare namespace CSP {
     ): Promise<{ confirmed: number; unconfirmed: number; balance: number }>;
     streamAddressUtxos(params: StreamAddressUtxosParams): any;
     streamAddressTransactions(params: StreamAddressUtxosParams): any;
-    streamAddressTransactionsNew(params: StreamAddressUtxosParamsNew): any;
+    streamAddressTransactionsInfo(params: StreamAddressUtxosParamsNew): any;
     streamAddressTransactionsTotal(params: StreamAddressUtxosTotalParams): any;
     streamTransactions(params: StreamTransactionsParams): any;
     getAuthhead(params: StreamTransactionParams): Promise<AuthheadJSON | undefined>;
