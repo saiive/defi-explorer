@@ -55,10 +55,11 @@ export class AboutComponent implements OnInit, OnDestroy {
       rewards,
       tokens: { supply },
       blockHeight,
-      chain
+      chain,
+      listCommunities
     } = resp;
 
-    return { rewards, supply, blockHeight, chain };
+    return { rewards, supply, blockHeight, chain, listCommunities };
   }
 
   public goToRichList() {
