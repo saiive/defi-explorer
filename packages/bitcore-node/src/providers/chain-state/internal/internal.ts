@@ -93,26 +93,42 @@ export class InternalStateProvider implements CSP.IChainStateService {
             script: 1,
             spentHeight: 1,
             wallets: 1,
-            transactions: ["$mintTxid", "$spentTxid"],
+            transactions: ['$mintTxid', '$spentTxid'],
           },
         },
         {
           $lookup: {
-            from: "transactions",
-            localField: "transactions",
-            foreignField: "txid",
-            as: "transactions",
+            from: 'transactions',
+            localField: 'transactions',
+            foreignField: 'txid',
+            as: 'transactions',
           },
         },
         {
-          $unwind: { path: "$transactions", preserveNullAndEmptyArrays: true },
+          $unwind: { path: '$transactions', preserveNullAndEmptyArrays: true },
         },
         {
           $match: {
-            "transactions.blockHeight": { $gte: 0 },
+            'transactions.blockHeight': { $gte: 0 },
           },
         },
-        { $skip : parseInt(skip, 10) },
+        {
+          $lookup: {
+            from: 'coins',
+            localField: 'transactions.txid',
+            foreignField: 'spentTxid',
+            as: 'input',
+          },
+        },
+        {
+          $lookup: {
+            from: 'coins',
+            localField: 'transactions.txid',
+            foreignField: 'mintTxid',
+            as: 'output',
+          },
+        },
+        { $skip: parseInt(skip, 10) },
         {
           $limit: parseInt(limit, 10),
         },
