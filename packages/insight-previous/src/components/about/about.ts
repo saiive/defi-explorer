@@ -2,7 +2,7 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ApiProvider } from '../../providers/api/api';
 import { DefaultProvider } from '../../providers/default/default';
 import { RedirProvider } from '../../providers/redir/redir';
-import { setIntervalSynchronous } from '../../utils/utility';
+import { setIntervalSynchronous, roundingDown } from '../../utils/utility';
 
 @Component({
   selector: 'about',
@@ -65,5 +65,9 @@ export class AboutComponent implements OnInit, OnDestroy {
     const chain = this.defaultProvider.getDefault('%CHAIN%');
     const network = this.defaultProvider.getDefault('%NETWORK%');
     this.redirProvider.redir('rich-list', { chain, network });
+  }
+
+  public roundingValue(value: string | number) {
+    return roundingDown(value);
   }
 }
