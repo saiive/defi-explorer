@@ -1,4 +1,4 @@
-ARG VERSION=v1.2.0-rc1
+ARG VERSION=v1.3.0
 
 FROM ubuntu:20.04 as builder
 ARG VERSION

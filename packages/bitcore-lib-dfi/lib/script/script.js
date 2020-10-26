@@ -29,6 +29,7 @@ var Script = function Script(from) {
     return new Script(from);
   }
   this.chunks = [];
+  this.buffer = {};
 
   if (BufferUtil.isBuffer(from)) {
     return Script.fromBuffer(from);
@@ -126,6 +127,8 @@ Script.prototype.toBuffer = function() {
       } else if (opcodenum === Opcode.OP_PUSHDATA4) {
         bw.writeUInt32LE(chunk.len);
         bw.write(chunk.buf);
+      } else if (opcodenum === Opcode.OP_RETURN) {
+        console.log('OP_RETURN');
       }
     }
   }
@@ -1195,6 +1198,37 @@ Script.prototype.getAnchor = function getAnchor() {
     }
   } catch (e) {
     throw new Error('Can\'t get AnchorBlockHash: ' + e.message);
+  }
+};
+
+Script.prototype.isCustom = function isCustom() {
+  try {
+    if (this.isDataOut() && this.chunks[1]) {
+      var br = new BufferReader(this.chunks[1].buf);
+
+      if (!br.eof()) {
+        return br.read(4).toString() === 'DfTx';
+      }
+    }
+  } catch(e) {}
+
+  return false;
+};
+
+Script.prototype.getCustom = function getCustom() {
+  var br = new BufferReader(this.chunks[1].buf);
+  br.set({ pos: 4 });
+  var custom = {};
+  console.log('customRead', this.chunks[1].buf);
+
+  try {
+      custom.btcTxHash = br.readReverse(32).toString('hex');
+      custom.customBlockHeight = br.readUInt32LE();
+      custom.prevCustomBlockHeight = br.readUInt32LE();
+
+      return custom;
+  } catch (e) {
+    throw new Error('Can\'t get CustomBlockHash: ' + e.message);
   }
 };
 

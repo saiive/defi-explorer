@@ -1145,4 +1145,41 @@ describe('Script', function() {
       });
     });
   });
+
+  describe('Custom transactions', function() {
+    describe('#isCustom', function() {
+      it('should exist isCustom method', function() {
+        expect(Script().isCustom()).to.exist;
+      });
+
+      it('should return false for not valid script', function() {
+        expect(Script().isCustom()).to.equal(false);
+        expect(Script('OP_RETURN').isCustom()).to.equal(false);
+        expect(Script('OP_RETURN 1 0x00').isCustom()).to.equal(false);
+        expect(Script('OP_RETURN 2 0x01').isCustom()).to.equal(false);
+        expect(Script('OP_RETURN 5 0x44665477').isCustom()).to.equal(false);
+      });
+
+      it('should return true for valid script', function() {
+        expect(Script('OP_RETURN 44665478540841686d6564546f6b0008000000000000000003').isCustom()).to.equal(true);
+      });
+    });
+
+    describe('#getCustom', function() {
+      it('should exist getCustom', function() {
+        expect(Script().getCustom).to.exist;
+      });
+
+      it('should return customBlockHash for testnet tx', function () {
+        expect(
+          Script('040000000001015b72db772261b095944ebfac13328b1fe8d70e7764a9f12f27cd2d80439d96090200000017160014285a15838a253432282062f02e88d1f39f41500dfeffffff0300e40b54020000001b6a1944665478540841686d6564546f6b00080000000000000000030000e1f5050000000017a9145630ddb88cfdd2ef4b780dfd538ad67292601d668700d4a92026eb86230017a9147a1d7e4582a304402d68325f2983db2ea851c87f87000247304402201109e50cc7895db021f5adf399ae5db4107bf7fffb99fceeb2d8f5fc398614140220443a4189445b2c98ec0f2cd610d3d318109bbb3bd30422e79213c08d76c36983012103a425648cb8758539fc480f30b5a32b82d5c89100eed4487a363f26798b46489400000000')
+            .getCustom(),
+        ).to.deep.equal({
+          customBlockHeight: 76845,
+          btcTxHash: '4ea4154ad51ab6679cce4ccccb1d8a57b829ea5976f7c3bc0e747de76fe52d3b',
+          prevCustomBlockHeight: 76500,
+        });
+      });
+    });
+  });
 });

@@ -1373,4 +1373,14 @@ Transaction.prototype.getAnchor = function() {
   return null;
 };
 
+Transaction.prototype.isCustom = function() {
+  var outputScript = this.outputs &&
+    this.outputs.length > 0 &&
+    this.outputs[0].script;
+  return outputScript && outputScript.isCustom();
+};
+
+  return null;
+};
+
 module.exports = Transaction;
