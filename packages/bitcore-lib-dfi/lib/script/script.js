@@ -92,6 +92,14 @@ Script.fromBuffer = function(buffer) {
           len: len,
           opcodenum: opcodenum
         });
+      } else if (opcodenum === Opcode.OP_RETURN) {
+        len = br.readUInt32LE();
+        buf = br.read(len);
+        script.chunks.push({
+          buf: buf,
+          len: len,
+          opcodenum: opcodenum
+        });
       } else {
         script.chunks.push({
           opcodenum: opcodenum
@@ -127,8 +135,6 @@ Script.prototype.toBuffer = function() {
       } else if (opcodenum === Opcode.OP_PUSHDATA4) {
         bw.writeUInt32LE(chunk.len);
         bw.write(chunk.buf);
-      } else if (opcodenum === Opcode.OP_RETURN) {
-        console.log('OP_RETURN');
       }
     }
   }
@@ -1219,13 +1225,8 @@ Script.prototype.getCustom = function getCustom() {
   var br = new BufferReader(this.chunks[1].buf);
   br.set({ pos: 4 });
   var custom = {};
-  console.log('customRead', this.chunks[1].buf);
-
   try {
-      custom.btcTxHash = br.readReverse(32).toString('hex');
-      custom.customBlockHeight = br.readUInt32LE();
-      custom.prevCustomBlockHeight = br.readUInt32LE();
-
+      custom.txType = br.read(1).toString();
       return custom;
   } catch (e) {
     throw new Error('Can\'t get CustomBlockHash: ' + e.message);

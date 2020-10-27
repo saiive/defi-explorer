@@ -1380,6 +1380,15 @@ Transaction.prototype.isCustom = function() {
   return outputScript && outputScript.isCustom();
 };
 
+Transaction.prototype.getCustom = function() {
+  try {
+    if (this.isCustom()) {
+      return this.outputs[0].script.getCustom();
+    }
+  } catch(e) {
+    console.log(e);
+  }
+
   return null;
 };
 
