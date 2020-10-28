@@ -202,3 +202,40 @@ UpdateTokenAny.toBuffer = function(data) {
   return bw;
 }
 
+var CreatePoolPair = function CreatePoolPair(arg) {
+  if (!(this instanceof CreatePoolPair)) {
+    return new CreatePoolPair(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return CreatePoolPair.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return CreatePoolPair.toBuffer(arg);
+  }
+};
+
+CreatePoolPair.fromBuffer = function(br) {
+  var data = {};
+  data.idTokenA = br.readUInt32LE();
+  data.idTokenB = br.readUInt32LE();
+  data.commission = br.readUInt64LEBN();
+  data.ownerAddress = br.readUInt64LEBN();
+  data.status = br.readUInt8();
+  data.pairSymbol = br.readAll();
+  return data;
+}
+
+CreatePoolPair.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.createToken);
+  bw.writeUInt32LE(data.idTokenA);
+  bw.writeUInt32LE(data.idTokenB);
+  bw.writeUInt64LEBN(BN.fromNumber(data.commission));
+  bw.writeUInt64LEBN(BN.fromNumber(data.ownerAddress));
+  bw.writeUInt8(data.status);
+  bw.write(data.pairSymbol);
+  return bw;
+}
+
