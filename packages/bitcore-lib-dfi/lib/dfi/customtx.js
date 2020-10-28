@@ -333,8 +333,8 @@ var AddPoolLiquidity = function AddPoolLiquidity(arg) {
 
 AddPoolLiquidity.fromBuffer = function(br) {
   var data = {};
-  data.from = br.writeUInt64LEBN();
-  data.shareAddress = br.writeUInt64LEBN();
+  data.from = br.readUInt64LEBN();
+  data.shareAddress = br.readUInt64LEBN();
   return data;
 }
 
@@ -347,5 +347,37 @@ AddPoolLiquidity.toBuffer = function(data) {
   bw.writeUInt64LEBN(BN.fromNumber(data.shareAddress));
   return bw;
 }
+
+var RemovePoolLiquidity = function RemovePoolLiquidity(arg) {
+  if (!(this instanceof RemovePoolLiquidity)) {
+    return new RemovePoolLiquidity(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return RemovePoolLiquidity.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return RemovePoolLiquidity.toBuffer(arg);
+  }
+};
+
+RemovePoolLiquidity.fromBuffer = function(br) {
+  var data = {};
+  data.from = br.readUInt64LEBN();
+  data.nTokenId = br.readUInt32LE();
+  data.nValue = br.writeUInt64LEBN();
+  return data;
+}
+
+RemovePoolLiquidity.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.addPoolLiquidity);
+  bw.writeUInt64LEBN(BN.fromNumber(data.from));
+  bw.writeUInt32LE(data.nTokenId);
+  bw.writeUInt64LEBN(BN.fromNumber(data.nValue));
+  return bw;
+}
+
 
 
