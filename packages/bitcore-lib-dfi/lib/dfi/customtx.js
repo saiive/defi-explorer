@@ -155,4 +155,50 @@ UpdateToken.toBuffer = function(data) {
   return bw;
 }
 
+var UpdateTokenAny = function UpdateTokenAny(arg) {
+  if (!(this instanceof UpdateTokenAny)) {
+    return new UpdateTokenAny(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return UpdateTokenAny.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return UpdateTokenAny.toBuffer(arg);
+  }
+};
+
+UpdateTokenAny.fromBuffer = function(br) {
+  var data = {};
+  data.tokenTx = br.readReverse(32);
+  var len = br.readUInt8();
+  var symbol = br.read(len);
+  len = br.readUInt8();
+  var name = br.read(len);
+  data.newToken = {
+    symbol: symbol,
+    name: name,
+    decimal: br.readUInt8(),
+    limit: br.readUInt64LEBN(),
+    mintable: br.readUInt8(),
+    tradeable: br.readUInt8(),
+    isDAT: br.readUInt8(),
+  };
+  return data;
+}
+
+UpdateTokenAny.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.createToken);
+  bw.write(data.tokenTx);
+  bw.write(data.symbol);
+  bw.write(data.name);
+  bw.writeUInt8(data.decimal);
+  bw.writeUInt64LEBN(BN.fromNumber(data.limit));
+  bw.writeUInt8(data.mintable);
+  bw.writeUInt8(data.tradeable);
+  bw.writeUInt8(data.isDAT);
+  return bw;
+}
 
