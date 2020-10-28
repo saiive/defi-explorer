@@ -94,5 +94,32 @@ CreateToken.toBuffer = function(data) {
   bw.write(data.destructionTx);
   bw.writeUInt32LE(data.creationHeight);
   bw.writeUInt32LE(data.destructionHeight);
+  return bw;
+};
+
+var MintToken = function MintToken(arg) {
+  if (!(this instanceof MintToken)) {
+    return new MintToken(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return MintToken.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return MintToken.toBuffer(arg);
+  }
+};
+
+MintToken.fromBuffer = function(br) {
+  var data = {};
+  data.balances = br.readUInt64LEBN();
   return data;
 }
+
+MintToken.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.writeUInt64LEBN(BN.fromNumber(data.balances))
+  return bw;
+}
+
+
