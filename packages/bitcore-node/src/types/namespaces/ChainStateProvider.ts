@@ -52,6 +52,8 @@ export declare namespace CSP {
     };
   };
 
+  export type GetTotalTransactionsListParams = ChainNetwork;
+
   export type GetBlockParams = ChainNetwork & {
     blockId?: string;
     sinceBlock?: number | string;
@@ -203,6 +205,7 @@ export declare namespace CSP {
     getCoinsForTx(params: { chain: string; network: string; txid: string }): Promise<CoinListingJSON>;
     getLatestTransactions(params: GetLatestTransactionsParams): Promise<any>;
     getTransactionsList(params: GetTransactionsListParams): Promise<any>;
+    getTotalTransactionsList(params: GetTotalTransactionsListParams): Promise<any>;
     getLocalTip(params): Promise<any>;
     getLocatorHashes(params): Promise<any>;
   }

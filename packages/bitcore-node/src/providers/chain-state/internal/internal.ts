@@ -619,6 +619,16 @@ export class InternalStateProvider implements CSP.IChainStateService {
     return result;
   }
 
+  async getTotalTransactionsList(params: CSP.GetTotalTransactionsListParams) {
+    const { chain, network } = params;
+    const query = {
+      chain,
+      network,
+    };
+    const result = await TransactionStorage.collection.count(query);
+    return result;
+  }
+
   async getLatestTransactions(params: CSP.GetLatestTransactionsParams) {
     const { chain, network } = params;
     const query = {
