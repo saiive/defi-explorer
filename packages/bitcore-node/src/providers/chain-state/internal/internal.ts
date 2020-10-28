@@ -280,6 +280,46 @@ export class InternalStateProvider implements CSP.IChainStateService {
     });
   }
 
+  async streamBlockTransactionsList(params: CSP.StreamBlockTransactionsList) {
+    const { chain, network, args } = params;
+    let { blockHash, limit, skip } = args;
+    if (!chain || !network) {
+      throw 'Missing chain or network';
+    }
+    let query: any = {
+      chain: chain,
+      network: network.toLowerCase(),
+      blockHash,
+    };
+    const result = await TransactionStorage.collection
+      .aggregate([
+        {
+          $match: query,
+        },
+        { $skip: parseInt(skip, 10) },
+        { $limit: parseInt(limit, 10) },
+        {
+          $lookup: {
+            from: 'coins',
+            localField: 'txid',
+            foreignField: 'spentTxid',
+            as: 'input',
+          },
+        },
+        {
+          $lookup: {
+            from: 'coins',
+            localField: 'txid',
+            foreignField: 'mintTxid',
+            as: 'output',
+          },
+        },
+      ])
+      .addCursorFlag('noCursorTimeout', true)
+      .toArray();
+    return result;
+  }
+
   async getTransaction(params: CSP.StreamTransactionParams) {
     let { chain, network, txId } = params;
     if (typeof txId !== 'string' || !chain || !network) {
@@ -563,6 +603,30 @@ export class InternalStateProvider implements CSP.IChainStateService {
       inputs: inputs.map((input) => CoinStorage._apiTransform(input, { object: true })),
       outputs: outputs.map((output) => CoinStorage._apiTransform(output, { object: true })),
     };
+  }
+
+  async getTransactionsList(params: CSP.GetTransactionsListParams) {
+    const {
+      chain,
+      network,
+      args: { limit, skip },
+    } = params;
+    const query = {
+      chain,
+      network,
+    };
+    const result = await TransactionStorage.getTransactionsList({ query, limit, skip });
+    return result;
+  }
+
+  async getTotalTransactionsList(params: CSP.GetTotalTransactionsListParams) {
+    const { chain, network } = params;
+    const query = {
+      chain,
+      network,
+    };
+    const result = await TransactionStorage.collection.count(query);
+    return result;
   }
 
   async getLatestTransactions(params: CSP.GetLatestTransactionsParams) {

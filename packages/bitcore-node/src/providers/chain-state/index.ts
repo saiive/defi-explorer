@@ -11,7 +11,7 @@ const services: CSP.ChainStateServices = {
   DFI: new DFIStateProvider(),
   BCH: new BCHStateProvider(),
   ETH: new ETHStateProvider(),
-  BAT: new BATStateProvider()
+  BAT: new BATStateProvider(),
 };
 
 class ChainStateProxy implements CSP.ChainStateProvider {
@@ -34,9 +34,8 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return this.get(params).streamAddressTransactionsInfo(params);
   }
 
-  streamAddressTransactionsTotal(params: CSP.StreamAddressUtxosTotalParams){
+  streamAddressTransactionsTotal(params: CSP.StreamAddressUtxosTotalParams) {
     return this.get(params).streamAddressTransactionsTotal(params);
-
   }
 
   async getBalanceForAddress(params: CSP.GetBalanceForAddressParams) {
@@ -57,6 +56,10 @@ class ChainStateProxy implements CSP.ChainStateProvider {
 
   streamTransactions(params: CSP.StreamTransactionsParams) {
     return this.get(params).streamTransactions(params);
+  }
+
+  streamBlockTransactionsList(params: CSP.StreamBlockTransactionsList) {
+    return this.get(params).streamBlockTransactionsList(params);
   }
 
   getAuthhead(params: CSP.StreamTransactionParams) {
@@ -133,6 +136,14 @@ class ChainStateProxy implements CSP.ChainStateProvider {
 
   async getLatestTransactions(params: CSP.GetLatestTransactionsParams) {
     return this.get(params).getLatestTransactions(params);
+  }
+
+  async getTransactionsList(params: CSP.GetTransactionsListParams) {
+    return this.get(params).getTransactionsList(params);
+  }
+
+  async getTotalTransactionsList(params: CSP.GetTotalTransactionsListParams) {
+    return this.get(params).getTotalTransactionsList(params);
   }
 
   async getLocalTip(params) {

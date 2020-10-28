@@ -53,6 +53,25 @@ router.get('/:blockId', async function (req: Request, res: Response) {
   }
 });
 
+router.get('/:blockHash/transactions', async function (req: Request, res: Response) {
+  let { blockHash, chain, network } = req.params;
+  let { skip = 0, limit = 0 } = req.query;
+  try {
+    const data = await ChainStateProvider.streamBlockTransactionsList({
+      chain,
+      network,
+      args: {
+        skip,
+        limit,
+        blockHash,
+      },
+    });
+    res.json(data);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
 module.exports = {
   router: router,
   path: '/block',
