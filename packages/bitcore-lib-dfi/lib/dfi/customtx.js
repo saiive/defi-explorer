@@ -22,8 +22,9 @@ var customTxType = {
   updatePoolPair: 'u',
   poolSwap: 's',
   addPoolLiquidity: 'l',
-  removePoolLiquidity: 'r'
-}
+  removePoolLiquidity: 'r',
+  setGovVariable: 'G',
+};
 
 var CUSTOM_SIGNATURE = 'DfTx';
 
@@ -376,6 +377,33 @@ RemovePoolLiquidity.toBuffer = function(data) {
   bw.writeUInt64LEBN(BN.fromNumber(data.from));
   bw.writeUInt32LE(data.nTokenId);
   bw.writeUInt64LEBN(BN.fromNumber(data.nValue));
+  return bw;
+}
+
+var SetGovVariable = function SetGovVariable(arg) {
+  if (!(this instanceof RemovePoolLiquidity)) {
+    return new RemovePoolLiquidity(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return RemovePoolLiquidity.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return RemovePoolLiquidity.toBuffer(arg);
+  }
+};
+
+SetGovVariable.fromBuffer = function(br) {
+  var data = {};
+  data.name = br.readAll();
+  return data;
+}
+
+SetGovVariable.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.addPoolLiquidity);
+  bw.write(data.name)
   return bw;
 }
 
