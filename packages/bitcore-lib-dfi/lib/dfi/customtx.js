@@ -278,3 +278,44 @@ UpdatePoolPair.toBuffer = function(data) {
   return bw;
 }
 
+var PoolSwap = function PoolSwap(arg) {
+  if (!(this instanceof PoolSwap)) {
+    return new PoolSwap(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return PoolSwap.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return PoolSwap.toBuffer(arg);
+  }
+};
+
+PoolSwap.fromBuffer = function(br) {
+  var data = {};
+  data.from = br.readUInt64LEBN();
+  data.to = br.readUInt64LEBN();
+  data.idTokenFrom = br.readUInt32LE();
+  data.idTokenTo = br.readUInt32LE();
+  data.amountFrom = br.readUInt64LEBN();
+  data.maxPrice = {
+    integer: br.readUInt64LEBN(),
+    fraction: br.readUInt64LEBN(),
+  };
+  return data;
+}
+
+PoolSwap.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.poolSwap);
+  bw.writeUInt64LEBN(BN.fromNumber(data.from));
+  bw.writeUInt64LEBN(BN.fromNumber(data.to));
+  bw.writeUInt32LE(data.idTokenFrom);
+  bw.writeUInt32LE(data.idTokenTo);
+  bw.writeUInt64LEBN(BN.fromNumber(data.amountFrom));
+  bw.writeUInt64LEBN(BN.fromNumber(data.maxPrice.integer));
+  bw.writeUInt64LEBN(BN.fromNumber(data.maxPrice.fraction));
+  return bw;
+}
+
