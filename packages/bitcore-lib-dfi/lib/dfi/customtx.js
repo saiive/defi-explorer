@@ -17,6 +17,12 @@ var customTxType = {
   createToken: 'T',
   mintToken: 'M',
   updateToken: 'N',
+  updateTokenAny: 'n',
+  createPoolPair: 'p',
+  updatePoolPair: 'u',
+  poolSwap: 's',
+  addPoolLiquidity: 'l',
+  removePoolLiquidity: 'r'
 }
 
 var CUSTOM_SIGNATURE = 'DfTx';
@@ -149,7 +155,7 @@ UpdateToken.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
-  bw.writeUInt8(customTxType.createToken);
+  bw.writeUInt8(customTxType.updateToken);
   bw.write(data.tokenTx);
   bw.writeUInt8(data.isDAT);
   return bw;
@@ -190,7 +196,7 @@ UpdateTokenAny.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
-  bw.writeUInt8(customTxType.createToken);
+  bw.writeUInt8(customTxType.updateTokenAny);
   bw.write(data.tokenTx);
   bw.write(data.symbol);
   bw.write(data.name);
@@ -229,13 +235,46 @@ CreatePoolPair.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
-  bw.writeUInt8(customTxType.createToken);
+  bw.writeUInt8(customTxType.createPoolPair);
   bw.writeUInt32LE(data.idTokenA);
   bw.writeUInt32LE(data.idTokenB);
   bw.writeUInt64LEBN(BN.fromNumber(data.commission));
   bw.writeUInt64LEBN(BN.fromNumber(data.ownerAddress));
   bw.writeUInt8(data.status);
   bw.write(data.pairSymbol);
+  return bw;
+}
+
+var UpdatePoolPair = function UpdatePoolPair(arg) {
+  if (!(this instanceof UpdatePoolPair)) {
+    return new UpdatePoolPair(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return UpdatePoolPair.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return UpdatePoolPair.toBuffer(arg);
+  }
+};
+
+UpdatePoolPair.fromBuffer = function(br) {
+  var data = {};
+  data.pollId = br.readUInt32LE();
+  data.status = br.readUInt8();
+  data.commission = br.readUInt64LEBN();
+  data.ownerAddress = br.readUInt64LEBN();
+  return data;
+}
+
+UpdatePoolPair.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.updatePoolPair);
+  bw.writeUInt32LE(data.pollId);
+  bw.writeUInt8(data.status);
+  bw.writeUInt64LEBN(BN.fromNumber(data.commission));
+  bw.writeUInt64LEBN(BN.fromNumber(data.ownerAddress));
   return bw;
 }
 
