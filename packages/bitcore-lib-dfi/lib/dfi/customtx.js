@@ -15,6 +15,8 @@ var customTxType = {
   createMasternode: 'C',
   resignMasternode: 'R',
   createToken: 'T',
+  mintToken: 'M',
+  updateToken: 'N',
 }
 
 var CUSTOM_SIGNATURE = 'DfTx';
@@ -118,7 +120,38 @@ MintToken.fromBuffer = function(br) {
 MintToken.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.mintToken);
   bw.writeUInt64LEBN(BN.fromNumber(data.balances))
+  return bw;
+}
+
+var UpdateToken = function UpdateToken(arg) {
+  if (!(this instanceof UpdateToken)) {
+    return new UpdateToken(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return UpdateToken.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return UpdateToken.toBuffer(arg);
+  }
+};
+
+UpdateToken.fromBuffer = function(br) {
+  var data = {};
+  data.tokenTx = br.readReverse(32);
+  data.isDAT = br.readUInt8();
+  return data;
+}
+
+UpdateToken.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.createToken);
+  bw.write(data.tokenTx);
+  bw.writeUInt8(data.isDAT);
   return bw;
 }
 
