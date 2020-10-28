@@ -35,6 +35,27 @@ router.get('/', function (req, res) {
   return ChainStateProvider.streamTransactions(payload);
 });
 
+router.get('/txn-list', async function (req, res) {
+  try {
+    let { chain, network } = req.params;
+    const { skip = 0, limit = 10 } = req.query;
+    chain = chain.toUpperCase();
+    network = network.toLowerCase();
+    const txnList = await ChainStateProvider.getTransactionsList({
+      chain,
+      network,
+      args: {
+        skip: parseInt(skip, 10),
+        limit: parseInt(limit, 10),
+      },
+    });
+    return res.send(txnList || []);
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).send(err.message);
+  }
+});
+
 router.get('/latest', async function (req, res) {
   try {
     let { chain, network } = req.params;
