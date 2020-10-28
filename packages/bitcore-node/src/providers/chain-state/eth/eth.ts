@@ -58,7 +58,8 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
           jsonrpc: '2.0',
           id: 0
         },
-        (_, data) => resolve(data?.result)
+        // @ts-ignore
+        (_, data) => resolve(data.result)
       )
     );
   }

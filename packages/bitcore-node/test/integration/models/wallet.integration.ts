@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+// @ts-ignore
 import { Wallet } from 'bitcore-client';
 import { Api } from '../../../src/services/api';
 import { AsyncRPC } from '../../../src/rpc';

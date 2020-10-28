@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { CoinStorage } from '../../src/models/coin';
+// @ts-ignore
 import { Wallet } from 'bitcore-client';
 import { Storage } from '../../src/services/storage';
 

@@ -1145,39 +1145,4 @@ describe('Script', function() {
       });
     });
   });
-
-  describe('Custom transactions', function() {
-    describe('#isCustom', function() {
-      it('should exist isCustom method', function() {
-        expect(Script().isCustom()).to.exist;
-      });
-
-      it('should return false for not valid script', function() {
-        expect(Script().isCustom()).to.equal(false);
-        expect(Script('OP_RETURN').isCustom()).to.equal(false);
-        expect(Script('OP_RETURN 1 0x00').isCustom()).to.equal(false);
-        expect(Script('OP_RETURN 2 0x01').isCustom()).to.equal(false);
-        expect(Script('OP_RETURN 5 0x44665477').isCustom()).to.equal(false);
-      });
-
-      it('should return true for valid script', function() {
-        expect(Script('OP_RETURN 5 0x44665478540841686d6564546f6b0008000000000000000003').isCustom()).to.equal(true);
-      });
-    });
-
-    describe('#getCustom', function() {
-      it('should exist getCustom', function() {
-        expect(Script().getCustom).to.exist;
-      });
-
-      it('should return custom info', function() {
-        expect(
-          Script('OP_RETURN 5 0x44665478540841686d6564546f6b0008000000000000000003')
-            .getCustom(),
-        ).to.deep.equal({
-          txType: 'T',
-        });
-      });
-    });
-  });
 });

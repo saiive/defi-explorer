@@ -1377,13 +1377,25 @@ Transaction.prototype.isCustom = function() {
   var outputScript = this.outputs &&
     this.outputs.length > 0 &&
     this.outputs[0].script;
-  return outputScript && outputScript.isCustom();
+  var br = new BufferReader(outputScript.chunks[0].buf);
+  if (!br.eof()) {
+    return br.read(4).toString() === 'DfTx';
+  }
+  return false;
 };
 
 Transaction.prototype.getCustom = function() {
   try {
     if (this.isCustom()) {
-      return this.outputs[0].script.getCustom();
+      var outputScript = this.outputs &&
+        this.outputs.length > 0 &&
+        this.outputs[0].script;
+      var br = new BufferReader(outputScript.chunks[0].buf);
+      br.set({ pos: 4 });
+      var custom = {};
+      custom.txType = br.readUInt8();
+      custom.buffer = br;
+      return custom;
     }
   } catch(e) {
     console.log(e);

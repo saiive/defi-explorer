@@ -1207,30 +1207,4 @@ Script.prototype.getAnchor = function getAnchor() {
   }
 };
 
-Script.prototype.isCustom = function isCustom() {
-  try {
-    if (this.isDataOut() && this.chunks[1]) {
-      var br = new BufferReader(this.chunks[1].buf);
-
-      if (!br.eof()) {
-        return br.read(4).toString() === 'DfTx';
-      }
-    }
-  } catch(e) {}
-
-  return false;
-};
-
-Script.prototype.getCustom = function getCustom() {
-  var br = new BufferReader(this.chunks[1].buf);
-  br.set({ pos: 4 });
-  var custom = {};
-  try {
-      custom.txType = br.read(1).toString();
-      return custom;
-  } catch (e) {
-    throw new Error('Can\'t get CustomBlockHash: ' + e.message);
-  }
-};
-
 module.exports = Script;
