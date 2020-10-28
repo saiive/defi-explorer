@@ -317,5 +317,35 @@ PoolSwap.toBuffer = function(data) {
   bw.writeUInt64LEBN(BN.fromNumber(data.maxPrice.integer));
   bw.writeUInt64LEBN(BN.fromNumber(data.maxPrice.fraction));
   return bw;
+};
+
+var AddPoolLiquidity = function AddPoolLiquidity(arg) {
+  if (!(this instanceof AddPoolLiquidity)) {
+    return new AddPoolLiquidity(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return AddPoolLiquidity.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return AddPoolLiquidity.toBuffer(arg);
+  }
+};
+
+AddPoolLiquidity.fromBuffer = function(br) {
+  var data = {};
+  data.from = br.writeUInt64LEBN();
+  data.shareAddress = br.writeUInt64LEBN();
+  return data;
 }
+
+AddPoolLiquidity.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.addPoolLiquidity);
+  bw.writeUInt64LEBN(BN.fromNumber(data.from));
+  bw.writeUInt64LEBN(BN.fromNumber(data.shareAddress));
+  return bw;
+}
+
 
