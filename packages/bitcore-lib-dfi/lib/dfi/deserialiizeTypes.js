@@ -23,7 +23,7 @@ CScript.fromBuffer = function(br) {
   }
   return array;
 }
-CScript.fromBuffer = function(data, bw) {
+CScript.toBuffer = function(data, bw) {
   var count = data.length;
   for (var i = 0; i < count; i++) {
     bw.writeUInt8(data[i]);
@@ -46,7 +46,7 @@ var CBalances = function(arg, bw) {
 CBalances.fromBuffer = function(br) {
   var res = new Map();
   var count = br.readVarintNum();
-  for (var i = 0; i++; i < count) {
+  for (var i = 0; i < count; i++) {
     res.set(br.readUInt32LE(), br.readUInt64LEBN());
   }
   return res;
