@@ -10,6 +10,8 @@ var Address = require('../address');
 var PublicKey =  require('../publickey');
 let BufferUtil = require('../util/buffer');
 let Signature = require('../crypto/signature');
+var CBalances = require('./deserialiizeTypes').CBalances;
+var CScript = require('./deserialiizeTypes').CScript;
 
 var customTxType = {
   createMasternode: 'C',
@@ -381,14 +383,14 @@ RemovePoolLiquidity.toBuffer = function(data) {
 }
 
 var SetGovVariable = function SetGovVariable(arg) {
-  if (!(this instanceof RemovePoolLiquidity)) {
-    return new RemovePoolLiquidity(arg);
+  if (!(this instanceof SetGovVariable)) {
+    return new SetGovVariable(arg);
   }
   if (BufferUtil.isBuffer(arg)) {
-    return RemovePoolLiquidity.fromBuffer(arg);
+    return SetGovVariable.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
-    return RemovePoolLiquidity.toBuffer(arg);
+    return SetGovVariable.toBuffer(arg);
   }
 };
 
@@ -406,6 +408,43 @@ SetGovVariable.toBuffer = function(data) {
   bw.write(data.name)
   return bw;
 }
+
+var UtxosToAccount = function UtxosToAccount(arg) {
+  if (!(this instanceof UtxosToAccount)) {
+    return new UtxosToAccount(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return UtxosToAccount.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return UtxosToAccount.toBuffer(arg);
+  }
+};
+
+UtxosToAccount.fromBuffer = function(br) {
+  var to = new Map();
+  var count = br.readVarintNum();
+  for (var i = 0; i++; i < count) {
+    to.set(CScript(br), CBalances(br));
+  }
+  var data = {};
+  data.to = to;
+  return data;
+}
+
+UtxosToAccount.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  var size = data.to.size();
+  bw.writeVarintNum(size);
+  for (var entry of data.to) {
+    bw = CScript(entry[0], bw);
+    bw = CBalances(entry[1], bw);
+  }
+  return bw;
+}
+
+
 
 
 
