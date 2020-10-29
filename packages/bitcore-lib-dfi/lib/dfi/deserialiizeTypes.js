@@ -7,7 +7,7 @@ var CScript = function CScript(arg, bw) {
   if (!(this instanceof CScript)) {
     return new CScript(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return CScript.fromBuffer(arg);
   }
   if (_.isArray(arg)) {
@@ -35,7 +35,7 @@ var CBalances = function(arg, bw) {
   if (!(this instanceof CBalances)) {
     return new CBalances(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return CBalances.fromBuffer(arg);
   }
   if (_.isMap(arg)) {
