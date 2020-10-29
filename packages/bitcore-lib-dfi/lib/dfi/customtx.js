@@ -65,7 +65,7 @@ var CreateToken = function CreateToken(arg) {
   if (!(this instanceof CreateToken)) {
     return new CreateToken(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return CreateToken.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -76,14 +76,12 @@ var CreateToken = function CreateToken(arg) {
 CreateToken.fromBuffer = function(br) {
   var data = {};
   var lenSymbol = br.readVarintNum();
-  data.symbol = br.read(lenSymbol);
+  data.symbol = br.read(lenSymbol).toString();
   var lenName = br.readVarintNum();
   data.name = br.read(lenName);
   data.decimal = br.readUInt8();
   data.limit = br.readUInt64LEBN();
-  data.mintable = br.readUInt8();
-  data.tradeable = br.readUInt8();
-  data.isDAT = br.readUInt8();
+  data.flags = br.readUInt8();
   return data;
 }
 
@@ -98,9 +96,7 @@ CreateToken.toBuffer = function(data) {
   bw.write(data.name);
   bw.writeUInt8(BN.fromNumber(data.decimal));
   bw.writeUInt64LEBN(BN.fromNumber(data.limit));
-  bw.writeUInt8(data.mintable);
-  bw.writeUInt8(data.tradeable);
-  bw.writeUInt8(data.isDAT);
+  bw.writeUInt8(data.flags);
   return bw;
 };
 
@@ -118,7 +114,7 @@ var MintToken = function MintToken(arg) {
 
 MintToken.fromBuffer = function(br) {
   var data = {};
-  data.minted = CBalances(br);
+  data.minted = new CBalances(br);
   return data;
 }
 
@@ -224,7 +220,7 @@ CreatePoolPair.fromBuffer = function(br) {
   data.idTokenA = br.readUInt32LE();
   data.idTokenB = br.readUInt32LE();
   data.commission = br.readUInt64LEBN();
-  data.ownerAddress = CScript(br);
+  data.ownerAddress = new CScript(br);
   data.status = br.readUInt8();
   var lenPairSymbol = br.readVarintNum();
   data.pairSymbol = br.read(lenPairSymbol);
@@ -239,7 +235,7 @@ CreatePoolPair.toBuffer = function(data) {
   bw.writeUInt32LE(data.idTokenA);
   bw.writeUInt32LE(data.idTokenB);
   bw.writeUInt64LEBN(BN.fromNumber(data.commission));
-  bw = CScript(data.ownerAddress, bw);
+  bw = new CScript(data.ownerAddress, bw);
   bw.writeUInt8(data.status);
   bw.writeVarintNum(data.pairSymbol);
   bw.write(data.pairSymbol);
@@ -337,10 +333,10 @@ AddPoolLiquidity.fromBuffer = function(br) {
   var from = new Map();
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {
-    from.set(CScript(br), CBalances(br));
+    from.set(new CScript(br), new CBalances(br));
   }
   data.from = from;
-  data.shareAddress = CScript(br);
+  data.shareAddress = new CScript(br);
   return data;
 }
 
@@ -352,10 +348,10 @@ AddPoolLiquidity.toBuffer = function(data) {
   var size = data.from.size();
   bw.writeVarintNum(size);
   for (var entry of data.from) {
-    bw = CScript(entry[0], bw);
-    bw = CBalances(entry[1], bw);
+    bw = new CScript(entry[0], bw);
+    bw = new CBalances(entry[1], bw);
   }
-  bw = CScript(data.shareAddress, bw);
+  bw = new CScript(data.shareAddress, bw);
   return bw;
 }
 
@@ -373,7 +369,7 @@ var RemovePoolLiquidity = function RemovePoolLiquidity(arg) {
 
 RemovePoolLiquidity.fromBuffer = function(br) {
   var data = {};
-  data.from = CScript(br);
+  data.from = new CScript(br);
   data.nTokenId = br.readUInt32LE();
   data.nValue = br.writeUInt64LEBN();
   return data;
@@ -384,7 +380,7 @@ RemovePoolLiquidity.toBuffer = function(data) {
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
   bw.writeUInt8(customTxType.removePoolLiquidity);
-  bw = CScript(data.form, bw);
+  bw = new CScript(data.form, bw);
   bw.writeUInt32LE(data.nTokenId);
   bw.writeUInt64LEBN(BN.fromNumber(data.nValue));
   return bw;
@@ -433,7 +429,7 @@ UtxosToAccount.fromBuffer = function(br) {
   var to = new Map();
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {
-    to.set(CScript(br), CBalances(br));
+    to.set(new CScript(br), new CBalances(br));
   }
   var data = {};
   data.to = to;
@@ -446,8 +442,8 @@ UtxosToAccount.toBuffer = function(data) {
   var size = data.to.size();
   bw.writeVarintNum(size);
   for (var entry of data.to) {
-    bw = CScript(entry[0], bw);
-    bw = CBalances(entry[1], bw);
+    bw = new CScript(entry[0], bw);
+    bw = new CBalances(entry[1], bw);
   }
   return bw;
 }
@@ -466,8 +462,8 @@ var AccountToUtxos = function AccountToUtxos(arg) {
 
 AccountToUtxos.fromBuffer = function(br) {
   var data = {};
-  data.from = CScript(br);
-  data.balances = CBalances(br);
+  data.from = new CScript(br);
+  data.balances = new CBalances(br);
   data.mintingOutputsStart = br.readUInt32LE();
   return data;
 }
@@ -475,8 +471,8 @@ AccountToUtxos.fromBuffer = function(br) {
 AccountToUtxos.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
-  bw = CScript(data.from, bw);
-  bw = CBalances(data.balances, bw);
+  bw = new CScript(data.from, bw);
+  bw = new CBalances(data.balances, bw);
   bw.writeUInt32LE(data.mintingOutputsStart);
   return bw;
 }
@@ -499,7 +495,7 @@ AccountToAccount.fromBuffer = function(br) {
   var to = new Map();
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {
-    to.set(CScript(br), CBalances(br));
+    to.set(new CScript(br), new CBalances(br));
   }
   data.to = to;
   return data;
@@ -508,14 +504,33 @@ AccountToAccount.fromBuffer = function(br) {
 AccountToAccount.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
-  bw = CScript(data.from, bw);
+  bw = new CScript(data.from, bw);
   var size = data.to.size();
   bw.writeVarintNum(size);
   for (var entry of data.to) {
-    bw = CScript(entry[0], bw);
-    bw = CBalances(entry[1], bw);
+    bw = new CScript(entry[0], bw);
+    bw = new CBalances(entry[1], bw);
   }
   return bw;
+}
+
+module.exports = {
+  customTxType: customTxType,
+  CreateMasternode: CreateMasternode,
+  ResignMasternode: ResignMasternode,
+  CreateToken: CreateToken,
+  MintToken: MintToken,
+  UpdateToken: UpdateToken,
+  UpdateTokenAny: UpdateTokenAny,
+  CreatePoolPair: CreatePoolPair,
+  UpdatePoolPair: UpdatePoolPair,
+  PoolSwap: PoolSwap,
+  AddPoolLiquidity: AddPoolLiquidity,
+  RemovePoolLiquidity: RemovePoolLiquidity,
+  UtxosToAccount: UtxosToAccount,
+  AccountToUtxos: AccountToUtxos,
+  AccountToAccount: AccountToAccount,
+  SetGovVariable: SetGovVariable,
 }
 
 
