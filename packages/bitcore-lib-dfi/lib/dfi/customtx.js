@@ -444,6 +444,35 @@ UtxosToAccount.toBuffer = function(data) {
   return bw;
 }
 
+var AccountToUtxos = function AccountToUtxos(arg) {
+  if (!(this instanceof AccountToUtxos)) {
+    return new AccountToUtxos(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return AccountToUtxos.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return AccountToUtxos.toBuffer(arg);
+  }
+};
+
+AccountToUtxos.fromBuffer = function(br) {
+  var data = {};
+  data.from = CScript(br);
+  data.balances = CBalances(br);
+  data.mintingOutputsStart = br.readUInt32LE();
+  return data;
+}
+
+AccountToUtxos.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw = CScript(data.from, bw);
+  bw = CBalances(data.balances, bw);
+  bw.writeUInt32LE(data.mintingOutputsStart);
+  return bw;
+}
+
 
 
 
