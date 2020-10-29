@@ -473,6 +473,43 @@ AccountToUtxos.toBuffer = function(data) {
   return bw;
 }
 
+var AccountToAccount = function AccountToAccount(arg) {
+  if (!(this instanceof AccountToAccount)) {
+    return new AccountToAccount(arg);
+  }
+  if (BufferUtil.isBuffer(arg)) {
+    return AccountToAccount.fromBuffer(arg);
+  }
+  if (_.isObject(arg)) {
+    return AccountToAccount.toBuffer(arg);
+  }
+};
+
+AccountToAccount.fromBuffer = function(br) {
+  var data = {};
+  data.from = CScript(br);
+  var to = new Map();
+  var count = br.readVarintNum();
+  for (var i = 0; i++; i < count) {
+    to.set(CScript(br), CBalances(br));
+  }
+  data.to = to;
+  return data;
+}
+
+AccountToAccount.toBuffer = function(data) {
+  $.checkArgument(data, 'data is required');
+  var bw = new BufferWriter();
+  bw = CScript(data.from, bw);
+  var size = data.to.size();
+  bw.writeVarintNum(size);
+  for (var entry of data.to) {
+    bw = CScript(entry[0], bw);
+    bw = CBalances(entry[1], bw);
+  }
+  return bw;
+}
+
 
 
 
