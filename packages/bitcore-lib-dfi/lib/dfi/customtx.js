@@ -75,16 +75,15 @@ var CreateToken = function CreateToken(arg) {
 
 CreateToken.fromBuffer = function(br) {
   var data = {};
+  var lenSymbol = br.readVarintNum();
+  data.symbol = br.read(lenSymbol);
+  var lenName = br.readVarintNum();
+  data.name = br.read(lenName);
   data.decimal = br.readUInt8();
   data.limit = br.readUInt64LEBN();
   data.mintable = br.readUInt8();
   data.tradeable = br.readUInt8();
   data.isDAT = br.readUInt8();
-  data.minted = br.readUInt8();
-  data.creationTx = br.readReverse(32);
-  data.destructionTx = br.readReverse(32);
-  data.creationHeight = br.readUInt32LE();
-  data.destructionHeight = br.readUInt32LE();
   return data;
 }
 
@@ -93,18 +92,15 @@ CreateToken.toBuffer = function(data) {
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
   bw.writeUInt8(customTxType.createToken);
+  bw.writeVarintNum(data.symbol.length);
   bw.write(data.symbol);
+  bw.writeVarintNum(data.name.length);
   bw.write(data.name);
   bw.writeUInt8(BN.fromNumber(data.decimal));
   bw.writeUInt64LEBN(BN.fromNumber(data.limit));
   bw.writeUInt8(data.mintable);
   bw.writeUInt8(data.tradeable);
   bw.writeUInt8(data.isDAT);
-  bw.writeUInt8(data.minted);
-  bw.write(data.creationTx);
-  bw.write(data.destructionTx);
-  bw.writeUInt32LE(data.creationHeight);
-  bw.writeUInt32LE(data.destructionHeight);
   return bw;
 };
 
@@ -122,7 +118,7 @@ var MintToken = function MintToken(arg) {
 
 MintToken.fromBuffer = function(br) {
   var data = {};
-  data.balances = br.readUInt64LEBN();
+  data.minted = CBalances(br);
   return data;
 }
 
@@ -131,7 +127,7 @@ MintToken.toBuffer = function(data) {
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
   bw.writeUInt8(customTxType.mintToken);
-  bw.writeUInt64LEBN(BN.fromNumber(data.balances))
+  bw.writeUInt64LEBN(BN.fromNumber(data.minted))
   return bw;
 }
 
@@ -228,9 +224,10 @@ CreatePoolPair.fromBuffer = function(br) {
   data.idTokenA = br.readUInt32LE();
   data.idTokenB = br.readUInt32LE();
   data.commission = br.readUInt64LEBN();
-  data.ownerAddress = br.readUInt64LEBN();
+  data.ownerAddress = CScript(br);
   data.status = br.readUInt8();
-  data.pairSymbol = br.readAll();
+  var lenPairSymbol = br.readVarintNum();
+  data.pairSymbol = br.read(lenPairSymbol);
   return data;
 }
 
@@ -242,8 +239,9 @@ CreatePoolPair.toBuffer = function(data) {
   bw.writeUInt32LE(data.idTokenA);
   bw.writeUInt32LE(data.idTokenB);
   bw.writeUInt64LEBN(BN.fromNumber(data.commission));
-  bw.writeUInt64LEBN(BN.fromNumber(data.ownerAddress));
+  bw = CScript(data.ownerAddress, bw);
   bw.writeUInt8(data.status);
+  bw.writeVarintNum(data.pairSymbol);
   bw.write(data.pairSymbol);
   return bw;
 }
@@ -336,8 +334,13 @@ var AddPoolLiquidity = function AddPoolLiquidity(arg) {
 
 AddPoolLiquidity.fromBuffer = function(br) {
   var data = {};
-  data.from = br.readUInt64LEBN();
-  data.shareAddress = br.readUInt64LEBN();
+  var from = new Map();
+  var count = br.readVarintNum();
+  for (var i = 0; i++; i < count) {
+    from.set(CScript(br), CBalances(br));
+  }
+  data.from = from;
+  data.shareAddress = CScript(br);
   return data;
 }
 
@@ -346,8 +349,13 @@ AddPoolLiquidity.toBuffer = function(data) {
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
   bw.writeUInt8(customTxType.addPoolLiquidity);
-  bw.writeUInt64LEBN(BN.fromNumber(data.from));
-  bw.writeUInt64LEBN(BN.fromNumber(data.shareAddress));
+  var size = data.from.size();
+  bw.writeVarintNum(size);
+  for (var entry of data.from) {
+    bw = CScript(entry[0], bw);
+    bw = CBalances(entry[1], bw);
+  }
+  bw = CScript(data.shareAddress, bw);
   return bw;
 }
 
@@ -365,7 +373,7 @@ var RemovePoolLiquidity = function RemovePoolLiquidity(arg) {
 
 RemovePoolLiquidity.fromBuffer = function(br) {
   var data = {};
-  data.from = br.readUInt64LEBN();
+  data.from = CScript(br);
   data.nTokenId = br.readUInt32LE();
   data.nValue = br.writeUInt64LEBN();
   return data;
@@ -375,8 +383,8 @@ RemovePoolLiquidity.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
   bw.write(CUSTOM_SIGNATURE);
-  bw.writeUInt8(customTxType.addPoolLiquidity);
-  bw.writeUInt64LEBN(BN.fromNumber(data.from));
+  bw.writeUInt8(customTxType.removePoolLiquidity);
+  bw = CScript(data.form, bw);
   bw.writeUInt32LE(data.nTokenId);
   bw.writeUInt64LEBN(BN.fromNumber(data.nValue));
   return bw;
