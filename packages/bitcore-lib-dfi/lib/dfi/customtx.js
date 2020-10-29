@@ -33,12 +33,12 @@ var customTxType = {
 
 var CUSTOM_SIGNATURE = 'DfTx';
 
-var CreateMasternode = function CreateMasternode(buffer) {
+var CreateMasternode = function CreateMasternode(arg) {
   if (!(this instanceof CreateMasternode)) {
-    return new CreateMasternode(buffer);
+    return new CreateMasternode(arg);
   }
-  if (BufferUtil.isBuffer(buffer)) {
-    return CreateMasternode.fromBuffer(buffer);
+  if (BufferUtil.isBuffer(arg.buf)) {
+    return CreateMasternode.fromBuffer(arg);
   }
 };
 
@@ -49,18 +49,18 @@ CreateMasternode.fromBuffer = function(buffer) {
   return data;
 };
 
-var ResignMasternode = function() {
+var ResignMasternode = function(arg) {
   if (!(this instanceof ResignMasternode)) {
-    return new ResignMasternode(buffer);
+    return new ResignMasternode(arg);
   }
-  if (BufferUtil.isBuffer(buffer)) {
-    return ResignMasternode.fromBuffer(buffer);
+  if (BufferUtil.isBuffer(arg.buf)) {
+    return ResignMasternode.fromBuffer(arg);
   }
 };
 
-ResignMasternode.fromBuffer = function(buffer) {
+ResignMasternode.fromBuffer = function(br) {
   var data = {};
-  data.nodeId = buffer.read(32);
+  data.nodeId = br.read(32);
   return data;
 }
 
@@ -107,7 +107,7 @@ var MintToken = function MintToken(arg) {
   if (!(this instanceof MintToken)) {
     return new MintToken(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return MintToken.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -134,7 +134,7 @@ var UpdateToken = function UpdateToken(arg) {
   if (!(this instanceof UpdateToken)) {
     return new UpdateToken(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return UpdateToken.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -163,7 +163,7 @@ var UpdateTokenAny = function UpdateTokenAny(arg) {
   if (!(this instanceof UpdateTokenAny)) {
     return new UpdateTokenAny(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return UpdateTokenAny.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -210,7 +210,7 @@ var CreatePoolPair = function CreatePoolPair(arg) {
   if (!(this instanceof CreatePoolPair)) {
     return new CreatePoolPair(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return CreatePoolPair.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -249,7 +249,7 @@ var UpdatePoolPair = function UpdatePoolPair(arg) {
   if (!(this instanceof UpdatePoolPair)) {
     return new UpdatePoolPair(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return UpdatePoolPair.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -282,7 +282,7 @@ var PoolSwap = function PoolSwap(arg) {
   if (!(this instanceof PoolSwap)) {
     return new PoolSwap(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return PoolSwap.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -323,7 +323,7 @@ var AddPoolLiquidity = function AddPoolLiquidity(arg) {
   if (!(this instanceof AddPoolLiquidity)) {
     return new AddPoolLiquidity(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return AddPoolLiquidity.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -362,7 +362,7 @@ var RemovePoolLiquidity = function RemovePoolLiquidity(arg) {
   if (!(this instanceof RemovePoolLiquidity)) {
     return new RemovePoolLiquidity(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return RemovePoolLiquidity.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -393,7 +393,7 @@ var SetGovVariable = function SetGovVariable(arg) {
   if (!(this instanceof SetGovVariable)) {
     return new SetGovVariable(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return SetGovVariable.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -420,7 +420,7 @@ var UtxosToAccount = function UtxosToAccount(arg) {
   if (!(this instanceof UtxosToAccount)) {
     return new UtxosToAccount(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return UtxosToAccount.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -457,7 +457,7 @@ var AccountToUtxos = function AccountToUtxos(arg) {
   if (!(this instanceof AccountToUtxos)) {
     return new AccountToUtxos(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return AccountToUtxos.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
@@ -488,7 +488,7 @@ var AccountToAccount = function AccountToAccount(arg) {
   if (!(this instanceof AccountToAccount)) {
     return new AccountToAccount(arg);
   }
-  if (BufferUtil.isBuffer(arg)) {
+  if (BufferUtil.isBuffer(arg.buf)) {
     return AccountToAccount.fromBuffer(arg);
   }
   if (_.isObject(arg)) {
