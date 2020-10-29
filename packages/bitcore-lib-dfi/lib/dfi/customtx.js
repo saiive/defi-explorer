@@ -25,6 +25,9 @@ var customTxType = {
   poolSwap: 's',
   addPoolLiquidity: 'l',
   removePoolLiquidity: 'r',
+  utxosToAccount: 'U',
+  accountToUtxos: 'b',
+  accountToAccount: 'B',
   setGovVariable: 'G',
 };
 
@@ -78,9 +81,9 @@ CreateToken.fromBuffer = function(br) {
   var lenSymbol = br.readVarintNum();
   data.symbol = br.read(lenSymbol).toString();
   var lenName = br.readVarintNum();
-  data.name = br.read(lenName);
+  data.name = br.read(lenName).toString();
   data.decimal = br.readUInt8();
-  data.limit = br.readUInt64LEBN();
+  data.limit = br.readUInt64LEBN().toNumber();
   data.flags = br.readUInt8();
   return data;
 }
@@ -440,6 +443,8 @@ UtxosToAccount.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
   var size = data.to.size();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.utxosToAccount);
   bw.writeVarintNum(size);
   for (var entry of data.to) {
     bw = new CScript(entry[0], bw);
@@ -471,6 +476,8 @@ AccountToUtxos.fromBuffer = function(br) {
 AccountToUtxos.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.accountToUtxos);
   bw = new CScript(data.from, bw);
   bw = new CBalances(data.balances, bw);
   bw.writeUInt32LE(data.mintingOutputsStart);
@@ -504,6 +511,8 @@ AccountToAccount.fromBuffer = function(br) {
 AccountToAccount.toBuffer = function(data) {
   $.checkArgument(data, 'data is required');
   var bw = new BufferWriter();
+  bw.write(CUSTOM_SIGNATURE);
+  bw.writeUInt8(customTxType.accountToAccount);
   bw = new CScript(data.from, bw);
   var size = data.to.size();
   bw.writeVarintNum(size);
