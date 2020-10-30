@@ -17,17 +17,12 @@ var CScript = function CScript(arg, bw) {
 
 CScript.fromBuffer = function(br) {
   var count = br.readVarintNum();
-  var array = [];
-  for (var i = 0; i < count; i++) {
-    array.push(br.readUInt8());
-  }
-  return array;
+  return br.read(count);
 }
 CScript.toBuffer = function(data, bw) {
   var count = data.length;
-  for (var i = 0; i < count; i++) {
-    bw.writeUInt8(data[i]);
-  }
+  bw.writeVarintNum(count);
+  bw.write(data);
   return bw;
 }
 
