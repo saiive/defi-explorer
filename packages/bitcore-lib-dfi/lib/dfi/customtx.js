@@ -144,7 +144,7 @@ var UpdateToken = function UpdateToken(arg) {
 
 UpdateToken.fromBuffer = function(br) {
   var data = {};
-  data.tokenTx = br.readReverse(32);
+  data.tokenTx = br.read(32).toString('hex');
   data.isDAT = br.readUInt8();
   return data;
 }
@@ -173,7 +173,7 @@ var UpdateTokenAny = function UpdateTokenAny(arg) {
 
 UpdateTokenAny.fromBuffer = function(br) {
   var data = {};
-  data.tokenTx = br.readReverse(32);
+  data.tokenTx = br.read(32);
   var len = br.readUInt8();
   var symbol = br.read(len);
   len = br.readUInt8();

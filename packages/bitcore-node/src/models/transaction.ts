@@ -13,6 +13,10 @@ import { TransactionJSON } from '../types/Transaction';
 import { SpentHeightIndicators } from '../types/Coin';
 import { Config } from '../services/config';
 import { EventStorage } from './events';
+import {
+  DefichainTransactionCustomData,
+  DefichainTransactionCustomType
+} from '../types/namespaces/Defichain/Transaction';
 
 const Chain = require('../chain');
 
@@ -78,6 +82,21 @@ export type SpendOp = {
   };
 };
 
+export type CustomOp = {
+  updateOne: {
+    filter: {
+      chain: string;
+      network: string;
+      txid: string;
+    },
+    update: { $set: {
+        isCustom: boolean;
+        txType: DefichainTransactionCustomType;
+        data: DefichainTransactionCustomData;
+      } }
+  }
+}
+
 @LoggifyClass
 export class TransactionModel extends BaseModel<ITransaction> {
   constructor(storage?: StorageService) {
@@ -128,6 +147,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
   }) {
     const mintOps = await this.getMintOps(params);
     const spendOps = this.getSpendOps({ ...params, mintOps });
+    const customOps = await this.getCustomOps(params);
     await this.pruneMempool({ ...params, mintOps, spendOps });
 
     logger.debug('Minting Coins', mintOps.length);
@@ -144,6 +164,15 @@ export class TransactionModel extends BaseModel<ITransaction> {
       await Promise.all(
         partition(spendOps, spendOps.length / Config.get().maxPoolSize).map(spendBatch =>
           CoinStorage.collection.bulkWrite(spendBatch, { ordered: false })
+        )
+      );
+    }
+
+    if (customOps) {
+      logger.debug('Custom Transactions', customOps.length);
+      await Promise.all(
+        partition(customOps, customOps.length / Config.get().maxPoolSize).map(customBatch =>
+          this.collection.bulkWrite(customBatch, { ordered: false })
         )
       );
     }
@@ -321,6 +350,40 @@ export class TransactionModel extends BaseModel<ITransaction> {
       });
       return txOps;
     }
+  }
+
+  async getCustomOps(params: {
+    txs: Array<Defichain.Transaction>;
+    height: number;
+    parentChain?: string;
+    forkHeight?: number;
+    initialSyncComplete: boolean;
+    chain: string;
+    network: string;
+  }) {
+    let customOps = new Array<CustomOp>();
+    for (let tx of params.txs) {
+      if (tx.isCustom()) {
+        const txid = tx._hash!;
+        const customData = tx.getCustom();
+        if (customData) {
+          customOps.push({
+            updateOne: {
+              filter: { txid, chain: params.chain, network: params.network },
+              update: {
+                $set: {
+                  isCustom: true,
+                  txType: customData.txType,
+                  data: customData.data,
+                }
+              }
+            }
+          });
+        }
+
+      }
+    }
+    return customOps;
   }
 
   async getMintOps(params: {
