@@ -26,6 +26,7 @@ var Output = require('./output');
 var Script = require('../script');
 var PrivateKey = require('../privatekey');
 var BN = require('../crypto/bn');
+var customTx = require('../dfi/customtx');
 
 /**
  * Represents a transaction, a set of inputs and outputs to change ownership of tokens
@@ -1374,27 +1375,73 @@ Transaction.prototype.getAnchor = function() {
 };
 
 Transaction.prototype.isCustom = function() {
-  var outputScript = this.outputs &&
-    this.outputs.length > 0 &&
-    this.outputs[0].script;
-  var br = new BufferReader(outputScript.chunks[0].buf);
-  if (!br.eof()) {
-    return br.read(4).toString() === 'DfTx';
-  }
+  var scriptBuffer = this.outputs[0]._scriptBuffer;
+    var br = new BufferReader(scriptBuffer);
+    br.set({pos: 2 });
+    if (!br.eof()) {
+      return br.read(4).toString() === 'DfTx';
+    }
   return false;
 };
 
 Transaction.prototype.getCustom = function() {
   try {
     if (this.isCustom()) {
-      var outputScript = this.outputs &&
-        this.outputs.length > 0 &&
-        this.outputs[0].script;
-      var br = new BufferReader(outputScript.chunks[0].buf);
-      br.set({ pos: 4 });
+      var scriptBuffer = this.outputs[0]._scriptBuffer;
+      var br = new BufferReader(scriptBuffer);
+      br.set({ pos: 6 });
       var custom = {};
-      custom.txType = br.readUInt8();
-      custom.buffer = br;
+      custom.txType = br.read(1).toString();
+      switch (custom.txType) {
+        case customTx.customTxType.createMasternode:
+          custom.data = new customTx.CreateMasternode(br);
+          break;
+        case customTx.customTxType.resignMasternode:
+          custom.data = new customTx.ResignMasternode(br);
+          break;
+        case customTx.customTxType.createToken:
+          custom.data = new customTx.CreateToken(br);
+          break;
+        case customTx.customTxType.mintToken:
+          custom.data = new customTx.MintToken(br);
+          break;
+        case customTx.customTxType.updateToken:
+          custom.data = new customTx.UpdateToken(br);
+          break;
+        case customTx.customTxType.updateTokenAny:
+          custom.data = new customTx.UpdateTokenAny(br);
+          break;
+        case customTx.customTxType.createPoolPair:
+          custom.data = new customTx.CreatePoolPair(br);
+          break;
+        case customTx.customTxType.updatePoolPair:
+          custom.data = new customTx.UpdatePoolPair(br);
+          break;
+        case customTx.customTxType.poolSwap:
+          custom.data = new customTx.PoolSwap(br);
+          break;
+        case customTx.customTxType.addPoolLiquidity:
+          custom.data = new customTx.AddPoolLiquidity(br);
+          break;
+        case customTx.customTxType.removePoolLiquidity:
+          custom.data = new customTx.RemovePoolLiquidity(br);
+          break;
+        case customTx.customTxType.utxosToAccount:
+          custom.data = new customTx.UtxosToAccount(br);
+          break;
+        case customTx.customTxType.accountToUtxos:
+          custom.data = new customTx.AccountToUtxos(br);
+          break;
+        case customTx.customTxType.accountToAccount:
+          custom.data = new customTx.AccountToAccount(br);
+          break;
+        case customTx.customTxType.setGovVariable:
+          custom.data = new customTx.SetGovVariable(br);
+          break;
+        default:
+          break;
+      }
+      console.log('customres', custom);
       return custom;
     }
   } catch(e) {
