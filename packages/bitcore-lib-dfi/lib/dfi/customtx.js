@@ -183,9 +183,7 @@ UpdateTokenAny.fromBuffer = function(br) {
     name: name,
     decimal: br.readUInt8(),
     limit: br.readUInt64LEBN(),
-    mintable: br.readUInt8(),
-    tradeable: br.readUInt8(),
-    isDAT: br.readUInt8(),
+    flags: br.readUInt8(),
   };
   return data;
 }
@@ -403,7 +401,8 @@ var SetGovVariable = function SetGovVariable(arg) {
 
 SetGovVariable.fromBuffer = function(br) {
   var data = {};
-  data.name = br.readAll();
+  var len = br.readVarintNum();
+  data.name = br.read(len);
   return data;
 }
 
