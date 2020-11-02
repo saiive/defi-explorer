@@ -224,7 +224,7 @@ CreatePoolPair.fromBuffer = function(br) {
   data.ownerAddress = new CScript(br);
   data.status = br.readUInt8();
   var lenPairSymbol = br.readVarintNum();
-  data.pairSymbol = br.read(lenPairSymbol);
+  data.pairSymbol = br.read(lenPairSymbol).toString();
   return data;
 }
 
@@ -257,10 +257,10 @@ var UpdatePoolPair = function UpdatePoolPair(arg) {
 
 UpdatePoolPair.fromBuffer = function(br) {
   var data = {};
-  data.pollId = br.readUInt32LE();
+  data.pollId = br.readUInt32LE().toString();
   data.status = br.readUInt8();
   data.commission = br.readUInt64LEBN();
-  data.ownerAddress = br.readUInt64LEBN();
+  data.ownerAddress = br.readUInt64LEBN().toString();
   return data;
 }
 
@@ -290,10 +290,10 @@ var PoolSwap = function PoolSwap(arg) {
 
 PoolSwap.fromBuffer = function(br) {
   var data = {};
-  data.from = br.readUInt64LEBN();
-  data.to = br.readUInt64LEBN();
-  data.idTokenFrom = br.readUInt32LE();
-  data.idTokenTo = br.readUInt32LE();
+  data.from = br.readUInt64LEBN().toString();
+  data.to = br.readUInt64LEBN().toString();
+  data.idTokenFrom = br.readUInt32LE().toString();
+  data.idTokenTo = br.readUInt32LE().toString();
   data.amountFrom = br.readUInt64LEBN();
   data.maxPrice = {
     integer: br.readUInt64LEBN(),
@@ -371,7 +371,7 @@ var RemovePoolLiquidity = function RemovePoolLiquidity(arg) {
 RemovePoolLiquidity.fromBuffer = function(br) {
   var data = {};
   data.from = new CScript(br);
-  data.nTokenId = br.readUInt32LE();
+  data.nTokenId = br.readUInt32LE().toString();
   data.nValue = br.writeUInt64LEBN();
   return data;
 }
@@ -402,7 +402,7 @@ var SetGovVariable = function SetGovVariable(arg) {
 SetGovVariable.fromBuffer = function(br) {
   var data = {};
   var len = br.readVarintNum();
-  data.name = br.read(len);
+  data.name = br.read(len).toString();
   return data;
 }
 
@@ -468,7 +468,7 @@ AccountToUtxos.fromBuffer = function(br) {
   var data = {};
   data.from = new CScript(br);
   data.balances = new CBalances(br);
-  data.mintingOutputsStart = br.readUInt32LE();
+  data.mintingOutputsStart = br.readUInt32LE().toString();
   return data;
 }
 
@@ -497,7 +497,7 @@ var AccountToAccount = function AccountToAccount(arg) {
 
 AccountToAccount.fromBuffer = function(br) {
   var data = {};
-  data.from = CScript(br);
+  data.from = new CScript(br);
   var to = new Map();
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {

@@ -17,7 +17,7 @@ var CScript = function CScript(arg, bw) {
 
 CScript.fromBuffer = function(br) {
   var count = br.readVarintNum();
-  return br.read(count);
+  return br.read(count).toString();
 }
 CScript.toBuffer = function(data, bw) {
   var count = data.length;
