@@ -66,6 +66,340 @@
           </ion-item>
         </ion-list>
 
+        <ng-container *ngIf="tx.isCustom">
+          <h2>Custom transaction</h2>
+          <ion-list class="list--summary">
+            <ion-item>
+              Type
+              <ion-note item-end>
+                {{ txType(tx.txType) }}
+              </ion-note>
+             </ion-item>
+            <ng-container *ngIf="tx.txType === 'C'">
+            <ion-item>
+              Operator type
+              <ion-note item-end>
+                {{ tx.customData.operatorType }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Operator auth address
+              <ion-note item-end>
+                {{ tx.customData.operatorAuthAddress }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'R'">
+            <ion-item>
+              NodeId
+              <ion-note item-end>
+                {{ tx.customData.nodeId }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'T'">
+            <ion-item>
+              Symbol
+              <ion-note item-end>
+                {{ tx.customData.symbol }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Name
+              <ion-note item-end>
+                {{ tx.customData.name }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Decimal
+              <ion-note item-end>
+                {{ tx.customData.decimal }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Limit
+              <ion-note item-end>
+                {{ tx.customData.limit }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Flags
+              <ion-note item-end>
+                {{ tx.customData.flags }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'M'">
+            <ion-item>
+              Minted
+              <ion-note item-end>
+                <div *ngFor="let key of keys(tx.customData.minted)">
+                  {{ key }}: {{ tx.customData.minted[key] }}
+                </div>
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'N'">
+            <ion-item>
+              Token Tx
+              <ion-note item-end>
+                {{ tx.customData.tokenTx }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              isDAT
+              <ion-note item-end>
+                {{ tx.customData.isDAT }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'n'">
+            <ion-item>
+              Token tx
+              <ion-note item-end>
+                {{ tx.customData.tokenTx }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Symbol
+              <ion-note item-end>
+                {{ tx.customData.symbol }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Name
+              <ion-note item-end>
+                {{ tx.customData.name }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              New token
+            </ion-item>
+            <ion-item>
+              Symbol
+              <ion-note item-end>
+                {{ tx.customData.newToken.symbol }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Name
+              <ion-note item-end>
+                {{ tx.customData.newToken.name }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Decimal
+              <ion-note item-end>
+                {{ tx.customData.newToken.decimal }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Limit
+              <ion-note item-end>
+                {{ tx.customData.newToken.limit }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Flags
+              <ion-note item-end>
+                {{ tx.customData.newToken.flags }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'p'">
+            <ion-item>
+              Id token A
+              <ion-note item-end>
+                {{ tx.customData.idTokenA }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Id token B
+              <ion-note item-end>
+                {{ tx.customData.idTokenB }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Commission
+              <ion-note item-end>
+                {{ tx.customData.commission }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Owner address
+              <ion-note item-end>
+                {{ tx.customData.ownerAddress }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Status
+              <ion-note item-end>
+                {{ tx.customData.status }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Pair symbol
+              <ion-note item-end>
+                {{ tx.customData.pairSymbol }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'u'">
+            <ion-item>
+              PollId
+              <ion-note item-end>
+                {{ tx.customData.pollId }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Status
+              <ion-note item-end>
+                {{ tx.customData.status }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Commission
+              <ion-note item-end>
+                {{ tx.customData.commission }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Owner address
+              <ion-note item-end>
+                {{ tx.customData.ownerAddress }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 's'">
+            <ion-item>
+              From
+              <ion-note item-end>
+                {{ tx.customData.from }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              To
+              <ion-note item-end>
+                {{ tx.customData.to }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Id token from
+              <ion-note item-end>
+                {{ tx.customData.idTokenFrom }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Id token to
+              <ion-note item-end>
+                {{ tx.customData.idTokenTo }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Amount from
+              <ion-note item-end>
+                {{ tx.customData.amountFrom }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Max price
+              <ion-note item-end>
+                {{ tx.customData.maxPrice.integer }}
+              </ion-note>
+              <ion-note item-end>
+                {{ tx.customData.maxPrice.fraction }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'l'">
+            <ion-item>
+              From
+              <ion-note item-end>
+                <div *ngFor="let key of keys(tx.customData.from)">
+                  {{ key }}: {{ tx.customData.from[key] }}
+                </div>
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              Share address
+              <ion-note item-end>
+                {{ tx.customData.shareAddress }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'r'">
+            <ion-item>
+              From
+              <ion-note item-end>
+                {{ tx.customData.from }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              NTokenId
+              <ion-note item-end>
+                {{ tx.customData.nTokenId }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              NValue
+              <ion-note item-end>
+                {{ tx.customData.nValue }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'G'">
+            <ion-item>
+              Name
+              <ion-note item-end>
+                {{ tx.customData.name }}
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'U'">
+            <ion-item>
+              to
+              <ion-note item-end>
+                <div *ngFor="let key of keys(tx.customData.to)">
+                  {{ key }}: {{ tx.customData.to[key] }}
+                </div>
+              </ion-note>
+            </ion-item>
+          </ng-container>
+            <ng-container *ngIf="tx.txType === 'b'">
+              <ion-item>
+                From
+                <ion-note item-end>
+                  {{ tx.customData.from }}
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                Balances
+                <ion-note item-end>
+                  <div *ngFor="let key of keys(tx.customData.balances)">
+                    {{ key }}: {{ tx.customData.balances[key] }}
+                  </div>
+                </ion-note>
+              </ion-item>
+                <ion-item>
+                  Minting outputs start
+                  <ion-note item-end>
+                    {{ tx.customData.mintingOutputsStart }}
+                  </ion-note>
+                </ion-item>
+            </ng-container>
+            <ng-container *ngIf="tx.txType === 'B'">
+            <ion-item>
+              To
+              <ion-note item-end>
+                <div *ngFor="let key of keys(tx.customData.to)">
+                  {{ key }}: {{ tx.customData.to[key] }}
+                </div>
+              </ion-note>
+            </ion-item>
+          </ng-container>
+          </ion-list>
+        </ng-container>
+
         <h2>Details</h2>
 
         <transaction [tx]="tx" [showCoins]="true"></transaction>

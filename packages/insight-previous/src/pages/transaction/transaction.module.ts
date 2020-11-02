@@ -17,7 +17,7 @@ import { TransactionPage } from './transaction';
     HeadNavComponentModule,
     LoaderComponentModule,
     ErrorComponentModule,
-    CopyToClipboardModule
+    CopyToClipboardModule,
   ],
   exports: [TransactionPage]
 })
