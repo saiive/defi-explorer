@@ -39,7 +39,7 @@ export class CoinListComponent implements OnInit {
           }
           this.showTransactions = true;
           this.loading = false;
-          this.events.publish('CoinList', { length: data.length });
+          this.events.publish('CoinList', { length: this.txs ? this.txs.length : 0 });
         },
         err => {
           this.logger.error(err);

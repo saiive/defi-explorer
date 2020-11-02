@@ -49,6 +49,7 @@
     "@types/socket.io-client": "^1.4.33",
     "angular2-moment": "1.7.1",
     "angular2-qrcode": "2.0.1",
+    "big.js": "^6.0.1",
     "bitcore-lib": "^8.2.0",
     "bitcore-lib-cash": "^8.2.0",
     "bitcore-lib-dfi": "^8.2.0",
