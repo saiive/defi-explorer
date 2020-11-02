@@ -112,6 +112,10 @@ export class RPC {
   async getEstimateFee(target: number) {
     return this.asyncCall('estimatefee', [target]);
   }
+
+  async getCustomTxApplied(txid: string, blockHeight: number) {
+    return this.asyncCall('iscustomtxapplied', [txid, blockHeight]);
+  }
 }
 
 @LoggifyClass
