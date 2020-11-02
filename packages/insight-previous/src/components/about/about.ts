@@ -59,7 +59,24 @@ export class AboutComponent implements OnInit, OnDestroy {
       listCommunities
     } = resp;
 
-    return { rewards, supply, blockHeight, chain, listCommunities };
+    const updatedListCommunities = {
+      AnchorReward: 0,
+      IncentiveFunding: 0
+    };
+
+    if (typeof listCommunities !== 'string') {
+      updatedListCommunities['AnchorReward'] = listCommunities.AnchorReward;
+      updatedListCommunities['IncentiveFunding'] =
+        listCommunities.IncentiveFunding;
+    }
+
+    return {
+      rewards,
+      supply,
+      blockHeight,
+      chain,
+      listCommunities: updatedListCommunities
+    };
   }
 
   public goToRichList() {

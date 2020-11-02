@@ -15,5 +15,5 @@ export const setIntervalSynchronous = (func, delay) => {
 };
 
 export const roundingDown = (val: string | number) => {
-  return new Big(val).round(0, 0).toString();
+  return new Big(val).round(2, 0).toString();
 };
