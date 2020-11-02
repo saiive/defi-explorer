@@ -148,6 +148,7 @@ export interface ApiTx extends CustomTx {
   spentHeight: number;
   value: number;
   version: number;
+  isCustomTxApplied: boolean;
 }
 
 export interface ApiCoin {
@@ -227,6 +228,8 @@ export interface AppTx extends CustomTx {
   fee: number;
   blockheight: number;
   blocktime: number;
+  isCustomTxApplied: boolean;
+  chain: string;
 }
 
 @Injectable()
@@ -266,6 +269,8 @@ export class TxsProvider {
       isCustom: tx.isCustom || false,
       txType: tx.txType || null,
       customData: tx.customData || null,
+      isCustomTxApplied: tx.isCustomTxApplied || false,
+      chain: tx.chain,
     };
   }
 

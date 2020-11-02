@@ -9,13 +9,18 @@
       <error [message]="errorMessage" *ngIf="!loading && errorMessage && confirmations !== -3 "></error>
 
       <div *ngIf="(!loading && !errorMessage) || confirmations === -3">
-        <h1 ion-text>
-          Transaction
-          <ion-note *ngIf="vout !== undefined">
-            <span class="tx-note" ion-text *ngIf="fromVout">Output {{ vout }}</span>
-            <span class="tx-note" ion-text *ngIf="!fromVout">Input {{ vout }}</span>
-          </ion-note>
-        </h1>
+        <div class="title">
+          <h1 ion-text>
+            Transaction
+            <ion-note *ngIf="vout !== undefined">
+              <span class="tx-note" ion-text *ngIf="fromVout">Output {{ vout }}</span>
+              <span class="tx-note" ion-text *ngIf="!fromVout">Input {{ vout }}</span>
+            </ion-note>
+          </h1>
+          <button class="button-skipped" *ngIf="isSkipped" tooltip="Skipped by some reason" positionV="bottom" arrow >
+            Skipped <ion-icon name="information-circle"></ion-icon>
+          </button>
+        </div>
 
         <p class="item-hash">
           <b>Transaction Hash</b> {{ tx.txid }} <button [copyToClipboard]="tx.txid">
@@ -27,9 +32,11 @@
 
         <error [message]="errorMessage" *ngIf="!loading && errorMessage"></error>
 
-        <ion-list class="list--summary">
-          <ion-item>
-            Size
+        <ion-list [ngClass]="{'list--summary': true, 'list--summary--disable': isSkipped}">
+          <ion-item color="red">
+            <ion-label color="{{isSkipped && 'light'}}">
+              Size
+            </ion-label>
             <ion-note item-end>
               {{ tx.size }} (bytes)
             </ion-note>
@@ -68,7 +75,7 @@
 
         <ng-container *ngIf="tx.isCustom">
           <h2>Custom transaction</h2>
-          <ion-list class="list--summary">
+          <ion-list [ngClass]="{'list--summary': true, 'list--summary--disable': isSkipped}">
             <ion-item>
               Type
               <ion-note item-end>

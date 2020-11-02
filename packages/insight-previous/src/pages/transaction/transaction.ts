@@ -43,6 +43,7 @@ export class TransactionPage {
   public fromVout: boolean;
   public confirmations: number;
   public errorMessage: string;
+  public isSkipped: boolean;
   public keys: (object?: any) => string[];
 
   private txId: string;
@@ -80,7 +81,6 @@ export class TransactionPage {
     this.txProvider.getTx(this.txId).subscribe(
       data => {
         this.tx = this.txProvider.toAppTx(data);
-        console.log(this.tx);
         this.loading = false;
         this.txProvider
           .getConfirmations(this.tx.blockheight)
@@ -91,6 +91,7 @@ export class TransactionPage {
             }
             this.confirmations = confirmations;
           });
+        this.isSkipped = !this.tx.isCustomTxApplied && this.tx.chain === 'DFI';
         // Be aware that the tx component is loading data into the tx object
       },
       err => {

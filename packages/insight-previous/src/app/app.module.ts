@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { BlocksPage, HomePage, PagesModule } from '../pages';
 import { AddressProvider } from '../providers/address/address';
@@ -26,7 +27,8 @@ import { InsightApp } from './app.component';
     IonicModule.forRoot(InsightApp, {
       mode: 'md',
       animate: false
-    })
+    }),
+    BrowserAnimationsModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [InsightApp, HomePage, BlocksPage],

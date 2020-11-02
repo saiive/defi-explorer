@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
+import { TooltipsModule } from 'ionic-tooltips';
 import { ErrorComponentModule } from '../../components/error/error.module';
 import { FooterComponentModule } from '../../components/footer/footer.module';
 import { HeadNavComponentModule } from '../../components/head-nav/head-nav.module';
@@ -18,6 +19,7 @@ import { TransactionPage } from './transaction';
     LoaderComponentModule,
     ErrorComponentModule,
     CopyToClipboardModule,
+    TooltipsModule.forRoot(),
   ],
   exports: [TransactionPage]
 })
