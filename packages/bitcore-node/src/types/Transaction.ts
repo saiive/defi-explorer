@@ -1,3 +1,5 @@
+import { DefichainTransactionCustomData, DefichainTransactionCustomType } from './namespaces/Defichain/Transaction';
+
 export type TransactionJSON = {
   _id: string;
   txid: string;
@@ -14,4 +16,7 @@ export type TransactionJSON = {
   inputCount: number;
   outputCount: number;
   value: number;
+  isCustom: boolean;
+  customData: DefichainTransactionCustomData | null;
+  txType: DefichainTransactionCustomType | null;
 };

@@ -36,6 +36,9 @@ export type ITransaction = {
   outputCount: number;
   value: number;
   wallets: ObjectID[];
+  isCustom: boolean;
+  customData: DefichainTransactionCustomData | null;
+  txType: DefichainTransactionCustomType | null;
 };
 
 export type MintOp = {
@@ -92,7 +95,7 @@ export type CustomOp = {
     update: { $set: {
         isCustom: boolean;
         txType: DefichainTransactionCustomType;
-        data: DefichainTransactionCustomData;
+        customData: DefichainTransactionCustomData;
       } }
   }
 }
@@ -374,7 +377,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
                 $set: {
                   isCustom: true,
                   txType: customData.txType,
-                  data: customData.data,
+                  customData: customData.data,
                 }
               }
             }
@@ -681,7 +684,10 @@ export class TransactionModel extends BaseModel<ITransaction> {
       outputCount: tx.outputCount || -1,
       size: tx.size || -1,
       fee: tx.fee || -1,
-      value: tx.value || -1
+      value: tx.value || -1,
+      isCustom: tx.isCustom || false,
+      txType: tx.txType || null,
+      customData: tx.customData || null,
     };
     if (options && options.object) {
       return transaction;
