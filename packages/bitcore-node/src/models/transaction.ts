@@ -36,9 +36,9 @@ export type ITransaction = {
   outputCount: number;
   value: number;
   wallets: ObjectID[];
-  isCustom: boolean;
-  customData: DefichainTransactionCustomData | null;
-  txType: DefichainTransactionCustomType | null;
+  isCustom?: boolean;
+  customData?: DefichainTransactionCustomData | null;
+  txType?: DefichainTransactionCustomType | null;
 };
 
 export type MintOp = {
