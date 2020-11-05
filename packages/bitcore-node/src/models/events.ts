@@ -25,6 +25,7 @@ export class EventModel extends BaseModel<IEvent> {
     await this.collection.createIndex({ type: 1, emitTime: 1 }, { background: true });
     const capped = await this.collection.isCapped();
     if (!capped) {
+      await this.db!.dropCollection('events');
       await this.db!.createCollection('events', { capped: true, size: 10000 });
     }
   }
