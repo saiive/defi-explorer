@@ -139,6 +139,7 @@ export class CoinModel extends BaseModel<ICoin> {
         // @ts-ignore
         .addCursorFlag('noCursorTimeout', true)
         .toArray();
+      //@ts-ignore
       const totalRows = result.length && result[0].total ? result[0].total : 0;
       setCache(totalCacheName, totalRows);
       response[totalCacheName] = totalRows;
