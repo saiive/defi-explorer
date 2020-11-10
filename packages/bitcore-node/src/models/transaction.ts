@@ -96,7 +96,9 @@ export type CustomOp = {
         isCustom: boolean;
         txType: DefichainTransactionCustomType;
         customData: DefichainTransactionCustomData;
-      } }
+      } },
+    upsert: true;
+    forceServerObjectId: true;
   }
 }
 
@@ -379,7 +381,9 @@ export class TransactionModel extends BaseModel<ITransaction> {
                   txType: customData.txType,
                   customData: customData.data,
                 }
-              }
+              },
+              upsert: true,
+              forceServerObjectId: true
             }
           });
         }

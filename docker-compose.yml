@@ -1,5 +1,4 @@
 version: '3.3'
-
 services:
   database:
     image: mongo:3.4-jessie
@@ -10,9 +9,8 @@ services:
     volumes:
       - db_data:/data/db
     restart: unless-stopped
-
   defichain:
-    image: defi/defichain:1.2.0
+    image: defi/defichain:1.3.0
     networks:
       - default
     environment:
@@ -28,11 +26,9 @@ services:
       - node_data:/data
       - ./defi.${NETWORK}.conf:/data/defi.conf
     restart: unless-stopped
-
   bitcore-node:
     build: .
     image: bitcore-node
-    # network_mode: host
     networks:
       - default
     command: "bash -c 'cd ./packages/bitcore-node/; npm run tsc; node build/src/server.js'"
@@ -47,17 +43,15 @@ services:
       - DISABLE_HEALTH_CRON=${DISABLE_HEALTH_CRON:-false}
     ports:
       - ${API_PORT}:3000
-    volumes: 
+    volumes:
       - ./bitcore.${NETWORK}.config.json:/usr/src/app/bitcore.config.json
     depends_on:
       - database
       - defichain
     restart: unless-stopped
-
   insight:
     build: .
     image: insight
-    # network_mode: host
     networks:
       - default
     command: ["npm", "run", "insight-previous:prod"]
@@ -70,12 +64,15 @@ services:
       - BITCORE_CONFIG_PATH=bitcore.config.json
     ports:
       - ${HTTP_PORT}:5000
-    volumes: 
+    volumes:
       - ./bitcore.${NETWORK}.config.json:/usr/src/app/bitcore.config.json
     depends_on:
       - bitcore-node
     restart: unless-stopped
-
-volumes: 
+volumes:
   db_data:
   node_data:
+    
+networks:
+  default:
+    driver: bridge
