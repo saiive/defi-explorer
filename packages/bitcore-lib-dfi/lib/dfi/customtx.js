@@ -331,10 +331,10 @@ var AddPoolLiquidity = function AddPoolLiquidity(arg) {
 
 AddPoolLiquidity.fromBuffer = function(br) {
   var data = {};
-  var from = new Map();
+  var from = {};
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {
-    from.set(new CScript(br), new CBalances(br));
+    from[new CScript(br)] = new CBalances(br);
   }
   data.from = from;
   data.shareAddress = new CScript(br);
@@ -428,10 +428,10 @@ var UtxosToAccount = function UtxosToAccount(arg) {
 };
 
 UtxosToAccount.fromBuffer = function(br) {
-  var to = new Map();
+  var to = {};
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {
-    to.set(new CScript(br), new CBalances(br));
+    to[new CScript(br)] = new CBalances(br);
   }
   var data = {};
   data.to = to;
@@ -498,10 +498,10 @@ var AccountToAccount = function AccountToAccount(arg) {
 AccountToAccount.fromBuffer = function(br) {
   var data = {};
   data.from = new CScript(br);
-  var to = new Map();
+  var to = {};
   var count = br.readVarintNum();
   for (var i = 0; i++; i < count) {
-    to.set(new CScript(br), new CBalances(br));
+    to[new CScript(br)] = new CBalances(br);
   }
   data.to = to;
   return data;

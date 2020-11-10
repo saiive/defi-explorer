@@ -33,16 +33,16 @@ var CBalances = function(arg, bw) {
   if (BufferUtil.isBuffer(arg.buf)) {
     return CBalances.fromBuffer(arg);
   }
-  if (_.isMap(arg)) {
+  if (_.isObject(arg)) {
     return CBalances.toBuffer(arg, bw);
   }
 };
 
 CBalances.fromBuffer = function(br) {
-  var res = new Map();
+  var res = {};
   var count = br.readVarintNum();
   for (var i = 0; i < count; i++) {
-    res.set(br.readUInt32LE(), br.readUInt64LEBN());
+    res[br.readUInt32LE()] = br.readUInt64LEBN().toNumber();
   }
   return res;
 }

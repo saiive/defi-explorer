@@ -1441,7 +1441,6 @@ Transaction.prototype.getCustom = function() {
         default:
           break;
       }
-      console.log('customres', custom);
       return custom;
     }
   } catch(e) {
