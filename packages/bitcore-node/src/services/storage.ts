@@ -39,14 +39,17 @@ export class StorageService {
         poolSize: options.maxPoolSize,
         useNewUrlParser: true,
       }
+      let queryParams = 'socketTimeoutMS=3600000&noDelay=true';
       if (process.env.SSL_CA_FILE_URL) {
-        const urlPath = path.join(__dirname,"../rds-combined-ca-bundle.pem");
+        const urlPath = path.join(__dirname, "../rds-combined-ca-bundle.pem");
         await download(process.env.SSL_CA_FILE_URL, urlPath);
         const ca = [fs.readFileSync(urlPath)];
         mongoOption.sslCA = ca;
         mongoOption.sslValidate = true;
+        queryParams = `${queryParams}&ssl=true&replicaSet=rs0&readPreference=secondaryPreferred`;
       }
-      const connectUrl = `mongodb://${auth}${dbHost}:${dbPort}/${dbName}?socketTimeoutMS=3600000&noDelay=true`;
+      console.log('Connecting to mongo server using:', mongoOption);
+      const connectUrl = `mongodb://${auth}${dbHost}:${dbPort}/${dbName}?${queryParams}`;
       let attemptConnect = async () => {
         return MongoClient.connect(
           connectUrl,
