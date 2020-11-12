@@ -45,13 +45,14 @@ export class StorageService {
         await download(process.env.SSL_CA_FILE_URL, urlPath);
         const ca = [fs.readFileSync(urlPath)];
         mongoOption.sslCA = ca;
-        mongoOption.sslValidate = true;
-        queryParams = `${queryParams}&ssl=true&replicaSet=rs0&readPreference=secondaryPreferred`;
+        mongoOption.ssl = true;
+        // queryParams = `${queryParams}&ssl=true&replicaSet=rs0&readPreference=secondaryPreferred`;
       }
       console.log('Connecting to mongo server using:', mongoOption);
       const connectUrl = `mongodb://${auth}${dbHost}:${dbPort}/${dbName}?${queryParams}`;
       let attemptConnect = async () => {
-        return MongoClient.connect(
+      console.log('Connecting to mongo server using connectUrl:', connectUrl);
+      return MongoClient.connect(
           connectUrl,
           mongoOption
         );
@@ -238,7 +239,7 @@ export class StorageService {
     const finalQuery = Object.assign({}, originalQuery, query);
     let cursor = model.collection
       .find(finalQuery, options)
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .stream({
         transform: transform || model._apiTransform
       });
