@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/connectDocumentDB
+      - feature/docdb-iscustomtxapplied
 
 name: Deploy to Amazon ECS
 
