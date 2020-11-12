@@ -4,13 +4,16 @@ import { TransformableModel } from '../types/TransformableModel';
 import logger from '../logger';
 import { LoggifyClass } from '../decorators/Loggify';
 import { ObjectID } from 'mongodb';
-import { MongoClient, Db, Cursor } from 'mongodb';
+import { MongoClient, Db, Cursor, MongoClientOptions } from 'mongodb';
 import { MongoBound } from '../models/base';
 import '../models';
 import { StreamingFindOptions } from '../types/Query';
 import { ConfigType } from '../types/Config';
 import { Config, ConfigService } from './config';
 import { Readable } from 'stream';
+import fs from 'fs';
+import download from '../utils/download';
+import path from 'path';
 
 export { StreamingFindOptions };
 
@@ -27,19 +30,31 @@ export class StorageService {
   }
 
   start(args: Partial<ConfigType> = {}): Promise<MongoClient> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let options = Object.assign({}, this.configService.get(), args);
       let { dbName, dbHost, dbPort, dbUser, dbPass } = options;
       let auth = (dbUser !== '' && dbPass !== '') ? `${dbUser}:${dbPass}@` : '';
-      const connectUrl = `mongodb://${auth}${dbHost}:${dbPort}/${dbName}?socketTimeoutMS=3600000&noDelay=true`;
+      const mongoOption:MongoClientOptions = {
+        keepAlive: true,
+        poolSize: options.maxPoolSize,
+        useNewUrlParser: true,
+      }
+      let queryParams = 'socketTimeoutMS=3600000&noDelay=true';
+      if (process.env.SSL_CA_FILE_URL) {
+        const urlPath = path.join(__dirname, "../rds-combined-ca-bundle.pem");
+        await download(process.env.SSL_CA_FILE_URL, urlPath);
+        const ca = [fs.readFileSync(urlPath)];
+        mongoOption.sslCA = ca;
+        mongoOption.ssl = true;
+        // queryParams = `${queryParams}&ssl=true&replicaSet=rs0&readPreference=secondaryPreferred`;
+      }
+      console.log('Connecting to mongo server using:', mongoOption);
+      const connectUrl = `mongodb://${auth}${dbHost}:${dbPort}/${dbName}?${queryParams}`;
       let attemptConnect = async () => {
-        return MongoClient.connect(
+      console.log('Connecting to mongo server using connectUrl:', connectUrl);
+      return MongoClient.connect(
           connectUrl,
-          {
-            keepAlive: true,
-            poolSize: options.maxPoolSize,
-            useNewUrlParser: true
-          }
+          mongoOption
         );
       };
       let attempted = 0;
@@ -224,7 +239,7 @@ export class StorageService {
     const finalQuery = Object.assign({}, originalQuery, query);
     let cursor = model.collection
       .find(finalQuery, options)
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .stream({
         transform: transform || model._apiTransform
       });

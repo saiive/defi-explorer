@@ -609,7 +609,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     // @ts-ignore
     const { query, options } = Storage.getFindOptions(this, params.options);
     const finalQuery = Object.assign({}, originalQuery, query);
-    return this.collection.find(finalQuery, options).addCursorFlag('noCursorTimeout', true);
+    return this.collection.find(finalQuery, options) // .addCursorFlag('noCursorTimeout', true);
   }
 
   async getTransactionCount(params: { query: any }) {
@@ -624,7 +624,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           $in: txIds
         }
       })
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .count();
   }
 
@@ -637,7 +637,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           $in: txIds
         }
       })
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .sort({ blockTime: 1 })
       .limit(1)
       .toArray();
@@ -654,7 +654,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           $in: txIds
         }
       })
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .sort({ blockTime: -1 })
       .limit(1)
       .toArray();
@@ -665,7 +665,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
   async getLatestTransactions(_: { query: any }) {
     const latestTxs = await this.collection
       .find()
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .sort({ blockTime: -1 })
       .limit(10)
       .toArray();
