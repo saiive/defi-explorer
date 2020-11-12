@@ -103,7 +103,7 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
     let query = { chain: this.chain, wallet: walletId };
     return WalletAddressStorage.collection
       .find(query)
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .toArray();
   }
 
