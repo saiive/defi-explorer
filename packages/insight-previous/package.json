@@ -54,7 +54,7 @@
     "bs58": "^4.0.1",
     "bitcore-lib": "^8.2.0",
     "bitcore-lib-cash": "^8.2.0",
-    "bitcore-lib-dfi": "^8.2.0",
+    "bitcore-lib-dfi": "ssh://git@github.com:DeFiCh/bitcore-lib-dfi.git",
     "ionic-angular": "3.9.2",
     "ionic-tooltips": "^3.1.0",
     "ionicons": "3.0.0",
