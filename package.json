@@ -60,5 +60,7 @@
     "typedoc": "^0.15.0",
     "typescript-eslint-parser": "^15.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bitcore-lib-dfi": "https://github.com/DeFiCh/bitcore-lib-dfi.git"
+  }
 }

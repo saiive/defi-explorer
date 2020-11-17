@@ -12,8 +12,6 @@ COPY ./packages/bitcore-lib/package.json ./packages/bitcore-lib/package.json
 RUN true
 COPY ./packages/bitcore-lib-cash/package.json ./packages/bitcore-lib-cash/package.json
 RUN true
-COPY ./packages/bitcore-lib-dfi/package.json ./packages/bitcore-lib-dfi/package.json
-RUN true
 COPY ./packages/bitcore-p2p/package.json ./packages/bitcore-p2p/package.json
 RUN true
 COPY ./packages/bitcore-p2p-cash/package.json ./packages/bitcore-p2p-cash/package.json
