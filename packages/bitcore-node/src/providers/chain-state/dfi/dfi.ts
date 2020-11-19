@@ -24,7 +24,7 @@ export class DFIStateProvider extends InternalStateProvider{
       if (found.blockHeight && found.blockHeight >= 0) {
         confirmations = tipHeight - found.blockHeight + 1;
       }
-      if (found.blockHeight) {
+      if (found.blockHeight && found.isCustom) {
         isCustomTxApplied = (await this.getRPC(chain, network).getCustomTxApplied(txId, found.blockHeight)) as boolean;
       }
       const convertedTx = TransactionStorage._apiTransform(found, { object: true }) as TransactionJSON;

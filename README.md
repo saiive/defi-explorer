@@ -6,10 +6,10 @@ An insight-based blockchain explorer that's built for the DeFi Blockchain ([defi
 
 The default setup uses docker and docker-compose to enable a single command deployment with an env file.
 
-By default there are 3 env files in the repo: 
+By default there are 3 env files in the repo:
 - `.env.testnet`
 - `.env.mainnet`
-- `.env.example` 
+- `.env.example`
 
 These files target `testnet.defichain.io` and `mainnet.defichain.io` deployments. To do a local deployment, create `.env` file that has the `NETWORK` and `API_PREFIX` variables as given in these files.
 
@@ -39,10 +39,10 @@ Please have a look at the `docker-compose.yml` file for other defaults and env u
 
 ### Conf files
 
-- `bitcore.${NETWORK}.config.json` [required] - The bitcore config file for the given network provided by the `NETWORK` env. 
+- `bitcore.${NETWORK}.config.json` [required] - The bitcore config file for the given network provided by the `NETWORK` env.
 - `defichain/defi.${NETWORK}.conf` [required] - The DeFi Blockchain config that's used the node.
 
-NOTE: Please make sure to set a proper `rpc` username and password in both of the above before production deployments. 
+NOTE: Please make sure to set a proper `rpc` username and password in both of the above before production deployments.
 
 - `defichain/Dockerfile` - This dockerfile downloads the specific version of the DeFi Blockchain binary and builds a docker image out of it, that's used by the deployment subsequently. Modify `VERSION` here for running a different version of the blockchain node.
 
@@ -50,8 +50,11 @@ For details on `bitcore` config, have a look at the [Bitcore README](./docs/Bitc
 
 ## Notes
 
-Deployment shortcuts: 
- 
+Deployment shortcuts:
+
+`testnet local`:
+> docker-compose --env-file .env.example -f docker-compose_local.yml up --build --force-recreate --remove-orphans
+
 `testnet.defichain.io`:
 
 > docker-compose --env-file .env.testnet up

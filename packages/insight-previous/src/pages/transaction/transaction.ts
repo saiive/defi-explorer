@@ -91,7 +91,7 @@ export class TransactionPage {
             }
             this.confirmations = confirmations;
           });
-        this.isSkipped = !this.tx.isCustomTxApplied && this.tx.chain === 'DFI';
+        this.isSkipped = !this.tx.isCustomTxApplied && this.tx.chain === 'DFI' && this.tx.isCustom;
         // Be aware that the tx component is loading data into the tx object
       },
       err => {
