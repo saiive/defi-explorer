@@ -10,7 +10,7 @@ services:
       - db_data:/data/db
     restart: unless-stopped
   defichain:
-    image: defi/defichain:1.3.0
+    image: defi/defichain:1.3.3
     networks:
       - default
     environment:
@@ -72,7 +72,7 @@ services:
 volumes:
   db_data:
   node_data:
-    
+
 networks:
   default:
     driver: bridge
