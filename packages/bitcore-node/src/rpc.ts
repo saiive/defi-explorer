@@ -114,7 +114,7 @@ export class RPC {
   }
 
   async getCustomTxApplied(txid: string, blockHeight: number) {
-    return this.asyncCall('iscustomtxapplied', [txid, blockHeight]);
+    return this.asyncCall('isappliedcustomtx', [txid, blockHeight]);
   }
 }
 
