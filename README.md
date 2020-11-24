@@ -52,8 +52,8 @@ For details on `bitcore` config, have a look at the [Bitcore README](./docs/Bitc
 
 Deployment shortcuts:
 
-`testnet local`:
-> docker-compose --env-file .env.example -f docker-compose_local.yml up --build --force-recreate --remove-orphans
+`testnet local environment`:
+> docker-compose --env-file .env.example up --build
 
 `testnet.defichain.io`:
 
