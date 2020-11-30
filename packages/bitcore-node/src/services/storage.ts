@@ -46,7 +46,6 @@ export class StorageService {
         const ca = [fs.readFileSync(urlPath)];
         mongoOption.sslCA = ca;
         mongoOption.ssl = true;
-        queryParams = `${queryParams}&replicaSet=rs0&readPreference=secondaryPreferred`;
       }
       const connectUrl = `mongodb://${auth}${dbHost}:${dbPort}/${dbName}?${queryParams}`;
       let attemptConnect = async () => {
