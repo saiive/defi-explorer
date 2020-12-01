@@ -7,7 +7,7 @@ const router = require('express').Router({ mergeParams: true });
 
 router.get('/', async function (req: Request<ParamsDictionary, any, any, any>, res: Response) {
   let { chain, network } = req.params;
-  const { sinceBlock, date, limit, since, direction, paging, anchorsOnly } = req.query;
+  const { sinceBlock, date, limit = 50, since, direction, paging, anchorsOnly } = req.query;
   let limitNum = 0;
   if (limit) {
     limitNum = parseInt(limit as string);

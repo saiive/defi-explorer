@@ -17,6 +17,7 @@ import {
   DefichainTransactionCustomData,
   DefichainTransactionCustomType
 } from '../types/namespaces/Defichain/Transaction';
+import nodeCache from '../NodeCache';
 
 const Chain = require('../chain');
 
@@ -112,7 +113,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     { key: 'blockHash' as 'blockHash', type: 'string' as 'string' },
     { key: 'blockHeight' as 'blockHeight', type: 'number' as 'number' },
     { key: 'blockTimeNormalized' as 'blockTimeNormalized', type: 'date' as 'date' },
-    { key: 'txid' as 'txid', type: 'string' as 'string' }
+    { key: 'txid' as 'txid', type: 'string' as 'string' },
   ];
 
   async onConnect() {
@@ -158,7 +159,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     logger.debug('Minting Coins', mintOps.length);
     if (mintOps.length) {
       await Promise.all(
-        partition(mintOps, mintOps.length / Config.get().maxPoolSize).map(mintBatch =>
+        partition(mintOps, mintOps.length / Config.get().maxPoolSize).map((mintBatch) =>
           CoinStorage.collection.bulkWrite(mintBatch, { ordered: false })
         )
       );
@@ -167,7 +168,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     logger.debug('Spending Coins', spendOps.length);
     if (spendOps.length) {
       await Promise.all(
-        partition(spendOps, spendOps.length / Config.get().maxPoolSize).map(spendBatch =>
+        partition(spendOps, spendOps.length / Config.get().maxPoolSize).map((spendBatch) =>
           CoinStorage.collection.bulkWrite(spendBatch, { ordered: false })
         )
       );
@@ -186,7 +187,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
       const txOps = await this.addTransactions({ ...params, mintOps });
       logger.debug('Writing Transactions', txOps.length);
       await Promise.all(
-        partition(txOps, txOps.length / Config.get().maxPoolSize).map(txBatch =>
+        partition(txOps, txOps.length / Config.get().maxPoolSize).map((txBatch) =>
           this.collection.bulkWrite(txBatch, { ordered: false })
         )
       );
@@ -198,8 +199,8 @@ export class TransactionModel extends BaseModel<ITransaction> {
           const tx = { ...op.updateOne.update.$set, ...filter };
           await EventStorage.signalTx(tx);
           await mintOps
-            .filter(coinOp => coinOp.updateOne.filter.mintTxid === filter.txid)
-            .map(coinOp => {
+            .filter((coinOp) => coinOp.updateOne.filter.mintTxid === filter.txid)
+            .map((coinOp) => {
               const address = coinOp.updateOne.update.$set.address;
               const coin = { ...coinOp.updateOne.update.$set, ...coinOp.updateOne.filter };
               return () => EventStorage.signalAddressCoin({ address, coin }) as any;
@@ -233,13 +234,13 @@ export class TransactionModel extends BaseModel<ITransaction> {
       network,
       parentChain,
       forkHeight,
-      mempoolTime
+      mempoolTime,
     } = params;
     if (parentChain && forkHeight && height < forkHeight) {
       const parentTxs = await TransactionStorage.collection
         .find({ blockHeight: height, chain: parentChain, network })
         .toArray();
-      return parentTxs.map(parentTx => {
+      return parentTxs.map((parentTx) => {
         return {
           updateOne: {
             filter: { txid: parentTx.txid, chain, network },
@@ -259,12 +260,12 @@ export class TransactionModel extends BaseModel<ITransaction> {
                 outputCount: parentTx.outputCount,
                 value: parentTx.value,
                 wallets: [],
-                ...(mempoolTime && { mempoolTime })
-              }
+                ...(mempoolTime && { mempoolTime }),
+              },
             },
             upsert: true,
-            forceServerObjectId: true
-          }
+            forceServerObjectId: true,
+          },
         };
       });
     } else {
@@ -272,7 +273,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
       if (height > 0) {
         spentQuery = { spentHeight: height, chain, network };
       } else {
-        spentQuery = { spentTxid: { $in: params.txs.map(tx => tx._hash) }, chain, network };
+        spentQuery = { spentTxid: { $in: params.txs.map((tx) => tx._hash) }, chain, network };
       }
       const spent = await CoinStorage.collection
         .find(spentQuery)
@@ -286,7 +287,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
         if (!agg[mintTxid]) {
           agg[mintTxid] = {
             total: value,
-            wallets: wallets || []
+            wallets: wallets || [],
           };
         } else {
           agg[mintTxid].total += value;
@@ -300,7 +301,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           if (!agg[coin.spentTxid]) {
             agg[coin.spentTxid] = {
               total: coin.value,
-              wallets: coin.wallets || []
+              wallets: coin.wallets || [],
             };
           } else {
             agg[coin.spentTxid].total += coin.value;
@@ -310,14 +311,14 @@ export class TransactionModel extends BaseModel<ITransaction> {
         return agg;
       }, {});
 
-      let txOps = params.txs.map(tx => {
+      let txOps = params.txs.map((tx) => {
         const txid = tx._hash!;
         const minted = groupedMints[txid] || {};
         const spent = groupedSpends[txid] || {};
         const mintedWallets = minted.wallets || [];
         const spentWallets = spent.wallets || [];
         const txWallets = mintedWallets.concat(spentWallets);
-        const wallets = lodash.uniqBy(txWallets, wallet => wallet.toHexString());
+        const wallets = lodash.uniqBy(txWallets, (wallet) => wallet.toHexString());
         let fee = 0;
         if (groupedMints[txid] && groupedSpends[txid]) {
           // TODO: Fee is negative for mempool txs
@@ -345,12 +346,12 @@ export class TransactionModel extends BaseModel<ITransaction> {
                 inputCount: tx.inputs.length,
                 outputCount: tx.outputs.length,
                 value: tx.outputAmount,
-                wallets
-              }
+                wallets,
+              },
             },
             upsert: true,
-            forceServerObjectId: true
-          }
+            forceServerObjectId: true,
+          },
         };
       });
       return txOps;
@@ -412,7 +413,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           chain: parentChain,
           network,
           mintHeight: height,
-          $or: [{ spentHeight: { $lt: SpentHeightIndicators.minimum } }, { spentHeight: { $gte: forkHeight } }]
+          $or: [{ spentHeight: { $lt: SpentHeightIndicators.minimum } }, { spentHeight: { $gte: forkHeight } }],
         })
         .project({ mintTxid: 1, mintIndex: 1 })
         .toArray();
@@ -446,7 +447,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
               mintTxid: tx._hash,
               mintIndex: index,
               chain,
-              network
+              network,
             },
             update: {
               $set: {
@@ -456,16 +457,16 @@ export class TransactionModel extends BaseModel<ITransaction> {
                 mintHeight: height,
                 coinbase: isCoinbase,
                 value: output.satoshis,
-                script: output.script && output.script.toBuffer()
+                script: output.script && output.script.toBuffer(),
               },
               $setOnInsert: {
                 spentHeight: SpentHeightIndicators.unspent,
-                wallets: []
-              }
+                wallets: [],
+              },
             },
             upsert: true,
-            forceServerObjectId: true
-          }
+            forceServerObjectId: true,
+          },
         });
       }
     }
@@ -482,10 +483,10 @@ export class TransactionModel extends BaseModel<ITransaction> {
         .project({ wallet: 1, address: 1 })
         .toArray();
       if (wallets.length) {
-        mintOps = mintOps.map(mintOp => {
+        mintOps = mintOps.map((mintOp) => {
           let transformedWallets = wallets
-            .filter(wallet => wallet.address === mintOp.updateOne.update.$set.address)
-            .map(wallet => wallet.wallet);
+            .filter((wallet) => wallet.address === mintOp.updateOne.update.$set.address)
+            .map((wallet) => wallet.wallet);
           mintOp.updateOne.update.$set.wallets = transformedWallets;
           delete mintOp.updateOne.update.$setOnInsert.wallets;
           if (!Object.keys(mintOp.updateOne.update.$setOnInsert).length) {
@@ -542,10 +543,10 @@ export class TransactionModel extends BaseModel<ITransaction> {
               mintIndex: inputObj.outputIndex,
               spentHeight: { $lt: SpentHeightIndicators.minimum },
               chain,
-              network
+              network,
             },
-            update: { $set: { spentTxid: tx._hash || tx.hash, spentHeight: height } }
-          }
+            update: { $set: { spentTxid: tx._hash || tx.hash, spentHeight: height } },
+          },
         };
         spendOps.push(updateQuery);
       }
@@ -578,7 +579,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           spentHeight: SpentHeightIndicators.pending,
           mintTxid: spendOp.updateOne.filter.mintTxid,
           mintIndex: spendOp.updateOne.filter.mintIndex,
-          spentTxid: { $ne: spendOp.updateOne.update.$set.spentTxid }
+          spentTxid: { $ne: spendOp.updateOne.update.$set.spentTxid },
         },
         { projection: { spentTxid: 1 } }
       );
@@ -598,7 +599,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
           { mintTxid: { $in: prunedTxs as string[] } },
           { $set: { mintHeight: SpentHeightIndicators.conflicting } },
           { w: 0, j: false, multi: true }
-        )
+        ),
       ]);
     }
     return;
@@ -618,11 +619,11 @@ export class TransactionModel extends BaseModel<ITransaction> {
     return this.collection
       .find({
         blockTime: {
-          $gte: new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000)
+          $gte: new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000),
         },
         txid: {
-          $in: txIds
-        }
+          $in: txIds,
+        },
       })
       // .addCursorFlag('noCursorTimeout', true)
       .count();
@@ -634,8 +635,8 @@ export class TransactionModel extends BaseModel<ITransaction> {
     const firstTransactionTime = await this.collection
       .find({
         txid: {
-          $in: txIds
-        }
+          $in: txIds,
+        },
       })
       // .addCursorFlag('noCursorTimeout', true)
       .sort({ blockTime: 1 })
@@ -651,8 +652,8 @@ export class TransactionModel extends BaseModel<ITransaction> {
     const lastTransactionTime = await this.collection
       .find({
         txid: {
-          $in: txIds
-        }
+          $in: txIds,
+        },
       })
       // .addCursorFlag('noCursorTimeout', true)
       .sort({ blockTime: -1 })
@@ -663,13 +664,20 @@ export class TransactionModel extends BaseModel<ITransaction> {
   }
 
   async getLatestTransactions(_: { query: any }) {
-    const latestTxs = await this.collection
-      .find()
-      // .addCursorFlag('noCursorTimeout', true)
-      .sort({ blockTime: -1 })
-      .limit(10)
-      .toArray();
-    return latestTxs;
+    const cacheName = 'latestTransaction';
+    const CACHE_TTL = 600 * 1000;
+    const cache = nodeCache.get(cacheName);
+    if (!cache) {
+      const latestTxs = await this.collection
+        .find()
+        .addCursorFlag('noCursorTimeout', true)
+        .sort({ blockTime: -1 })
+        .limit(10)
+        .toArray();
+      nodeCache.set(cacheName, latestTxs, CACHE_TTL);
+      return latestTxs;
+    }
+    return cache;
   }
 
   _apiTransform(tx: Partial<MongoBound<ITransaction>>, options?: TransformOptions): TransactionJSON | string {
@@ -678,7 +686,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
       txid: tx.txid || '',
       network: tx.network || '',
       chain: tx.chain || '',
-      blockHeight: tx.blockHeight === undefined ? -1 : tx.blockHeight ,
+      blockHeight: tx.blockHeight === undefined ? -1 : tx.blockHeight,
       blockHash: tx.blockHash || '',
       blockTime: tx.blockTime ? tx.blockTime.toISOString() : '',
       blockTimeNormalized: tx.blockTimeNormalized ? tx.blockTimeNormalized.toISOString() : '',

@@ -18,7 +18,8 @@ import { StringifyJsonStream } from '../../../utils/stringifyJsonStream';
 import { StateStorage } from '../../../models/state';
 import { SpentHeightIndicators, CoinJSON } from '../../../types/Coin';
 import { Config } from '../../../services/config';
-import { STATS_URL } from '../../../constants/config';
+import { CACHE_TTL_SECONDS, STATS_URL } from '../../../constants/config';
+import nodeCache from '../../../NodeCache';
 
 @LoggifyClass
 export class InternalStateProvider implements CSP.IChainStateService {
@@ -97,14 +98,14 @@ export class InternalStateProvider implements CSP.IChainStateService {
   }
 
   async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
-    const {chain, network} = params;
+    const { chain, network } = params;
     const total = await BlockStorage.collection.count({
       chain,
       network,
       processed: true,
-      btcTxHash: { '$exists': true }
-    })
-    return { total }
+      btcTxHash: { $exists: true },
+    });
+    return { total };
   }
 
   async getBlocks(params: CSP.GetBlockParams) {
@@ -572,21 +573,30 @@ export class InternalStateProvider implements CSP.IChainStateService {
 
   async getCoinCalculation(params: CSP.GetCoinCalculation) {
     const { chain, network } = params;
-    const result = await CoinStorage.collection
-      .aggregate([
-        {
-          $match: {
-            chain: chain,
-            network: network,
-            address: { $ne: 'false' },
-            spentHeight: { $lt: SpentHeightIndicators.minimum },
-            mintHeight: { $gt: SpentHeightIndicators.conflicting },
+    const cacheName = ``;
+    const CACHE_COIN_CALCULATION_TTL = 60;
+    const cache = nodeCache.get(cacheName);
+
+    if (!cache) {
+      const result = await CoinStorage.collection
+        .aggregate([
+          {
+            $match: {
+              chain: chain,
+              network: network,
+              address: { $ne: 'false' },
+              spentHeight: { $lt: SpentHeightIndicators.minimum },
+              mintHeight: { $gt: SpentHeightIndicators.conflicting },
+            },
           },
-        },
-        { $group: { _id: null, total: { $sum: '$value' } } },
-      ])
-      .toArray();
-    return result[0] || { total: 0 };
+          { $group: { _id: null, total: { $sum: '$value' } } },
+        ])
+        .toArray();
+      const resp = result[0] || { total: 0 };
+      nodeCache.set(cacheName, resp, CACHE_COIN_CALCULATION_TTL);
+      return resp;
+    }
+    return cache;
   }
 
   async getLocalTip({ chain, network }) {
@@ -602,16 +612,16 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const query =
       startHeight && endHeight
         ? {
-          processed: true,
-          chain,
-          network,
-          height: { $gt: startHeight, $lt: endHeight },
-        }
+            processed: true,
+            chain,
+            network,
+            height: { $gt: startHeight, $lt: endHeight },
+          }
         : {
-          processed: true,
-          chain,
-          network,
-        };
+            processed: true,
+            chain,
+            network,
+          };
     const locatorBlocks = await BlockStorage.collection
       .find(query, { sort: { height: -1 }, limit: 30 })
       // .addCursorFlag('noCursorTimeout', true)
