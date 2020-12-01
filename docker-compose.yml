@@ -60,7 +60,7 @@ services:
     container_name: insight
     build: .
     image: insight
-    command: ["npm", "run", "insight-previous:prod"]
+    command: ['npm', 'run', 'insight-previous:prod']
     networks:
       - default
     ports:
