@@ -58,9 +58,27 @@ export class AboutComponent implements OnInit, OnDestroy {
       tokens: { supply },
       blockHeight,
       chain,
+      listCommunities
     } = resp;
 
-    return { rewards, supply, blockHeight, chain };
+    const updatedListCommunities = {
+      AnchorReward: 0,
+      IncentiveFunding: 0
+    };
+
+    if (typeof listCommunities !== 'string') {
+      updatedListCommunities['AnchorReward'] = listCommunities.AnchorReward;
+      updatedListCommunities['IncentiveFunding'] =
+        listCommunities.IncentiveFunding;
+    }
+
+    return {
+      rewards,
+      supply,
+      blockHeight,
+      chain,
+      listCommunities: updatedListCommunities
+    };
   }
 
   public goToRichList() {
@@ -68,6 +86,7 @@ export class AboutComponent implements OnInit, OnDestroy {
     const network = this.defaultProvider.getDefault('%NETWORK%');
     this.redirProvider.redir('rich-list', { chain, network });
   }
+
   public roundingValue(value: string | number) {
     return roundingDown(value);
   }
