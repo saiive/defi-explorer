@@ -92,7 +92,19 @@ export class InternalStateProvider implements CSP.IChainStateService {
   streamBlocks(params: CSP.StreamBlocksParams) {
     const { req, res } = params;
     const { query, options } = this.getBlocksQuery(params);
+    // @ts-ignore
     Storage.apiStreamingFind(BlockStorage, query, options, req, res);
+  }
+
+  async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
+    const {chain, network} = params;
+    const total = await BlockStorage.collection.count({
+      chain,
+      network,
+      processed: true,
+      btcTxHash: { '$exists': true }
+    })
+    return { total }
   }
 
   async getBlocks(params: CSP.GetBlockParams) {
@@ -189,6 +201,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     }
     const tip = await this.getLocalTip(params);
     const tipHeight = tip ? tip.height : 0;
+    // @ts-ignore
     return Storage.apiStreamingFind(TransactionStorage, query, args, req, res, (t) => {
       let confirmations = 0;
       if (t.blockHeight !== undefined && t.blockHeight >= 0) {

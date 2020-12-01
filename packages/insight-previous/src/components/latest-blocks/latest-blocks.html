@@ -56,7 +56,7 @@
       </ion-row>
 
       <ion-row *ngIf="showLoadMoreButton || showAnchoredBlocksButton">
-        <ion-infinite-scroll (ionInfinite)="loadMoreBlocks($event)">
+        <ion-infinite-scroll (ionInfinite)="loadMoreBlocks($event)" *ngIf="enableInfiniteLoader">
           <loader [type]="'grid'"></loader>
         </ion-infinite-scroll>
       </ion-row>

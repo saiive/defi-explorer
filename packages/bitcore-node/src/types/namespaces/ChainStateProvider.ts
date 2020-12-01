@@ -126,10 +126,12 @@ export declare namespace CSP {
     req: Request;
     res: Response;
   };
-  export type GetStatsParams = ChainNetwork
+  export type GetStatsParams = ChainNetwork;
 
 
   export type GetCoinCalculation = ChainNetwork;
+
+  export type GetTotalAnchoredBlocks = ChainNetwork;
 
   export type Provider<T> = { get(params: { chain: string }): T };
   export type ChainStateProvider = Provider<IChainStateService> & IChainStateService;
@@ -140,6 +142,7 @@ export declare namespace CSP {
     getRichList(params: GetRichListParams): Promise<any>;
     getBlock(params: GetBlockParams): Promise<IBlock | string>;
     streamBlocks(params: StreamBlocksParams): any;
+    getTotalAnchoredBlocks(params: GetTotalAnchoredBlocks): any;
     getFee(params: GetEstimateSmartFeeParams): any;
     broadcastTransaction(params: BroadcastTransactionParams): Promise<any>;
     createWallet(params: CreateWalletParams): Promise<IWallet>;

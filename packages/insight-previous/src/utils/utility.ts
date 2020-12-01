@@ -15,5 +15,9 @@ export const setIntervalSynchronous = (func, delay) => {
 };
 
 export const roundingDown = (val: string | number) => {
+  if(isNaN(parseFloat(val))) {
+    return val;
+  }
   return new Big(val).round(2, 0).toString();
 };
+

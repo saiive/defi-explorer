@@ -6,7 +6,7 @@ import { setIntervalSynchronous, roundingDown } from '../../utils/utility';
 
 @Component({
   selector: 'about',
-  templateUrl: 'about.html'
+  templateUrl: 'about.html',
 })
 export class AboutComponent implements OnInit, OnDestroy {
   public quickStats = { rewards: {}, supply: {}, blockHeight: '', chain: '' };
@@ -33,17 +33,19 @@ export class AboutComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    if (this.reloadInterval) this.reloadInterval();
+    if (this.reloadInterval) {
+      this.reloadInterval();
+    }
   }
 
   private loadQuickStats() {
     this.apiProvider.getStats().subscribe(
-      response => {
+      (response) => {
         this.quickStats = this.processResponse(response);
         this.errorMessage = '';
         this.loading = false;
       },
-      err => {
+      (err) => {
         this.errorMessage = err.error || err.message;
         this.loading = false;
       }
