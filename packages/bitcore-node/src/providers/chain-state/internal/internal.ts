@@ -72,7 +72,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
       spentHeight: { $lt: SpentHeightIndicators.minimum },
       mintHeight: { $gt: SpentHeightIndicators.conflicting },
     };
-    let balance = await CoinStorage.getBalance({ query });
+    let balance:any = await CoinStorage.getBalance({ query });
     return balance;
   }
 
@@ -574,7 +574,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
   async getCoinCalculation(params: CSP.GetCoinCalculation) {
     const { chain, network } = params;
     const cacheName = ``;
-    const CACHE_COIN_CALCULATION_TTL = 60;
+    const CACHE_TTL_SECONDS = 60 * 1000;
     const cache = nodeCache.get(cacheName);
 
     if (!cache) {
@@ -593,7 +593,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
         ])
         .toArray();
       const resp = result[0] || { total: 0 };
-      nodeCache.set(cacheName, resp, CACHE_COIN_CALCULATION_TTL);
+      nodeCache.set(cacheName, resp, CACHE_TTL_SECONDS);
       return resp;
     }
     return cache;

@@ -7,7 +7,7 @@ import { SpentHeightIndicators, CoinJSON } from '../types/Coin';
 import { valueOrDefault } from '../utils/check';
 import { StorageService } from '../services/storage';
 import { BlockStorage } from './block';
-import { RICH_LIST_PAGE_SIZE, CACHE_TTL_SECONDS } from '../constants/config';
+import { RICH_LIST_PAGE_SIZE } from '../constants/config';
 import nodeCache from '../NodeCache';
 
 export type ICoin = {
@@ -84,13 +84,8 @@ export class CoinModel extends BaseModel<ICoin> {
     const pageSize =
       !params.query.pageSize || params.query.pageSize === NaN ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
     const cacheKey = `${pageNo}-${pageSize}`;
-    const totalCacheName = 'total';
-    const cache = nodeCache.mget([cacheKey, totalCacheName]);
-    console.log('************************');
-    console.log({
-      cache,
-    });
-    console.log('************************');
+    const cache = nodeCache.get(cacheKey);
+    const CACHE_TTL_SECONDS = 300 * 1000;
 
     const baseCodition = [
       {
@@ -108,54 +103,44 @@ export class CoinModel extends BaseModel<ICoin> {
           balance: 1,
         },
       },
+      { $sort: { balance: -1 } },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: 1 },
+          data: {
+            $push: {
+              address: '$address',
+              balance: '$balance',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          total: 1,
+          data: {
+            $slice: ['$data', pageSize * (pageNo - 1), pageSize],
+          },
+        },
+      },
     ];
 
-    const additionalCondition = [{ $sort: { balance: -1 } }, { $skip: pageSize * (pageNo - 1) }, { $limit: pageSize }];
-
-    const response = {};
-
-    const fetchRichList = async (conditions) => {
+    // Have time stamp within the last 300 seconds, skip fetching again.
+    if (!cache) {
       const result: any = await this.collection
-        .aggregate(conditions, options)
+        .aggregate(baseCodition, options)
         // @ts-ignore
         // .addCursorFlag('noCursorTimeout', true)
         .toArray();
-      return result || [];
-    };
-
-    // Have time stamp within the last 300 seconds, skip fetching again.
-    if (!cache[cacheKey]) {
-      console.log('==================================RichList');
-      console.log('Going into Cache');
-      console.log('==================================RichList');
-      const updatedConditions = [...baseCodition, ...additionalCondition];
-
-      const result: any = await fetchRichList(updatedConditions);
 
       // add data to cache
-      nodeCache.set(cacheKey, result, CACHE_TTL_SECONDS);
-      response['data'] = result;
-    } else {
-      response['data'] = cache[cacheKey];
+      const resp = result[0] || {};
+      nodeCache.set(cacheKey, resp, CACHE_TTL_SECONDS);
+      return resp;
     }
 
-    if (!cache[totalCacheName]) {
-      console.log('==================================TotalCount');
-      console.log('Going into Cache');
-      console.log('==================================TotalCount');
-      const result = await this.collection
-        .aggregate([...baseCodition, { $count: 'total' }], options)
-        // @ts-ignore
-        // .addCursorFlag('noCursorTimeout', true)
-        .toArray();
-      //@ts-ignore
-      const totalRows = result.length && result[0].total ? result[0].total : 0;
-      nodeCache.set(totalCacheName, totalRows, CACHE_TTL_SECONDS);
-      response[totalCacheName] = totalRows;
-    } else {
-      response[totalCacheName] = cache[totalCacheName];
-    }
-    return response;
+    return cache;
   }
 
   async getTransactionIdsForAddress(params: { query: any }) {
@@ -166,14 +151,11 @@ export class CoinModel extends BaseModel<ICoin> {
 
   async getBalance(params: { query: any }, options: CollectionAggregationOptions = {}) {
     let { query } = params;
-    const CACHE_TTL_SECONDS_GET_BALANCE = 30 * 1000;
+    const CACHE_TTL_SECONDS = 60 * 1000;
     const cacheName = `${query.address}-balance`;
     const cache = nodeCache.get(cacheName);
 
     if (!cache) {
-      console.log('==================================GETBALANCE');
-      console.log('Going into Cache');
-      console.log('==================================GETBALANCE');
       const result = await this.collection
         .aggregate<{ _id: string; balance: number }>(
           [
@@ -209,7 +191,7 @@ export class CoinModel extends BaseModel<ICoin> {
         },
         { confirmed: 0, unconfirmed: 0, balance: 0 }
       );
-      nodeCache.set(cacheName, response, CACHE_TTL_SECONDS_GET_BALANCE);
+      nodeCache.set(cacheName, response, CACHE_TTL_SECONDS);
       return response;
     }
     return cache;

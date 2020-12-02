@@ -1,9 +1,9 @@
 on:
   release:
     types: [created]
-  # push:
-  #   branches:
-  #     - feature/docdb-iscustomtxapplied
+  push:
+    branches:
+      - feature/docdb-iscustomtxapplied
 
 name: Deploy to Amazon ECS
 
