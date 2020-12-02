@@ -670,7 +670,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     if (!cache) {
       const latestTxs = await this.collection
         .find()
-        .addCursorFlag('noCursorTimeout', true)
+        // .addCursorFlag('noCursorTimeout', true)
         .sort({ blockTime: -1 })
         .limit(10)
         .toArray();
