@@ -665,7 +665,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
 
   async getLatestTransactions(_: { query: any }) {
     const cacheName = 'latestTransaction';
-    const CACHE_TTL_SECONDS = 60 * 1000;
+    const CACHE_TTL_SECONDS = 60;
     const cache = nodeCache.get(cacheName);
     if (!cache) {
       const latestTxs = await this.collection

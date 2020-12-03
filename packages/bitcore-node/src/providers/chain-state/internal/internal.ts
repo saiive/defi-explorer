@@ -18,7 +18,7 @@ import { StringifyJsonStream } from '../../../utils/stringifyJsonStream';
 import { StateStorage } from '../../../models/state';
 import { SpentHeightIndicators, CoinJSON } from '../../../types/Coin';
 import { Config } from '../../../services/config';
-import { CACHE_TTL_SECONDS, STATS_URL } from '../../../constants/config';
+import { STATS_URL } from '../../../constants/config';
 import nodeCache from '../../../NodeCache';
 
 @LoggifyClass
@@ -574,7 +574,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
   async getCoinCalculation(params: CSP.GetCoinCalculation) {
     const { chain, network } = params;
     const cacheName = ``;
-    const CACHE_TTL_SECONDS = 60 * 1000;
+    const CACHE_TTL_SECONDS = 60;
     const cache = nodeCache.get(cacheName);
 
     if (!cache) {
