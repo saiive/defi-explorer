@@ -58,6 +58,7 @@ export class TransactionPage {
     private logger: Logger,
     private priceProvider: PriceProvider,
   ) {
+    this.JSON = JSON;
     this.keys = keys;
     this.txId = navParams.get('txId');
     this.vout = navParams.get('vout');
