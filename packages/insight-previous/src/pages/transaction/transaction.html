@@ -367,7 +367,7 @@
               to
               <ion-note item-end>
                 <div *ngFor="let key of keys(tx.customData.to)">
-                  {{ key }}: {{ tx.customData.to[key] }}
+                  {{ key }}: {{ JSON.stringify(tx.customData.to[key]) }}
                 </div>
               </ion-note>
             </ion-item>
@@ -395,11 +395,17 @@
                 </ion-item>
             </ng-container>
             <ng-container *ngIf="tx.txType === 'B'">
+              <ion-item>
+                From
+                <ion-note item-end>
+                  {{ tx.customData.from }}
+                </ion-note>
+              </ion-item>
             <ion-item>
               To
               <ion-note item-end>
                 <div *ngFor="let key of keys(tx.customData.to)">
-                  {{ key }}: {{ tx.customData.to[key] }}
+                  {{ key }}: {{ JSON.stringify(tx.customData.to[key]) }}
                 </div>
               </ion-note>
             </ion-item>
