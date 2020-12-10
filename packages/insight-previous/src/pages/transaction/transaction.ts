@@ -45,6 +45,7 @@ export class TransactionPage {
   public errorMessage: string;
   public isSkipped: boolean;
   public keys: (object?: any) => string[];
+  public JSON: JSON;
 
   private txId: string;
   private chainNetwork: ChainNetwork;
