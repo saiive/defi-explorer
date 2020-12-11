@@ -14,9 +14,9 @@ export const setIntervalSynchronous = (func, delay) => {
   return clear;
 };
 
-export const roundingDown = val => {
-  if (deciRegExp.test(val)) {
-    return new Big(val).round(2, 0).toString();
+export const roundingDown = (val: string | number) => {
+  if(isNaN(parseFloat(String(val)))) {
+    return val;
   }
-  return val;
+  return new Big(val).round(2, 0).toString();
 };
