@@ -126,7 +126,7 @@
             <ion-item>
               Limit
               <ion-note item-end>
-                {{ tx.customData.limit }}
+                {{ JSON.stringify(tx.customData.limit) }}
               </ion-note>
             </ion-item>
             <ion-item>
@@ -180,7 +180,7 @@
               </ion-note>
             </ion-item>
             <ion-item>
-              New token
+              <h5>New token</h5>
             </ion-item>
             <ion-item>
               Symbol
@@ -203,7 +203,7 @@
             <ion-item>
               Limit
               <ion-note item-end>
-                {{ tx.customData.newToken.limit }}
+                {{ JSON.stringify(tx.customData.newToken.limit) }}
               </ion-note>
             </ion-item>
             <ion-item>
