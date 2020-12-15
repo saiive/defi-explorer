@@ -26,6 +26,7 @@ services:
       - 19554:19554
     environment:
       - NETWORK=${NETWORK:?NETWORK env required}
+    # command: /app/bin/defid -reindex
     volumes:
       - node_data:/data
       - ./defi.${NETWORK}.conf:/data/defi.conf

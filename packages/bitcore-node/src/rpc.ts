@@ -26,7 +26,7 @@ export class RPC {
           if (res.body) {
             if (res.body.error) {
               return callback(res.body.error);
-            } else if (res.body.result) {
+            } else if (res.body.result !== undefined) {
               return callback(null, res.body && res.body.result);
             } else {
               return callback({ msg: 'No error or body found', body: res.body });
