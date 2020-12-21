@@ -58,7 +58,8 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
           jsonrpc: '2.0',
           id: 0
         },
-        (_, data) => resolve(data?.result)
+        // @ts-ignore
+        (_, data) => resolve(data.result)
       )
     );
   }
@@ -103,7 +104,7 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
     let query = { chain: this.chain, wallet: walletId };
     return WalletAddressStorage.collection
       .find(query)
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .toArray();
   }
 

@@ -66,7 +66,8 @@ export class ParityRPC {
           jsonrpc: '2.0',
           id: 0
         },
-        (_, data) => resolve(data?.result as Array<ParityTraceResponse>)
+        // @ts-ignore
+        (_, data) => resolve(data.result as Array<ParityTraceResponse>)
       )
     );
   }

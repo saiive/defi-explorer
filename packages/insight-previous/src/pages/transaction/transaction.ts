@@ -1,11 +1,30 @@
 import { Component, Injectable } from '@angular/core';
 import { IonicPage, NavParams } from 'ionic-angular';
+import { keys } from 'lodash';
 import { ApiProvider, ChainNetwork } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
 import { Logger } from '../../providers/logger/logger';
 import { PriceProvider } from '../../providers/price/price';
 import { RedirProvider } from '../../providers/redir/redir';
 import { TxsProvider } from '../../providers/transactions/transactions';
+
+const CUSTOM_TX_TYPE = {
+  C: 'createMasternode',
+  R: 'resignMasternode',
+  T: 'createToken',
+  M: 'mintToken',
+  N: 'updateToken',
+  n: 'updateTokenAny',
+  p: 'createPoolPair',
+  u: 'updatePoolPair',
+  s: 'poolSwap',
+  l: 'addPoolLiquidity',
+  r: 'removePoolLiquidity',
+  U: 'utxosToAccount',
+  b: 'accountToUtxos',
+  B: 'accountToAccount',
+  G: 'setGovVariable'
+}
 
 @Injectable()
 @IonicPage({
@@ -24,6 +43,9 @@ export class TransactionPage {
   public fromVout: boolean;
   public confirmations: number;
   public errorMessage: string;
+  public isSkipped: boolean;
+  public keys: (object?: any) => string[];
+  public JSON: JSON;
 
   private txId: string;
   private chainNetwork: ChainNetwork;
@@ -35,8 +57,10 @@ export class TransactionPage {
     private apiProvider: ApiProvider,
     private txProvider: TxsProvider,
     private logger: Logger,
-    private priceProvider: PriceProvider
+    private priceProvider: PriceProvider,
   ) {
+    this.JSON = JSON;
+    this.keys = keys;
     this.txId = navParams.get('txId');
     this.vout = navParams.get('vout');
     this.fromVout = navParams.get('fromVout') || undefined;
@@ -69,6 +93,7 @@ export class TransactionPage {
             }
             this.confirmations = confirmations;
           });
+        this.isSkipped = !this.tx.isCustomTxApplied && this.tx.chain === 'DFI' && this.tx.isCustom;
         // Be aware that the tx component is loading data into the tx object
       },
       err => {
@@ -85,5 +110,9 @@ export class TransactionPage {
       chain: this.chainNetwork.chain,
       network: this.chainNetwork.network
     });
+  }
+
+  public txType(type: string): string {
+    return CUSTOM_TX_TYPE[type];
   }
 }

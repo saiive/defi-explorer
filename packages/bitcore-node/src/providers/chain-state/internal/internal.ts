@@ -19,6 +19,7 @@ import { StateStorage } from '../../../models/state';
 import { SpentHeightIndicators, CoinJSON } from '../../../types/Coin';
 import { Config } from '../../../services/config';
 import { STATS_URL } from '../../../constants/config';
+import nodeCache from '../../../NodeCache';
 
 @LoggifyClass
 export class InternalStateProvider implements CSP.IChainStateService {
@@ -71,7 +72,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
       spentHeight: { $lt: SpentHeightIndicators.minimum },
       mintHeight: { $gt: SpentHeightIndicators.conflicting },
     };
-    let balance = await CoinStorage.getBalance({ query });
+    let balance:any = await CoinStorage.getBalance({ query });
     return balance;
   }
 
@@ -97,19 +98,19 @@ export class InternalStateProvider implements CSP.IChainStateService {
   }
 
   async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
-    const {chain, network} = params;
+    const { chain, network } = params;
     const total = await BlockStorage.collection.count({
       chain,
       network,
       processed: true,
-      btcTxHash: { '$exists': true }
-    })
-    return { total }
+      btcTxHash: { $exists: true },
+    });
+    return { total };
   }
 
   async getBlocks(params: CSP.GetBlockParams) {
     const { query, options } = this.getBlocksQuery(params);
-    let cursor = BlockStorage.collection.find<IBlock>(query, options).addCursorFlag('noCursorTimeout', true);
+    let cursor = BlockStorage.collection.find<IBlock>(query, options);//.addCursorFlag('noCursorTimeout', true);
     if (options.sort) {
       cursor = cursor.sort(options.sort);
     }
@@ -317,7 +318,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const wallet = await WalletStorage.collection.findOne({ pubKey });
     const walletId = wallet!._id!;
     const query = { chain, network, wallets: walletId, spentHeight: { $gte: SpentHeightIndicators.minimum } };
-    const cursor = CoinStorage.collection.find(query).addCursorFlag('noCursorTimeout', true);
+    const cursor = CoinStorage.collection.find(query);//.addCursorFlag('noCursorTimeout', true);
     const seen = {};
     const stringifyWallets = (wallets: Array<ObjectId>) => wallets.map((w) => w.toHexString());
     const allMissingAddresses = new Array<string>();
@@ -331,7 +332,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
             // find coins that were spent with my coins
             const spends = await CoinStorage.collection
               .find({ chain, network, spentTxid: spentCoin.spentTxid })
-              .addCursorFlag('noCursorTimeout', true)
+              // .addCursorFlag('noCursorTimeout', true)
               .toArray();
             const missing = spends
               .filter((coin) => !stringifyWallets(coin.wallets).includes(walletId.toHexString()))
@@ -404,7 +405,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const transactionStream = TransactionStorage.collection
       .find(query)
       .sort({ blockTimeNormalized: 1 })
-      .addCursorFlag('noCursorTimeout', true);
+      // .addCursorFlag('noCursorTimeout', true);
     const listTransactionsStream = new ListTransactionsStream(wallet);
     transactionStream.pipe(listTransactionsStream).pipe(res);
   }
@@ -479,7 +480,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
         network,
         spentTxid: txid,
       })
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .toArray();
 
     const outputs = await CoinStorage.collection
@@ -488,7 +489,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
         network,
         mintTxid: txid,
       })
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .toArray();
 
     return {
@@ -572,21 +573,30 @@ export class InternalStateProvider implements CSP.IChainStateService {
 
   async getCoinCalculation(params: CSP.GetCoinCalculation) {
     const { chain, network } = params;
-    const result = await CoinStorage.collection
-      .aggregate([
-        {
-          $match: {
-            chain: chain,
-            network: network,
-            address: { $ne: 'false' },
-            spentHeight: { $lt: SpentHeightIndicators.minimum },
-            mintHeight: { $gt: SpentHeightIndicators.conflicting },
+    const cacheName = ``;
+    const CACHE_TTL_SECONDS = 60;
+    const cache = nodeCache.get(cacheName);
+
+    if (!cache) {
+      const result = await CoinStorage.collection
+        .aggregate([
+          {
+            $match: {
+              chain: chain,
+              network: network,
+              address: { $ne: 'false' },
+              spentHeight: { $lt: SpentHeightIndicators.minimum },
+              mintHeight: { $gt: SpentHeightIndicators.conflicting },
+            },
           },
-        },
-        { $group: { _id: null, total: { $sum: '$value' } } },
-      ])
-      .toArray();
-    return result[0] || { total: 0 };
+          { $group: { _id: null, total: { $sum: '$value' } } },
+        ])
+        .toArray();
+      const resp = result[0] || { total: 0 };
+      nodeCache.set(cacheName, resp, CACHE_TTL_SECONDS);
+      return resp;
+    }
+    return cache;
   }
 
   async getLocalTip({ chain, network }) {
@@ -602,19 +612,19 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const query =
       startHeight && endHeight
         ? {
-          processed: true,
-          chain,
-          network,
-          height: { $gt: startHeight, $lt: endHeight },
-        }
+            processed: true,
+            chain,
+            network,
+            height: { $gt: startHeight, $lt: endHeight },
+          }
         : {
-          processed: true,
-          chain,
-          network,
-        };
+            processed: true,
+            chain,
+            network,
+          };
     const locatorBlocks = await BlockStorage.collection
       .find(query, { sort: { height: -1 }, limit: 30 })
-      .addCursorFlag('noCursorTimeout', true)
+      // .addCursorFlag('noCursorTimeout', true)
       .toArray();
     if (locatorBlocks.length < 2) {
       return [Array(65).join('0')];

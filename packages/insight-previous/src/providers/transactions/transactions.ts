@@ -9,7 +9,125 @@ interface CoinsApiResponse {
   inputs: ApiCoin[];
   outputs: ApiCoin[];
 }
-export interface ApiTx {
+
+export type CustomTxCreateMasternode = {
+  operatorType: number,
+  operatorAuthAddress: string,
+}
+
+export type CustomTxResignMasternode = {
+  nodeId: string;
+}
+
+export type CustomTxCreateToken = {
+  symbol: string;
+  name: string;
+  decimal: number;
+  limit: number;
+  flags: number;
+}
+
+export type CustomTxMintToken = {
+  minted: Map<any, any>;
+}
+
+export type CustomTxUpdateToken = {
+  tokenTx: string;
+  isDAT: number;
+}
+
+export type CustomTxUpdateTokenAny = {
+  tokenTx: string;
+  newToken: {
+    symbol: string;
+    name: string;
+    decimal: number;
+    limit: number;
+    mintable: number;
+    tradeable: number;
+    isDAT: number;
+  };
+}
+
+export type CustomTxCreatePoolPair = {
+  idTokenA: string;
+  idTokenB: string;
+  commission: number;
+  ownerAddress: string;
+  status: string;
+  pairSymbol: string;
+}
+
+export type CustomTxUpdatePoolPair = {
+  pollId: string;
+  status: string;
+  commission: number;
+  ownerAddress: string;
+}
+
+export type CustomTxPoolSwap = {
+  from: string;
+  to: string;
+  idTokenFrom: string;
+  idTokenTo: string;
+  amountFrom: number;
+  maxPrice: {
+    integer: number;
+    fraction: number;
+  }
+}
+
+export type CustomTxAddPoolLiquidity = {
+  from: Map<any, any>;
+  shareAddress: string;
+}
+
+export type CustomTxRemovePoolLiquidity = {
+  from: string;
+  shareAddress: string;
+  nValue: number;
+}
+
+export type CustomTxSetGovVariable = {
+  name: string;
+}
+
+export type CustomTxUtxosToAccount = {
+  to: Map<any, any>;
+}
+
+export type CustomTxAccountToUtxos = {
+  from: string;
+  balances: Map<any, any>;
+  mintingOutputsStart: string;
+}
+
+export type CustomTxAccountToAccount = {
+  from: string;
+  to: Map<any, any>;
+}
+
+interface CustomTx {
+  isCustom: boolean;
+  txType: 'C' | 'R' | 'T' | 'M' | 'N' | 'n' | 'p' | 'u' | 's' | 'l' | 'r' | 'U' | 'b' | 'B' | 'G' | null;
+  customData: CustomTxCreateMasternode |
+    CustomTxResignMasternode |
+    CustomTxCreateToken |
+    CustomTxMintToken |
+    CustomTxUpdateToken |
+    CustomTxUpdateTokenAny |
+    CustomTxCreatePoolPair |
+    CustomTxUpdatePoolPair |
+    CustomTxPoolSwap |
+    CustomTxAddPoolLiquidity |
+    CustomTxRemovePoolLiquidity |
+    CustomTxSetGovVariable |
+    CustomTxUtxosToAccount |
+    CustomTxAccountToUtxos |
+    CustomTxAccountToAccount | null;
+}
+
+export interface ApiTx extends CustomTx {
   address: string;
   chain: string;
   network: string;
@@ -30,6 +148,7 @@ export interface ApiTx {
   spentHeight: number;
   value: number;
   version: number;
+  isCustomTxApplied: boolean;
 }
 
 export interface ApiCoin {
@@ -94,7 +213,7 @@ export interface AppOutput {
   spentHeight: null;
 }
 
-export interface AppTx {
+export interface AppTx extends CustomTx {
   txid: string;
   blockhash: string;
   version: number;
@@ -109,6 +228,8 @@ export interface AppTx {
   fee: number;
   blockheight: number;
   blocktime: number;
+  isCustomTxApplied: boolean;
+  chain: string;
 }
 
 @Injectable()
@@ -144,7 +265,12 @@ export class TxsProvider {
       vin: [], // populated when coins are retrieved
       vout: [], // populated when coins are retrieved
       valueOut: tx.value,
-      version: tx.version
+      version: tx.version,
+      isCustom: tx.isCustom || false,
+      txType: tx.txType || null,
+      customData: tx.customData || null,
+      isCustomTxApplied: tx.isCustomTxApplied || false,
+      chain: tx.chain,
     };
   }
 

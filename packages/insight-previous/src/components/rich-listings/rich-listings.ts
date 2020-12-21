@@ -34,7 +34,7 @@ export class RichListingsComponent implements OnDestroy {
     public logger: Logger
   ) { }
 
-  public onInitBase(pageNum: number = 1, pageSize: number = 50): void {
+  public onInitBase(pageNum: number = 1, pageSize: number = 200): void {
     this.loadAddressLists(pageNum, pageSize);
     const seconds = 15;
     this.ngZone.runOutsideAngular(() => {

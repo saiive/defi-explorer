@@ -27,7 +27,7 @@ export class RichListPage implements AfterViewInit, AfterViewChecked {
   private chainNetwork: ChainNetwork;
   public network: string;
   public pageNum = 1;
-  public pageSize = 50;
+  public pageSize = 200;
   public enableInfiniteScroller = false;
   constructor(
     public nav: Nav,

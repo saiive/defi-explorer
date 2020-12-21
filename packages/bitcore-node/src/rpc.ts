@@ -26,7 +26,7 @@ export class RPC {
           if (res.body) {
             if (res.body.error) {
               return callback(res.body.error);
-            } else if (res.body.result) {
+            } else if (res.body.result !== undefined) {
               return callback(null, res.body && res.body.result);
             } else {
               return callback({ msg: 'No error or body found', body: res.body });
@@ -111,6 +111,10 @@ export class RPC {
 
   async getEstimateFee(target: number) {
     return this.asyncCall('estimatefee', [target]);
+  }
+
+  async getCustomTxApplied(txid: string, blockHeight: number) {
+    return this.asyncCall('isappliedcustomtx', [txid, blockHeight]);
   }
 }
 

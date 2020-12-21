@@ -33,53 +33,72 @@ a {
   opacity: 0.7;
 }
 
+.title {
+  display: flex;
+}
+
+.button-skipped {
+  margin-left: auto;
+  margin-right: 0;
+  background: none;
+}
+
 .list--summary {
-  ion-label {
-    color: #334;
-    font-weight: bold;
-  }
+ion-label {
+color: #334;
+font-weight: bold;
+}
 
-  ion-item {
-    color: #99a;
-    font-size: 1.125rem;
-    padding: 0;
-  }
+ion-item {
+color: #99a;
+font-size: 1.125rem;
+padding: 0;
+}
 
-  ion-note {
-    color: #99a;
-    max-width: 80%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+ion-note {
+color: #99a;
+max-width: 80%;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+&--disable {
+ion-label {
+  color: #99a;
+}
+a {
+  color: #99a;
+}
+}
 }
 
 .grid--table {
-  margin: 10px 0 20px;
+margin: 10px 0 20px;
 
-  .col {
-    padding: 1em 0.6em;
-  }
+.col {
+padding: 1em 0.6em;
+}
 
-  ion-row {
+ion-row {
 
-    &:first-child {
-      background-color: #fff;
-      border-top: none;
-    }
+&:first-child {
+  background-color: #fff;
+  border-top: none;
+}
 
-    &:nth-child(even) {
-      background-color: #f8f8f9;
-    }
+&:nth-child(even) {
+  background-color: #f8f8f9;
+}
 
-    &:last-child {
-      background-color: #fff;
-    }
-  }
+&:last-child {
+  background-color: #fff;
+}
+}
 }
 
 ion-infinite-scroll{
-  width: 100%;
+width: 100%;
 }
 
 // Shared Sass variables, which can be used to adjust Ionic's
@@ -92,25 +111,25 @@ ion-infinite-scroll{
 // Desktop
 
 ion-header .toolbar {
- margin: auto;
+margin: auto;
 }
 
 ion-footer .toolbar[fixed] {
-  min-height: 36px;
+min-height: 36px;
 }
 
 @media (min-width: map-get($grid-breakpoints, lg)) {
- ion-navbar.toolbar,
- ion-header .toolbar[fixed],
- ion-footer .toolbar[fixed],
- ion-tabs .tabbar {
-   margin: 0;
-   padding-right: calc((100% - #{map-get($grid-max-widths, lg)}) / 2);
-   padding-left: calc((100% - #{map-get($grid-max-widths, lg)}) / 2);
- }
+ion-navbar.toolbar,
+ion-header .toolbar[fixed],
+ion-footer .toolbar[fixed],
+ion-tabs .tabbar {
+margin: 0;
+padding-right: calc((100% - #{map-get($grid-max-widths, lg)}) / 2);
+padding-left: calc((100% - #{map-get($grid-max-widths, lg)}) / 2);
+}
 }
 
 a.disabled-link{
-  color: #99a;
-  pointer-events: none;
+color: #99a;
+pointer-events: none;
 }

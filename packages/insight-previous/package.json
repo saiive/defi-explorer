@@ -39,6 +39,7 @@
     "fix:tslint": "tslint --type-check --fix --project ."
   },
   "dependencies": {
+    "@angular/animations": "5",
     "@angular/common": "5.2.10",
     "@angular/compiler": "5.2.10",
     "@angular/core": "5.2.10",
@@ -50,10 +51,11 @@
     "angular2-moment": "1.7.1",
     "angular2-qrcode": "2.0.1",
     "big.js": "^6.0.1",
+    "bs58": "^4.0.1",
     "bitcore-lib": "^8.2.0",
     "bitcore-lib-cash": "^8.2.0",
-    "bitcore-lib-dfi": "^8.2.0",
     "ionic-angular": "3.9.2",
+    "ionic-tooltips": "^3.1.0",
     "ionicons": "3.0.0",
     "lodash": "4.17.11",
     "rxjs": "5.5.12",
@@ -66,7 +68,7 @@
     "@ionic/app-scripts": "3.2.3",
     "@types/jasmine": "2.5.41",
     "@types/lodash": "4.14.104",
-    "@types/node": "14.11.10",
+    "@types/node": "7.0.4",
     "codecov": "2.2.0",
     "jasmine-core": "2.5.2",
     "jasmine-spec-reporter": "3.2.0",
@@ -84,7 +86,7 @@
     "tslint-angular": "3.0.3",
     "tslint-config-prettier": "1.18.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "4.0.3",
+    "typescript": "2.6.2",
     "webdriver-manager": "^12.1.1"
   },
   "engines": {
