@@ -1,0 +1,3 @@
+[submodule "packages/bitcore-lib-dfi"]
+	path = packages/bitcore-lib-dfi
+	url = git@github.com:DeFiCh/bitcore-lib-dfi.git

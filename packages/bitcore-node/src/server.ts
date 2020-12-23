@@ -50,6 +50,6 @@ const start = async () => {
   const network = process.env.NETWORK;
   const chain = process.env.CHAIN;
   // insert data to db for pre-mined coins for mainnet and testnet
-  (network === MAINNET || network === TESTNET) && (await insertGenesisData(network));
+  (cluster.isMaster && (network === MAINNET || network === TESTNET)) && (await insertGenesisData(network));
   HealthCheck.startJob(chain, network)
 })();

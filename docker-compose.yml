@@ -14,7 +14,7 @@ services:
 
   defichain:
     container_name: defichain
-    image: defi/defichain:1.3.3
+    image: defi/defichain:1.3.9
     networks:
       - default
     ports:
@@ -26,6 +26,7 @@ services:
       - 19554:19554
     environment:
       - NETWORK=${NETWORK:?NETWORK env required}
+    # command: /app/bin/defid -reindex
     volumes:
       - node_data:/data
       - ./defi.${NETWORK}.conf:/data/defi.conf
@@ -60,7 +61,7 @@ services:
     container_name: insight
     build: .
     image: insight
-    command: ["npm", "run", "insight-previous:prod"]
+    command: ['npm', 'run', 'insight-previous:prod']
     networks:
       - default
     ports:

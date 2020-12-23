@@ -1,5 +1,5 @@
 import Big from 'big.js';
-
+const deciRegExp = /^-?\d*(\.)?\d+$/;
 export const setIntervalSynchronous = (func, delay) => {
   // tslint:disable-next-line: one-variable-per-declaration
   let intervalFunction, timeoutId, clear;
@@ -20,4 +20,3 @@ export const roundingDown = (val: string | number) => {
   }
   return new Big(val).round(2, 0).toString();
 };
-
