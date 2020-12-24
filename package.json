@@ -61,6 +61,6 @@
     "typescript-eslint-parser": "^15.0.0"
   },
   "dependencies": {
-    "bitcore-lib-dfi": "https://github.com/DeFiCh/bitcore-lib-dfi.git#bugfix/cbalances_custom_tx"
+    "bitcore-lib-dfi": "https://github.com/DeFiCh/bitcore-lib-dfi.git"
   }
 }
