@@ -43,7 +43,7 @@ export type DefichainTransactionCreateToken = {
 }
 
 export type DefichainTransactionMintToken = {
-  minted: Map<any, any>;
+  minted: Array<any>;
 }
 
 export type DefichainTransactionUpdateToken = {
@@ -93,7 +93,9 @@ export type DefichainTransactionPoolSwap = {
 }
 
 export type DefichainTransactionAddPoolLiquidity = {
-  from: Map<any, any>;
+  from: {
+    [key: string]: Array<any>
+  };
   shareAddress: string;
 }
 
@@ -108,18 +110,22 @@ export type DefichainTransactionSetGovVariable = {
 }
 
 export type DefichainTransactionUtxosToAccount = {
-  to: Map<any, any>;
+  to: {
+    [key: string]: Array<any>
+  };
 }
 
 export type DefichainTransactionAccountToUtxos = {
   from: string;
-  balances: Map<any, any>;
+  balances: Array<any>;
   mintingOutputsStart: string;
 }
 
 export type DefichainTransactionAccountToAccount = {
   from: string;
-  to: Map<any, any>;
+  to:{
+    [key: string]: Array<any>
+  };
 }
 
 

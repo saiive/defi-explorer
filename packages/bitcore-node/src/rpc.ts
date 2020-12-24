@@ -43,6 +43,7 @@ export class RPC {
     return new Promise((resolve, reject) => {
       this.callMethod(method, params, (err, data) => {
         if (err) {
+          console.log(err.message)
           return reject(err);
         }
         return resolve(data);
@@ -115,6 +116,10 @@ export class RPC {
 
   async getCustomTxApplied(txid: string, blockHeight: number) {
     return this.asyncCall('isappliedcustomtx', [txid, blockHeight]);
+  }
+
+  async getToken(token: number): Promise<any> {
+    return this.asyncCall('gettoken', [token]);
   }
 }
 

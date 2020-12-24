@@ -1,6 +1,9 @@
 on:
   release:
     types: [created]
+  # push:
+  #   branches:
+  #     - bugfix/output_type_coin
 
 name: Deploy to Amazon ECS
 
