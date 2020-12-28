@@ -128,8 +128,17 @@ export type DefichainTransactionAccountToAccount = {
   };
 }
 
+export type DefichainTransactionAnyAccountsToAccounts = {
+  from: Array<{
+    [key: string]: Array<any>
+  }>
+  to: Array<{
+    [key: string]: Array<any>
+  }>
+}
 
-export type DefichainTransactionCustomType =  'C' | 'R' | 'T' | 'M' | 'N' | 'n' | 'p' | 'u' | 's' | 'l' | 'r' | 'U' | 'b' | 'B' | 'G';
+
+export type DefichainTransactionCustomType =  'C' | 'R' | 'T' | 'M' | 'N' | 'n' | 'p' | 'u' | 's' | 'l' | 'r' | 'U' | 'b' | 'B' | 'G' | 'a';
 export type DefichainTransactionCustomData = DefichainTransactionCreateMasternode |
   DefichainTransactionResignMasternode |
   DefichainTransactionCreateToken |
@@ -144,7 +153,8 @@ export type DefichainTransactionCustomData = DefichainTransactionCreateMasternod
   DefichainTransactionSetGovVariable |
   DefichainTransactionUtxosToAccount |
   DefichainTransactionAccountToUtxos |
-  DefichainTransactionAccountToAccount;
+  DefichainTransactionAccountToAccount |
+  DefichainTransactionAnyAccountsToAccounts;
 
 export type DefichainTransactionCustom = {
   txType: DefichainTransactionCustomType,
@@ -161,7 +171,7 @@ export type DefichainTransactionType = {
   inputs: DefichainInput[];
   toBuffer: () => Buffer;
   getAnchor: () => DefichainTransactionAnchor | null,
-  isCustom: () => boolean;
+  checkCustom: () => { isCustom: boolean, br?: Buffer },
   getCustom: () => DefichainTransactionCustom | null,
   nLockTime: number;
 };

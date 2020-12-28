@@ -8,6 +8,7 @@ import {
   DefichainTransactionUtxosToAccount,
   DefichainTransactionAccountToUtxos,
   DefichainTransactionAccountToAccount,
+  DefichainTransactionAnyAccountsToAccounts,
 } from '../../../types/namespaces/Defichain/Transaction';
 
 export class DFIStateProvider extends InternalStateProvider{
@@ -89,6 +90,30 @@ export class DFIStateProvider extends InternalStateProvider{
               });
             }
             break;
+          }
+          case 'a': {
+            for (let i =0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).from.length; i++) {
+              for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i]) {
+                const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map((from) => {
+                  return this.getRPC(chain, network).getToken(from.token);
+                });
+                const tokens = await Promise.all(tokensPromises);
+                (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key] = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map((from, index) => {
+                  return `${from.balance}@${tokens[index][from.token].symbol}`;
+                });
+              }
+            }
+            for (let i =0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).to.length; i++) {
+              for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i]) {
+                const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map((to) => {
+                  return this.getRPC(chain, network).getToken(to.token);
+                });
+                const tokens = await Promise.all(tokensPromises);
+                (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key] = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map((to, index) => {
+                  return `${to.balance}@${tokens[index][to.token].symbol}`;
+                });
+              }
+            }
           }
         }
       }
