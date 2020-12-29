@@ -23,7 +23,8 @@ const CUSTOM_TX_TYPE = {
   U: 'utxosToAccount',
   b: 'accountToUtxos',
   B: 'accountToAccount',
-  G: 'setGovVariable'
+  G: 'setGovVariable',
+  a: 'AnyAccountsToAccounts'
 }
 
 @Injectable()

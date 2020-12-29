@@ -369,7 +369,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
   }) {
     let customOps = new Array<CustomOp>();
     for (let tx of params.txs) {
-      if (tx.isCustom()) {
+      if (tx.checkCustom().isCustom) {
         const txid = tx._hash!;
         const customData = tx.getCustom();
         if (customData) {

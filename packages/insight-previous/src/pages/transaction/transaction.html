@@ -410,6 +410,28 @@
               </ion-note>
             </ion-item>
           </ng-container>
+            <ng-container *ngIf="tx.txType === 'a'">
+              <ion-item>
+                From
+                <ion-note item-end>
+                  <div *ngFor="let item of tx.customData.from">
+                    <div *ngFor="let key of keys(item)">
+                      {{ key }}: {{ JSON.stringify(item[key]) }}
+                    </div>
+                  </div>
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                To
+                <ion-note item-end>
+                  <div *ngFor="let item of tx.customData.to">
+                    <div *ngFor="let key of keys(item)">
+                      {{ key }}: {{ JSON.stringify(item[key]) }}
+                    </div>
+                  </div>
+                </ion-note>
+              </ion-item>
+            </ng-container>
           </ion-list>
         </ng-container>
 
