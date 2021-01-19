@@ -4,6 +4,7 @@
 
 trigger:
 - main
+- master
 
 resources:
 - repo: self
@@ -37,3 +38,4 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+          latest
