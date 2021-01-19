@@ -32,6 +32,7 @@ function findConfig(): ConfigType | undefined {
         foundConfig = bitcoreConfig.bitcoreNode;
       } catch (e) {
         foundConfig = undefined;
+        logger.error(e);
       }
     }
   }
