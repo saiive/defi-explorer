@@ -1,4 +1,5 @@
 import { homedir, cpus } from 'os';
+import logger from './logger';
 import parseArgv from './utils/parseArgv';
 import { ConfigType } from './types/Config';
 import * as _ from 'lodash';
@@ -80,6 +81,8 @@ const Config = function (): ConfigType {
   };
 
   let foundConfig = findConfig();
+  logger.info("found config" + foundConfig);
+  
   const mergeCopyArray = (objVal, srcVal) => (objVal instanceof Array ? srcVal : undefined);
   config = _.mergeWith(config, foundConfig, mergeCopyArray);
   if (!Object.keys(config.chains).length) {
@@ -99,6 +102,8 @@ const Config = function (): ConfigType {
     });
   }
   config = setTrustedPeers(config);
+  
+  logger.info("config is" + JSON.stringify(config));
   return config;
 };
 
