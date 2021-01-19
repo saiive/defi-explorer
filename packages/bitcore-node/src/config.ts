@@ -8,6 +8,8 @@ let program = parseArgv([], ['config']);
 function findConfig(): ConfigType | undefined {
   let foundConfig;
   const envConfigPath = process.env.BITCORE_CONFIG_PATH;
+  
+  logger.info("envConfigPath " + envConfigPath);
   const argConfigPath = program.config;
   const configFileName = 'bitcore.config.json';
   let bitcoreConfigPaths = [
@@ -15,6 +17,8 @@ function findConfig(): ConfigType | undefined {
     `../../../../${configFileName}`,
     `../../${configFileName}`
   ];
+
+  logger.info("bitcoreConfigPaths " + JSON.stringify(bitcoreConfigPaths));
   const overrideConfig = argConfigPath || envConfigPath;
   if (overrideConfig) {
     bitcoreConfigPaths.unshift(overrideConfig);
@@ -81,7 +85,7 @@ const Config = function (): ConfigType {
   };
 
   let foundConfig = findConfig();
-  logger.info("found config" + foundConfig);
+  logger.info("found config " + foundConfig);
   
   const mergeCopyArray = (objVal, srcVal) => (objVal instanceof Array ? srcVal : undefined);
   config = _.mergeWith(config, foundConfig, mergeCopyArray);
