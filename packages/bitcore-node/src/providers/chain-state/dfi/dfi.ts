@@ -130,4 +130,13 @@ export class DFIStateProvider extends InternalStateProvider {
     return await this.getRPC(chain, network).getAccount(ownerAddress);
   }
 
+  async listTokens(params: any): Promise<any> {
+    const { chain, network } = params;
+    return await this.getRPC(chain, network).listTokens();
+  }  
+  async getToken(params: any): Promise<any> {
+    const { chain, network, token } = params;
+    return await this.getRPC(chain, network).getToken(token);
+  }
+
 }
