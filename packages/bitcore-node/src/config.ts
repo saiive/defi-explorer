@@ -93,7 +93,7 @@ const Config = function (): ConfigType {
   if (!Object.keys(config.chains).length) {
     Object.assign(config.chains, {
       DFI: {
-        mainnet: {
+        testnet: {
           chainSource: 'p2p',
           trustedPeers: [{ host: '127.0.0.1', port: 18555 }],
           rpc: {
