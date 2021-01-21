@@ -11,7 +11,7 @@ import {
   DefichainTransactionAnyAccountsToAccounts,
 } from '../../../types/namespaces/Defichain/Transaction';
 
-export class DFIStateProvider extends InternalStateProvider{
+export class DFIStateProvider extends InternalStateProvider {
   constructor(chain: string = 'DFI') {
     super(chain);
   }
@@ -70,7 +70,7 @@ export class DFIStateProvider extends InternalStateProvider{
             break;
           }
           case 'b': {
-            const tokensPromises =  (found.customData as DefichainTransactionAccountToUtxos).balances.map((balance) => {
+            const tokensPromises = (found.customData as DefichainTransactionAccountToUtxos).balances.map((balance) => {
               return this.getRPC(chain, network).getToken(balance.token);
             });
             const tokens = await Promise.all(tokensPromises);
@@ -92,7 +92,7 @@ export class DFIStateProvider extends InternalStateProvider{
             break;
           }
           case 'a': {
-            for (let i =0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).from.length; i++) {
+            for (let i = 0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).from.length; i++) {
               for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i]) {
                 const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map((from) => {
                   return this.getRPC(chain, network).getToken(from.token);
@@ -103,7 +103,7 @@ export class DFIStateProvider extends InternalStateProvider{
                 });
               }
             }
-            for (let i =0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).to.length; i++) {
+            for (let i = 0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).to.length; i++) {
               for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i]) {
                 const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map((to) => {
                   return this.getRPC(chain, network).getToken(to.token);
@@ -123,6 +123,20 @@ export class DFIStateProvider extends InternalStateProvider{
     } else {
       return undefined;
     }
+  }
+
+  async getAccount(params: any): Promise<any> {
+    const { chain, network, ownerAddress } = params;
+    return await this.getRPC(chain, network).getAccount(ownerAddress);
+  }
+
+  async listTokens(params: any): Promise<any> {
+    const { chain, network } = params;
+    return await this.getRPC(chain, network).listTokens();
+  }  
+  async getToken(params: any): Promise<any> {
+    const { chain, network, token } = params;
+    return await this.getRPC(chain, network).getToken(token);
   }
 
 }

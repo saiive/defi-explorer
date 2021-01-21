@@ -4,7 +4,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { ChainStateProvider } from '../../providers/chain-state';
 import queue from '../../worker/queue';
 
-router.get('/:address/txs', function(req: express.Request<ParamsDictionary, any, any, any>, res) {
+router.get('/:address/txs', function (req: express.Request<ParamsDictionary, any, any, any>, res) {
   let { address, chain, network } = req.params;
   let { unspent, limit = 10 } = req.query;
   let payload = {
@@ -18,7 +18,7 @@ router.get('/:address/txs', function(req: express.Request<ParamsDictionary, any,
   ChainStateProvider.streamAddressTransactions(payload);
 });
 
-router.get('/:address', function(req: express.Request<ParamsDictionary, any, any, any>, res) {
+router.get('/:address', function (req: express.Request<ParamsDictionary, any, any, any>, res) {
   let { address, chain, network } = req.params;
   let { unspent, limit = 10 } = req.query;
   let payload = {
@@ -32,7 +32,7 @@ router.get('/:address', function(req: express.Request<ParamsDictionary, any, any
   ChainStateProvider.streamAddressUtxos(payload);
 });
 
-router.get('/:address/balance', async function(req, res) {
+router.get('/:address/balance', async function (req, res) {
   let { address, chain, network } = req.params;
   try {
     let result = await ChainStateProvider.getBalanceForAddress({
@@ -46,8 +46,23 @@ router.get('/:address/balance', async function(req, res) {
   }
 });
 
+
+router.get('/:ownerAddress/account', async function (req, res) {
+  let { ownerAddress, chain, network } = req.params;
+  try {
+    let result = await ChainStateProvider.getAccount({
+      chain,
+      network,
+      ownerAddress
+    });
+    return res.send(result || { confirmed: 0, unconfirmed: 0, balance: 0 });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
 // @ts-ignore
-router.get('/stats/rich-list', async function(req, res) {
+router.get('/stats/rich-list', async function (req, res) {
   const { chain, network } = req.params;
   const { pageno, pagesize } = req.query;
   let pageNo = 0;
