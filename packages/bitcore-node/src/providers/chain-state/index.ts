@@ -141,5 +141,9 @@ class ChainStateProxy implements CSP.ChainStateProvider {
   streamMissingWalletAddresses(params) {
     return this.get(params).streamMissingWalletAddresses(params);
   }
+
+  async getAccount(params) {
+    return this.get(params).getAccount(params);
+  }
 }
 export let ChainStateProvider = new ChainStateProxy();

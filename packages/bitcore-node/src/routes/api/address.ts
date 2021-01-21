@@ -46,6 +46,21 @@ router.get('/:address/balance', async function(req, res) {
   }
 });
 
+
+router.get('/:address/account', async function(req, res) {
+  let { address, chain, network } = req.params;
+  try {
+    let result = await ChainStateProvider.getBalanceForAddress({
+      chain,
+      network,
+      address
+    });
+    return res.send(result || { confirmed: 0, unconfirmed: 0, balance: 0 });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
 // @ts-ignore
 router.get('/stats/rich-list', async function(req, res) {
   const { chain, network } = req.params;

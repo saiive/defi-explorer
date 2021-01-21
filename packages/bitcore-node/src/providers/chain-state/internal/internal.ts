@@ -631,4 +631,8 @@ export class InternalStateProvider implements CSP.IChainStateService {
     }
     return locatorBlocks.map((block) => block.hash);
   }
+
+  getAccount(params: any): Promise<any> {
+    return Promise.resolve({});
+  }
 }
