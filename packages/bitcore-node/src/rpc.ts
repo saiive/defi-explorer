@@ -121,6 +121,10 @@ export class RPC {
   async getToken(token: number): Promise<any> {
     return this.asyncCall('gettoken', [token]);
   }
+
+  async getAccount(ownerAddress: string): Promise<any> {
+    return this.asyncCall('getaccount', [ownerAddress]);
+  }
 }
 
 @LoggifyClass

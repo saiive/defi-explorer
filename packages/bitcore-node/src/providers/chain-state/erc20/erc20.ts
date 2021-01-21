@@ -24,4 +24,9 @@ export class ERC20StateProvider extends ETHStateProvider implements CSP.IChainSt
       .call();
     return { confirmed: balance, unconfirmed: 0, balance };
   }
+
+  
+  getAccount(params): Promise<any> {
+    return Promise.resolve({});
+  }
 }

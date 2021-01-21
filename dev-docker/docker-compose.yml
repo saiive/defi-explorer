@@ -1,0 +1,35 @@
+version: '3.0'
+
+services:
+  database:
+    container_name: mongo_db
+    image: mongo:3.4-jessie
+    expose:
+      - 27017
+    volumes:
+      - db_data:/data/db
+    restart: unless-stopped
+
+  defichain:
+    image: defi/defichain
+    command:
+      defid
+      -printtoconsole
+      -rpcuser=test
+      -rpcpassword=test
+      -testnet
+    volumes:
+      - node_data:/data
+    restart: unless-stopped
+    ports:
+      - 8555:8555
+      - 8554:8554
+      - 18555:18555
+      - 18554:18554
+      - 19555:19555
+      - 19554:19554
+
+ 
+volumes:
+  db_data:
+  node_data:

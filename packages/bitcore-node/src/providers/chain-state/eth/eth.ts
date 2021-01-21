@@ -130,4 +130,9 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
     );
     return balance;
   }
+
+  
+  getAccount(params): Promise<any> {
+    return Promise.resolve({});
+  }
 }
