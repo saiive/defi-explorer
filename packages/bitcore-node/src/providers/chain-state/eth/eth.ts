@@ -79,7 +79,7 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
     Storage.stream(
       new Readable({
         objectMode: true,
-        read: async function() {
+        read: async function () {
           for (const walletAddress of addresses) {
             const transactions = await new ParityRPC(web3).getTransactionsForAddress(100000, walletAddress.address);
             for await (const tx of transactions) {
@@ -131,8 +131,8 @@ export class ETHStateProvider extends InternalStateProvider implements CSP.IChai
     return balance;
   }
 
-  
-  getAccount(params): Promise<any> {
-    return Promise.resolve({});
+
+  getWalletBalanceAtTime(params: any): Promise<{ confirmed: number; unconfirmed: number; balance: number }> {
+    throw new Error("not implemented");
   }
 }

@@ -324,20 +324,20 @@ export class CoinModel extends BaseModel<ICoin> {
 
   _apiTransform(coin: MongoBound<ICoin>, options?: { object: boolean }): any {
     const transform: CoinJSON = {
-      _id: valueOrDefault(coin._id, new ObjectID()).toHexString(),
-      chain: valueOrDefault(coin.chain, ''),
-      network: valueOrDefault(coin.network, ''),
-      coinbase: valueOrDefault(coin.coinbase, false),
-      mintIndex: valueOrDefault(coin.mintIndex, -1),
-      spentTxid: valueOrDefault(coin.spentTxid, ''),
-      mintTxid: valueOrDefault(coin.mintTxid, ''),
-      mintHeight: valueOrDefault(coin.mintHeight, -1),
-      spentHeight: valueOrDefault(coin.spentHeight, SpentHeightIndicators.error),
-      address: valueOrDefault(coin.address, ''),
-      script: valueOrDefault(coin.script, Buffer.alloc(0)).toString('hex'),
-      value: valueOrDefault(coin.value, -1),
-      confirmations: valueOrDefault(coin.confirmations, -1),
-      customTxOut: valueOrDefault(CoinStorage.getCustomTxOut(coin), null),
+      _id: valueOrDefault<any>(coin._id, new ObjectID()).toHexString(),
+      chain: valueOrDefault<string>(coin.chain, ''),
+      network: valueOrDefault<string>(coin.network, ''),
+      coinbase: valueOrDefault<boolean>(coin.coinbase, false),
+      mintIndex: valueOrDefault<number>(coin.mintIndex, -1),
+      spentTxid: valueOrDefault<string>(coin.spentTxid, ''),
+      mintTxid: valueOrDefault<string>(coin.mintTxid, ''),
+      mintHeight: valueOrDefault<number>(coin.mintHeight, -1),
+      spentHeight: valueOrDefault<number>(coin.spentHeight, SpentHeightIndicators.error),
+      address: valueOrDefault<string>(coin.address, ''),
+      script: valueOrDefault<Buffer>(coin.script, Buffer.alloc(0)).toString('hex'),
+      value: valueOrDefault<number>(coin.value, -1),
+      confirmations: valueOrDefault<number>(coin.confirmations, -1),
+      customTxOut: valueOrDefault<any>(CoinStorage.getCustomTxOut(coin), null),
     };
     if (options && options.object) {
       return transform;

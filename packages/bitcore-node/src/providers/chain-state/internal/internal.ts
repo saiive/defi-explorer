@@ -72,7 +72,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
       spentHeight: { $lt: SpentHeightIndicators.minimum },
       mintHeight: { $gt: SpentHeightIndicators.conflicting },
     };
-    let balance:any = await CoinStorage.getBalance({ query });
+    let balance: any = await CoinStorage.getBalance({ query });
     return balance;
   }
 
@@ -405,25 +405,25 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const transactionStream = TransactionStorage.collection
       .find(query)
       .sort({ blockTimeNormalized: 1 })
-      // .addCursorFlag('noCursorTimeout', true);
+    // .addCursorFlag('noCursorTimeout', true);
     const listTransactionsStream = new ListTransactionsStream(wallet);
     transactionStream.pipe(listTransactionsStream).pipe(res);
   }
 
-  async getWalletBalance(params: CSP.GetWalletBalanceParams) {
+  async getWalletBalance(params: CSP.GetWalletBalanceParams): Promise<{ confirmed: number; unconfirmed: number; balance: number }> {
     const query = {
       wallets: params.wallet._id,
       'wallets.0': { $exists: true },
       spentHeight: { $lt: SpentHeightIndicators.minimum },
       mintHeight: { $gt: SpentHeightIndicators.conflicting },
     };
-    return CoinStorage.getBalance({ query });
+    return <{ confirmed: number; unconfirmed: number; balance: number }>await CoinStorage.getBalance({ query });
   }
 
   async getWalletBalanceAtTime(params: CSP.GetWalletBalanceAtTimeParams) {
     const { chain, network, time } = params;
     let query = { wallets: params.wallet._id, 'wallets.0': { $exists: true } };
-    return CoinStorage.getBalanceAtTime({ query, time, chain, network });
+    return <{ confirmed: number; unconfirmed: number; balance: number }>await CoinStorage.getBalanceAtTime({ query, time, chain, network });
   }
 
   async streamWalletUtxos(params: CSP.StreamWalletUtxosParams) {
@@ -612,16 +612,16 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const query =
       startHeight && endHeight
         ? {
-            processed: true,
-            chain,
-            network,
-            height: { $gt: startHeight, $lt: endHeight },
-          }
+          processed: true,
+          chain,
+          network,
+          height: { $gt: startHeight, $lt: endHeight },
+        }
         : {
-            processed: true,
-            chain,
-            network,
-          };
+          processed: true,
+          chain,
+          network,
+        };
     const locatorBlocks = await BlockStorage.collection
       .find(query, { sort: { height: -1 }, limit: 30 })
       // .addCursorFlag('noCursorTimeout', true)
