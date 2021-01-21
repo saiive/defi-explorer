@@ -118,12 +118,15 @@ export class RPC {
     return this.asyncCall('isappliedcustomtx', [txid, blockHeight]);
   }
 
-  async getToken(token: number): Promise<any> {
+  async getToken(token: any): Promise<any> {
     return this.asyncCall('gettoken', [token]);
   }
 
   async getAccount(ownerAddress: string): Promise<any> {
     return this.asyncCall('getaccount', [ownerAddress]);
+  }
+  async listTokens(): Promise<any> {
+    return this.asyncCall('listtokens', []);
   }
 }
 
