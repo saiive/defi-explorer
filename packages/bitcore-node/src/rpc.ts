@@ -125,8 +125,24 @@ export class RPC {
   async getAccount(ownerAddress: string): Promise<any> {
     return this.asyncCall('getaccount', [ownerAddress]);
   }
+
   async listTokens(): Promise<any> {
     return this.asyncCall('listtokens', []);
+  }
+
+  async getGov(): Promise<any> {
+    return this.asyncCall('getgov', ['LP_DAILY_DFI_REWARD']);
+  }
+
+  async listPoolPairs(): Promise<any> {
+    return this.asyncCall('listpoolpairs', []);
+  }
+
+  async listPoolShares(start: number, including_start: boolean, limit: number): Promise<any> {
+    return this.asyncCall('listpoolshares', [{start, including_start, limit}]);
+  }
+  async getPoolPair(poolID: string): Promise<any> {
+    return this.asyncCall('getpoolpair', [poolID]);
   }
 }
 
