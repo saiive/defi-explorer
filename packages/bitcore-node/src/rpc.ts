@@ -144,6 +144,10 @@ export class RPC {
   async getPoolPair(poolID: string): Promise<any> {
     return this.asyncCall('getpoolpair', [poolID]);
   }
+
+  async testPoolSwap(from: string, tokenFrom: string, amountForm: number, to: string, tokenTo: string, maxPrice: number): Promise<any> {
+    return this.asyncCall('testpoolswap', [{'from': from, 'tokenFrom': tokenFrom, 'amountFrom': amountForm, 'to': to, 'tokenTo': tokenTo}]);
+  }
 }
 
 @LoggifyClass

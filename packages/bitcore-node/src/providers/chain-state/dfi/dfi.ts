@@ -164,4 +164,10 @@ export class DFIStateProvider extends InternalStateProvider {
     return await this.getRPC(chain, network).getPoolPair(poolID);
   }
 
+  async testPoolSwap(params: any): Promise<any> {
+    const { chain, network, from, tokenFrom, amountFrom, to, tokenTo, maxPrice } = params;
+
+    return await this.getRPC(chain, network).testPoolSwap(from, tokenFrom, amountFrom, to, tokenTo, maxPrice);
+  }
+
 }
