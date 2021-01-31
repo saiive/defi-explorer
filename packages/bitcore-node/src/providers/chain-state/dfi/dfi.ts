@@ -133,10 +133,35 @@ export class DFIStateProvider extends InternalStateProvider {
   async listTokens(params: any): Promise<any> {
     const { chain, network } = params;
     return await this.getRPC(chain, network).listTokens();
-  }  
+  }
+
   async getToken(params: any): Promise<any> {
     const { chain, network, token } = params;
     return await this.getRPC(chain, network).getToken(token);
+  }
+
+  async getGov(params: any): Promise<any> {
+    const { chain, network } = params;
+
+    return await this.getRPC(chain, network).getGov();
+  }
+
+  async listPoolPairs(params: any): Promise<any> {
+    const { chain, network } = params;
+
+    return await this.getRPC(chain, network).listPoolPairs();
+  }
+
+  async listPoolShares(params: any): Promise<any> {
+    const { chain, network, start, including_start, limit } = params;
+
+    return await this.getRPC(chain, network).listPoolShares(start, including_start, limit);
+  }
+
+  async getPoolPair(params: any): Promise<any> {
+    const { chain, network, poolID } = params;
+
+    return await this.getRPC(chain, network).getPoolPair(poolID);
   }
 
 }
