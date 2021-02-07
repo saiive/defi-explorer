@@ -47,7 +47,7 @@ router.get('/listpoolshares', async function (req, res) {
         }
 
         if (including_start !== undefined) {
-            including_startBool = including_start === 'true';
+            including_startBool = including_start.toString().toLowerCase() === 'true';
         }
 
         const chainProvider = ChainStateProvider.get({chain});
