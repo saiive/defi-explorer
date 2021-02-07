@@ -33,15 +33,30 @@ router.get('/listpoolpairs', async function (req, res) {
 });
 
 router.get('/listpoolshares', async function (req, res) {
-    let { chain, network, start, including_start, limit } = req.params;
+    let {chain, network} = req.params;
+    let {start, including_start, limit} = req.query;
+    let startNum, limitNum, including_startBool;
+
     try {
-        const chainProvider = ChainStateProvider.get({ chain });
+        if (limit) {
+            limitNum = parseInt(limit as string);
+        }
+
+        if (start) {
+            startNum = parseInt(start as string);
+        }
+
+        if (including_start !== undefined) {
+            including_startBool = including_start === 'true';
+        }
+
+        const chainProvider = ChainStateProvider.get({chain});
         let result = await (<DFIStateProvider>chainProvider).listPoolShares({
             chain,
             network,
-            start,
-            including_start,
-            limit
+            start: startNum,
+            including_start: including_startBool,
+            limit: limitNum
         });
         return res.send(result || {});
     } catch (err) {

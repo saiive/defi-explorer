@@ -139,7 +139,7 @@ export class RPC {
   }
 
   async listPoolShares(start: number, including_start: boolean, limit: number): Promise<any> {
-    return this.asyncCall('listpoolshares', [{start, including_start, limit}]);
+    return this.asyncCall('listpoolshares', [{start, including_start, limit}, true, false]);
   }
   async getPoolPair(poolID: string): Promise<any> {
     return this.asyncCall('getpoolpair', [poolID]);
