@@ -11,7 +11,7 @@ router.get('/list', async function (req, res) {
             chain,
             network
         });
-        return res.send(result || { confirmed: 0, unconfirmed: 0, balance: 0 });
+        return res.send(result);
     } catch (err) {
         return res.status(500).send(err);
     }
@@ -26,7 +26,9 @@ router.get('/get/:token', async function (req, res) {
             token
         });
         var keyElement = Object.keys(result)[0];
-        return res.send(result[keyElement] || { confirmed: 0, unconfirmed: 0, balance: 0 });
+        var tokenResult = result[keyElement];
+        tokenResult["id"] = keyElement;
+        return res.send(tokenResult);
     } catch (err) {
         return res.status(500).send(err);
     }
