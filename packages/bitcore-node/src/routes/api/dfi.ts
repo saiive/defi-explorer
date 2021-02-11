@@ -79,6 +79,22 @@ router.get('/getpoolpair/:poolID', async function (req, res) {
     }
 });
 
+router.get('/listaccounthistory/:owner/:token', async function (req, res) {
+    let { chain, network, owner, token } = req.params;
+    try {
+        const chainProvider = ChainStateProvider.get({ chain });
+        let result = await (<DFIStateProvider>chainProvider).listAccountHistory({
+            chain,
+            network,
+            owner,
+            token
+        });
+        return res.send(result || {});
+    } catch (err) {
+        return res.status(500).send(err);
+    }
+});
+
 router.post('/testpoolswap', async function (req, res) {
   try {
     let { chain, network } = req.params;

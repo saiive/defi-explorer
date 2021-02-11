@@ -148,6 +148,9 @@ export class RPC {
   async testPoolSwap(from: string, tokenFrom: string, amountForm: number, to: string, tokenTo: string, maxPrice: number): Promise<any> {
     return this.asyncCall('testpoolswap', [{'from': from, 'tokenFrom': tokenFrom, 'amountFrom': amountForm, 'to': to, 'tokenTo': tokenTo}]);
   }
+  async listAccountHistory(owner: string, token: string): Promise<any> {
+    return this.asyncCall('listaccounthistory', [owner, {'token': token}]);
+  }
 }
 
 @LoggifyClass
