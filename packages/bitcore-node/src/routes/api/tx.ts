@@ -111,6 +111,22 @@ router.get('/:txid/coins', (req, res, next) => {
   }
 });
 
+router.get('/:txid/decoderaw', (req, res, next) => {
+  let { chain, network, txid } = req.params;
+  if (typeof txid !== 'string' || typeof chain !== 'string' || typeof network !== 'string') {
+    res.status(400).send('Missing required param');
+  } else {
+    chain = chain.toUpperCase();
+    network = network.toLowerCase();
+    ChainStateProvider.getDecodeRawTx({ chain, network, txid })
+      .then((tx) => {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(200).send(tx);
+      })
+      .catch(next);
+  }
+});
+
 router.post('/send', async function (req, res) {
   try {
     let { chain, network } = req.params;

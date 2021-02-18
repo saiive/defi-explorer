@@ -82,7 +82,7 @@ export class CoinModel extends BaseModel<ICoin> {
   ) {
     const { pageNo } = params.query;
     const pageSize =
-      !params.query.pageSize || params.query.pageSize === NaN ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
+      !params.query.pageSize || isNaN(params.query.pageSize) ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
     const cacheKey = `${pageNo}-${pageSize}`;
     const cache = nodeCache.get(cacheKey);
     const CACHE_TTL_SECONDS = 300;
@@ -153,7 +153,7 @@ export class CoinModel extends BaseModel<ICoin> {
     let { query } = params;
     const CACHE_TTL_SECONDS = 60;
     const cacheName = `${query.address}-balance`;
-    const cache = nodeCache.get(cacheName);
+    const cache = (nodeCache.get(cacheName) as { confirmed: number; unconfirmed: number; balance: number });
 
     if (!cache) {
       const result = await this.collection

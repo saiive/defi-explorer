@@ -171,6 +171,7 @@ export declare namespace CSP {
     getLatestTransactions(params: GetLatestTransactionsParams): Promise<any>;
     getLocalTip(params): Promise<any>;
     getLocatorHashes(params): Promise<any>;
+    getDecodeRawTx(params): Promise<JSON>;
   }
 
   type ChainStateServices = { [key: string]: IChainStateService };

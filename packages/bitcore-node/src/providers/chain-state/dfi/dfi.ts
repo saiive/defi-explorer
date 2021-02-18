@@ -1,14 +1,14 @@
-import { InternalStateProvider } from "../internal/internal";
+import { InternalStateProvider } from '../internal/internal';
 import { CSP } from '../../../types/namespaces/ChainStateProvider';
 import { TransactionStorage } from '../../../models/transaction';
 import { TransactionJSON } from '../../../types/Transaction';
 import {
-  DefichainTransactionMintToken,
-  DefichainTransactionAddPoolLiquidity,
-  DefichainTransactionUtxosToAccount,
-  DefichainTransactionAccountToUtxos,
   DefichainTransactionAccountToAccount,
+  DefichainTransactionAccountToUtxos,
+  DefichainTransactionAddPoolLiquidity,
   DefichainTransactionAnyAccountsToAccounts,
+  DefichainTransactionMintToken,
+  DefichainTransactionUtxosToAccount
 } from '../../../types/namespaces/Defichain/Transaction';
 
 export class DFIStateProvider extends InternalStateProvider{
