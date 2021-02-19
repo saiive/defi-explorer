@@ -118,10 +118,10 @@ router.get('/:txid/decoderaw', (req, res, next) => {
   } else {
     chain = chain.toUpperCase();
     network = network.toLowerCase();
-    ChainStateProvider.getDecodeRawTx({ chain, network, txid })
+    ChainStateProvider.getDecodeRawTx({ chain, network, txId: txid })
       .then((tx) => {
         res.setHeader('Content-Type', 'application/json');
-        return res.status(200).send(tx);
+        return res.status(200).send(JSON.stringify(tx));
       })
       .catch(next);
   }
