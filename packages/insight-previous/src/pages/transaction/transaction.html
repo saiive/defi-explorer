@@ -444,7 +444,7 @@
           <loader *ngIf="loadingRawTx" [type]="'title'"></loader>
           <error [message]="errorMessageRawTx" *ngIf="!loadingRawTx && errorMessageRawTx"></error>
           <div class='raw-tx' *ngIf='rawTx && !loadingRawTx'>
-            <pre [innerHTML]="{t: 'dsfsdf'} | prettyjson"></pre>
+            <pre [innerHTML]="rawTx | prettyjson"></pre>
           </div>
         </ng-container>
       </div>
