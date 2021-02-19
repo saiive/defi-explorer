@@ -315,4 +315,9 @@ export class TxsProvider {
     const url: string = this.api.getUrl() + '/tx/latest';
     return this.httpClient.get<any>(url)
   }
+
+  public getDecodeRawTx(txId: string): any {
+    const url: string = `${this.api.getUrl()}/tx/${txId}/decoderaw`;
+    return this.httpClient.get<any>(url);
+  }
 }

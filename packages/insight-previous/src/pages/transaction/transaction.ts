@@ -47,6 +47,9 @@ export class TransactionPage {
   public isSkipped: boolean;
   public keys: (object?: any) => string[];
   public JSON: JSON;
+  public rawTx: JSON;
+  public loadingRawTx = true;
+  public errorMessageRawTx: string;
 
   private txId: string;
   private chainNetwork: ChainNetwork;
@@ -66,6 +69,7 @@ export class TransactionPage {
     this.vout = navParams.get('vout');
     this.fromVout = navParams.get('fromVout') || undefined;
 
+
     const chain: string =
       navParams.get('chain') || this.apiProvider.getConfig().chain;
     const network: string =
@@ -78,6 +82,17 @@ export class TransactionPage {
     this.apiProvider.changeNetwork(this.chainNetwork);
     this.currencyProvider.setCurrency();
     this.priceProvider.setCurrency();
+  }
+
+  private loadRawTx(): void {
+    this.txProvider.getDecodeRawTx(this.txId).subscribe(data => {
+      this.rawTx = data;
+      this.loadingRawTx = false;
+    }, err => {
+      this.logger.error(err.message);
+      this.errorMessageRawTx = err.error || err.message;
+      this.loadingRawTx = false;
+    })
   }
 
   public ionViewDidLoad(): void {
@@ -96,6 +111,7 @@ export class TransactionPage {
           });
         this.isSkipped = !this.tx.isCustomTxApplied && this.tx.chain === 'DFI' && this.tx.isCustom;
         // Be aware that the tx component is loading data into the tx object
+        this.loadRawTx();
       },
       err => {
         this.logger.error(err.message);
