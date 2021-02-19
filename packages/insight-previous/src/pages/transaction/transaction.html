@@ -438,8 +438,14 @@
         <h2>Details</h2>
 
         <transaction [tx]="tx" [showCoins]="true"></transaction>
-      </div>
 
+        <ng-container>
+          <h2>Raw Transaction</h2>
+          <div class='raw-tx'>
+            <pre [innerHTML]="{t: 'dsfsdf'} | prettyjson"></pre>
+          </div>
+        </ng-container>
+      </div>
     </div>
 
   </ion-grid>

@@ -2,4 +2,26 @@ page-transaction {
   ion-note > .tx-note{
     font-size: 2.2rem;
   }
+
+  .key {
+    color: #EB65F8;
+  }
+
+  .string {
+    color: darkgreen;
+  }
+
+  .number {
+    color: darkred;
+  }
+
+  .null {
+    color: darkorange;
+  }
+
+  .raw-tx {
+    padding: 15px;
+    background-color: #f7f7f7;
+    border: 1px solid #f3f3f3;
+  }
 }
