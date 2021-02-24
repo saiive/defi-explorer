@@ -81,13 +81,26 @@ router.get('/getpoolpair/:poolID', async function (req, res) {
 
 router.get('/listaccounthistory/:owner/:token', async function (req, res) {
     let { chain, network, owner, token } = req.params;
+    let {maxBlockHeight, limit} = req.query;
+    let maxBlockHeightNum, limitNum;
+
     try {
+        if (limit) {
+            limitNum = parseInt(limit as string);
+        }
+
+        if (maxBlockHeight) {
+            maxBlockHeightNum = parseInt(maxBlockHeight as string);
+        }
+
         const chainProvider = ChainStateProvider.get({ chain });
         let result = await (<DFIStateProvider>chainProvider).listAccountHistory({
             chain,
             network,
             owner,
-            token
+            token,
+            limit: limitNum,
+            maxBlockHeight: maxBlockHeightNum
         });
         return res.send(result || {});
     } catch (err) {
