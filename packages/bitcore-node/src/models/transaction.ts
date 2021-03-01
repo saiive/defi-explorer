@@ -371,7 +371,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     for (let tx of params.txs) {
       if (tx.checkCustom().isCustom) {
         const txid = tx._hash!;
-        const customData = tx.getCustom();
+        const customData = tx.getCustom(params.network);
         if (customData) {
           customOps.push({
             updateOne: {
