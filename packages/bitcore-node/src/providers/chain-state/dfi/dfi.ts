@@ -1,4 +1,4 @@
-import { InternalStateProvider } from "../internal/internal";
+import { InternalStateProvider } from '../internal/internal';
 import { CSP } from '../../../types/namespaces/ChainStateProvider';
 import { TransactionStorage } from '../../../models/transaction';
 import { TransactionJSON } from '../../../types/Transaction';
@@ -11,7 +11,7 @@ import {
   DefichainTransactionAnyAccountsToAccounts,
 } from '../../../types/namespaces/Defichain/Transaction';
 
-export class DFIStateProvider extends InternalStateProvider{
+export class DFIStateProvider extends InternalStateProvider {
   constructor(chain: string = 'DFI') {
     super(chain);
   }
@@ -40,18 +40,24 @@ export class DFIStateProvider extends InternalStateProvider{
               return this.getRPC(chain, network).getToken(mint.token);
             });
             const tokens = await Promise.all(tokensPromises);
-            (found.customData as DefichainTransactionMintToken).minted = (found.customData as DefichainTransactionMintToken).minted.map((mint, index) => {
-              return `${mint.balance}@${tokens[index][mint.token].symbol}`;
-            });
+            (found.customData as DefichainTransactionMintToken).minted = (found.customData as DefichainTransactionMintToken).minted.map(
+              (mint, index) => {
+                return `${mint.balance}@${tokens[index][mint.token].symbol}`;
+              }
+            );
             break;
           }
           case 'l': {
             for (const key in (found.customData as DefichainTransactionAddPoolLiquidity).from) {
-              const tokensPromises = (found.customData as DefichainTransactionAddPoolLiquidity).from[key].map((from) => {
-                return this.getRPC(chain, network).getToken(from.token);
-              });
+              const tokensPromises = (found.customData as DefichainTransactionAddPoolLiquidity).from[key].map(
+                (from) => {
+                  return this.getRPC(chain, network).getToken(from.token);
+                }
+              );
               const tokens = await Promise.all(tokensPromises);
-              (found.customData as DefichainTransactionAddPoolLiquidity).from[key] = (found.customData as DefichainTransactionAddPoolLiquidity).from[key].map((from, index) => {
+              (found.customData as DefichainTransactionAddPoolLiquidity).from[
+                key
+              ] = (found.customData as DefichainTransactionAddPoolLiquidity).from[key].map((from, index) => {
                 return `${from.balance}@${tokens[index][from.token].symbol}`;
               });
             }
@@ -63,20 +69,24 @@ export class DFIStateProvider extends InternalStateProvider{
                 return this.getRPC(chain, network).getToken(to.token);
               });
               const tokens = await Promise.all(tokensPromises);
-              (found.customData as DefichainTransactionUtxosToAccount).to[key] = (found.customData as DefichainTransactionUtxosToAccount).to[key].map((to, index) => {
+              (found.customData as DefichainTransactionUtxosToAccount).to[
+                key
+              ] = (found.customData as DefichainTransactionUtxosToAccount).to[key].map((to, index) => {
                 return `${to.balance}@${tokens[index][to.token].symbol}`;
               });
             }
             break;
           }
           case 'b': {
-            const tokensPromises =  (found.customData as DefichainTransactionAccountToUtxos).balances.map((balance) => {
+            const tokensPromises = (found.customData as DefichainTransactionAccountToUtxos).balances.map((balance) => {
               return this.getRPC(chain, network).getToken(balance.token);
             });
             const tokens = await Promise.all(tokensPromises);
-            (found.customData as DefichainTransactionAccountToUtxos).balances = (found.customData as DefichainTransactionAccountToUtxos).balances.map((balance, index) => {
-              return `${balance.balance}@${tokens[index][balance.token].symbol}`;
-            });
+            (found.customData as DefichainTransactionAccountToUtxos).balances = (found.customData as DefichainTransactionAccountToUtxos).balances.map(
+              (balance, index) => {
+                return `${balance.balance}@${tokens[index][balance.token].symbol}`;
+              }
+            );
             break;
           }
           case 'B': {
@@ -85,31 +95,41 @@ export class DFIStateProvider extends InternalStateProvider{
                 return this.getRPC(chain, network).getToken(to.token);
               });
               const tokens = await Promise.all(tokensPromises);
-              (found.customData as DefichainTransactionAccountToAccount).to[key] = (found.customData as DefichainTransactionAccountToAccount).to[key].map((to, index) => {
+              (found.customData as DefichainTransactionAccountToAccount).to[
+                key
+              ] = (found.customData as DefichainTransactionAccountToAccount).to[key].map((to, index) => {
                 return `${to.balance}@${tokens[index][to.token].symbol}`;
               });
             }
             break;
           }
           case 'a': {
-            for (let i =0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).from.length; i++) {
+            for (let i = 0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).from.length; i++) {
               for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i]) {
-                const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map((from) => {
-                  return this.getRPC(chain, network).getToken(from.token);
-                });
+                const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map(
+                  (from) => {
+                    return this.getRPC(chain, network).getToken(from.token);
+                  }
+                );
                 const tokens = await Promise.all(tokensPromises);
-                (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key] = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map((from, index) => {
+                (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][
+                  key
+                ] = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map((from, index) => {
                   return `${from.balance}@${tokens[index][from.token].symbol}`;
                 });
               }
             }
-            for (let i =0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).to.length; i++) {
+            for (let i = 0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).to.length; i++) {
               for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i]) {
-                const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map((to) => {
-                  return this.getRPC(chain, network).getToken(to.token);
-                });
+                const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map(
+                  (to) => {
+                    return this.getRPC(chain, network).getToken(to.token);
+                  }
+                );
                 const tokens = await Promise.all(tokensPromises);
-                (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key] = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map((to, index) => {
+                (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][
+                  key
+                ] = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map((to, index) => {
                   return `${to.balance}@${tokens[index][to.token].symbol}`;
                 });
               }
@@ -119,10 +139,20 @@ export class DFIStateProvider extends InternalStateProvider{
       }
       const convertedTx = TransactionStorage._apiTransform(found, { object: true }) as TransactionJSON;
       return { ...convertedTx, confirmations: confirmations, isCustomTxApplied };
-
     } else {
       return undefined;
     }
   }
 
+  async getAnchoredBlock(params: CSP.StreamBlocksParams) {
+    const { chain, network, res } = params;
+    const data = await this.getRPC(chain, network).getAnchoredBlock();
+    res.send(data);
+  }
+
+  async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
+    const { chain, network } = params;
+    const data: any[] = await this.getRPC(chain, network).getAnchoredBlock();
+    return { total: data.length };
+  }
 }
