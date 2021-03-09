@@ -149,7 +149,7 @@ export class RPC {
     return this.asyncCall('testpoolswap', [{'from': from, 'tokenFrom': tokenFrom, 'amountFrom': amountForm, 'to': to, 'tokenTo': tokenTo}]);
   }
 
-  async listAccountHistory(owner: string, token: string, limit: number, maxBlockHeight: number): Promise<any> {
+  async listAccountHistory(owner: string, token: string, limit: number, maxBlockHeight: number, noRewards: boolean): Promise<any> {
     let query = {
       token: token
     };
@@ -161,6 +161,8 @@ export class RPC {
     if (maxBlockHeight) {
       query['maxBlockHeight'] = maxBlockHeight;
     }
+
+    query['no_rewards'] = noRewards;
 
     return this.asyncCall('listaccounthistory', [owner, query]);
   }

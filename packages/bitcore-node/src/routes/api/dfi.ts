@@ -81,8 +81,8 @@ router.get('/getpoolpair/:poolID', async function (req, res) {
 
 router.get('/listaccounthistory/:owner/:token', async function (req, res) {
     let { chain, network, owner, token } = req.params;
-    let {maxBlockHeight, limit} = req.query;
-    let maxBlockHeightNum, limitNum;
+    let {maxBlockHeight, limit, no_rewards} = req.query;
+    let maxBlockHeightNum, limitNum, noRewardsBool;
 
     try {
         if (limit) {
@@ -93,6 +93,10 @@ router.get('/listaccounthistory/:owner/:token', async function (req, res) {
             maxBlockHeightNum = parseInt(maxBlockHeight as string);
         }
 
+        if (no_rewards !== undefined) {
+            noRewardsBool = no_rewards.toString().toLowerCase() === 'true';
+        }
+
         const chainProvider = ChainStateProvider.get({ chain });
         let result = await (<DFIStateProvider>chainProvider).listAccountHistory({
             chain,
@@ -100,7 +104,8 @@ router.get('/listaccounthistory/:owner/:token', async function (req, res) {
             owner,
             token,
             limit: limitNum,
-            maxBlockHeight: maxBlockHeightNum
+            maxBlockHeight: maxBlockHeightNum,
+            noRewards: noRewardsBool
         });
         return res.send(result || {});
     } catch (err) {
