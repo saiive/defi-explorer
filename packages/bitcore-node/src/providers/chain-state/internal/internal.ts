@@ -633,7 +633,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
   }
 
   async getDecodeRawTx(params: CSP.StreamTransactionParams) {
-    let { chain, network, txId } = params;
+    const { chain, network, txId } = params;
     const rawTx =  await this.getRPC(chain, network).getRawTx(txId);
     return await this.getRPC(chain, network).decodeRawTx(rawTx);
   }
