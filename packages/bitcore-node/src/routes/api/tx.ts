@@ -7,7 +7,7 @@ import { TransactionJSON } from '../../types/Transaction';
 import { CacheTimes } from '../middleware';
 const router = Router({ mergeParams: true });
 
-router.get('/', function (req, res) {
+router.get('/', function(req, res) {
   let { chain, network } = req.params;
   let { blockHeight, blockHash, limit, since, direction, paging } = req.query;
   if (!chain || !network) {
@@ -23,7 +23,7 @@ router.get('/', function (req, res) {
     network,
     req,
     res,
-    args: { limit, since, direction, paging },
+    args: { limit, since, direction, paging }
   };
 
   if (blockHeight !== undefined) {
@@ -35,7 +35,7 @@ router.get('/', function (req, res) {
   return ChainStateProvider.streamTransactions(payload);
 });
 
-router.get('/latest', async function (req, res) {
+router.get('/latest', async function(req, res) {
   try {
     let { chain, network } = req.params;
     chain = chain.toUpperCase();
@@ -103,7 +103,7 @@ router.get('/:txid/coins', (req, res, next) => {
     chain = chain.toUpperCase();
     network = network.toLowerCase();
     ChainStateProvider.getCoinsForTx({ chain, network, txid })
-      .then((coins) => {
+      .then(coins => {
         res.setHeader('Content-Type', 'application/json');
         return res.status(200).send(JSON.stringify(coins));
       })
@@ -111,23 +111,24 @@ router.get('/:txid/coins', (req, res, next) => {
   }
 });
 
-router.get('/:txid/decoderaw', (req, res, next) => {
+router.get('/:txid/decoderaw', async (req, res) => {
   let { chain, network, txid } = req.params;
   if (typeof txid !== 'string' || typeof chain !== 'string' || typeof network !== 'string') {
-    res.status(400).send('Missing required param');
+    return res.status(400).send('Missing required param');
   } else {
-    chain = chain.toUpperCase();
-    network = network.toLowerCase();
-    ChainStateProvider.getDecodeRawTx({ chain, network, txId: txid })
-      .then((tx) => {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(200).send(JSON.stringify(tx));
-      })
-      .catch(next);
+    try {
+      chain = chain.toUpperCase();
+      network = network.toLowerCase();
+      const tx = await ChainStateProvider.getDecodeRawTx({ chain, network, txId: txid });
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).send(JSON.stringify(tx));
+    } catch (error) {
+      return res.status(500).send(error);
+    }
   }
 });
 
-router.post('/send', async function (req, res) {
+router.post('/send', async function(req, res) {
   try {
     let { chain, network } = req.params;
     let { rawTx } = req.body;
@@ -136,7 +137,7 @@ router.post('/send', async function (req, res) {
     let txid = await ChainStateProvider.broadcastTransaction({
       chain,
       network,
-      rawTx,
+      rawTx
     });
     return res.send({ txid });
   } catch (err) {
@@ -147,5 +148,5 @@ router.post('/send', async function (req, res) {
 
 module.exports = {
   router: router,
-  path: '/tx',
+  path: '/tx'
 };
