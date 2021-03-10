@@ -14,7 +14,7 @@ services:
 
   defichain:
     container_name: defichain
-    image: defi/defichain:1.4.5
+    image: defi/defichain:1.5.2
     networks:
       - default
     ports:
