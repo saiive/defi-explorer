@@ -171,6 +171,7 @@ Peer.prototype._addSocketEventHandlers = function() {
 
 Peer.prototype._onError = function(e) {
   this.emit('error', e);
+  console.log("Socket error", e);
   if (this.status !== Peer.STATUS.DISCONNECTED) {
     this.disconnect();
   }
