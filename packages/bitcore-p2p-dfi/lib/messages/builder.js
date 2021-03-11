@@ -19,7 +19,7 @@ function builder(options) {
   options.BlockHeader = options.BlockHeader || bitcore.BlockHeader;
   options.Transaction = options.Transaction || bitcore.Transaction;
   options.MerkleBlock = options.MerkleBlock || bitcore.MerkleBlock;
-  options.protocolVersion = options.protocolVersion || 70001;
+  options.protocolVersion = options.protocolVersion || 70016;
 
   var exported = {
     constructors: {
@@ -62,6 +62,9 @@ function builder(options) {
       anchorauth: 'AnchorAuth',
       anchorcnf: 'AnchorConformation',
       getauths: 'GetAuths',
+      sendheaders: 'SendHeaders',
+      sendcmpct: 'Sendcmpct',
+      feefilter: 'Feefilter'
     },
     commands: {}
   };
