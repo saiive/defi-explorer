@@ -19,6 +19,8 @@ COPY ./packages/bitcore-p2p-cash/package.json ./packages/bitcore-p2p-cash/packag
 RUN true
 COPY ./packages/bitcore-p2p-dfi/package.json ./packages/bitcore-p2p-dfi/package.json
 RUN true
+COPY ./packages/bitcore-lib-dfi/package.json ./packages/bitcore-lib-dfi/package.json
+RUN true
 COPY ./packages/bitcore-wallet-client/package.json ./packages/bitcore-wallet-client/package.json
 RUN true
 COPY ./packages/bitcore-client/package.json ./packages/bitcore-client/package.json
