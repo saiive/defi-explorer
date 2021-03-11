@@ -155,8 +155,13 @@ Peer.prototype.connect = function() {
 Peer.prototype._addSocketEventHandlers = function() {
   var self = this;
 
-  this.socket.on('error', self._onError.bind(this));
-  this.socket.on('end', self.disconnect.bind(this));
+  this.socket.on('error', function(e) {
+    self._onError(e);
+  });
+  this.socket.on('end', function(e){
+    self.disconnect();
+    console.log("socket end...", e);
+  });
 
   this.socket.on('data', function(data) {
     self.dataBuffer.push(data);
@@ -185,6 +190,8 @@ Peer.prototype.disconnect = function() {
   this.status = Peer.STATUS.DISCONNECTED;
   this.socket.destroy();
   this.emit('disconnect');
+
+  
   return this;
 };
 
