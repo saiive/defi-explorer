@@ -197,7 +197,6 @@ Pool.prototype._connectPeer = function _connectPeer(addr) {
       relay: self.relay
     });
 
-    console.log("connect to peer", peer);
     peer.on('connect', function peerConnect() {
       self.emit('peerconnect', peer, addr);
     });
