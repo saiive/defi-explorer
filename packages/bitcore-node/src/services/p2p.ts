@@ -36,7 +36,7 @@ export class P2pManager {
     }
     logger.info('Starting P2P Manager');
     console.log(Config.chainNetworks());
-    
+
     for (let chainNetwork of Config.chainNetworks()) {
       const { chain, network } = chainNetwork;
       const chainConfig = Config.chainConfig(chainNetwork);
@@ -470,7 +470,7 @@ export class P2pWorker {
   }
 
   async start() {
-    logger.debug(`Started worker for chain ${this.chain}`);
+    logger.info(`Started worker for chain ${this.chain}`);
     await this.connect();
     this.refreshSyncingNode();
   }
