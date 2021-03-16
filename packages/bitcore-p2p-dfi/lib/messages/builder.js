@@ -60,7 +60,7 @@ function builder(options) {
       mempool: 'MemPool',
       getaddr: 'GetAddr',
       anchorauth: 'AnchorAuth',
-      anchorcnf: 'AnchorConformation',
+      anchorconf: 'AnchorConformation',
       getauths: 'GetAuths',
     },
     commands: {}
