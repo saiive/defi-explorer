@@ -35,7 +35,8 @@ export class P2pManager {
       return;
     }
     logger.info('Starting P2P Manager');
-
+    console.log(Config.chainNetworks());
+    
     for (let chainNetwork of Config.chainNetworks()) {
       const { chain, network } = chainNetwork;
       const chainConfig = Config.chainConfig(chainNetwork);
