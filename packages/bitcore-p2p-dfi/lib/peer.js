@@ -60,6 +60,8 @@ function Peer(options) {
 
   this.network = Networks.get(options.network) || Networks.defaultNetwork;
 
+  console.log("peer network is ", this.network);
+
   if (!this.port) {
     this.port = this.network.port;
   }
@@ -144,6 +146,7 @@ Peer.prototype.connect = function() {
   this.socket.on('connect', function(ev) {
     self.status = Peer.STATUS.CONNECTED;
     self.emit('connect');
+    console.log("peer connect");
     self._sendVersion();
   });
 
@@ -190,6 +193,7 @@ Peer.prototype.disconnect = function() {
   this.status = Peer.STATUS.DISCONNECTED;
   this.socket.destroy();
   this.emit('disconnect');
+  console.log("peer disconnect");
 
   
   return this;

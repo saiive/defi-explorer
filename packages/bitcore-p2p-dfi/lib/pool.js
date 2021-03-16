@@ -57,8 +57,6 @@ function Pool(options) {
   this.network = Networks.get(options.network) || Networks.defaultNetwork;
   this.relay = options.relay === false ? false : true;
 
-  console.log(options);
-
   if (options.addrs) {
     for (var i = 0; i < options.addrs.length; i++) {
       this._addAddr(options.addrs[i]);
@@ -201,7 +199,7 @@ Pool.prototype._connectPeer = function _connectPeer(addr) {
     });
 
 
-    console.log("connect to peer...", peer, this.network);
+    console.log("connect to peer...", ip, port, this.network);
 
     peer.on('connect', function peerConnect() {
       self.emit('peerconnect', peer, addr);
