@@ -463,14 +463,14 @@ export class P2pWorker {
 
   async stop() {
     this.stopping = true;
-    logger.info(`Stopping worker for chain ${this.chain}`);
+    logger.info(`Stopping worker for chain ${this.chain}:${this.network}`);
     this.queuedRegistrations.forEach(clearTimeout);
     await this.unregisterSyncingNode();
     await this.disconnect();
   }
 
   async start() {
-    logger.info(`Started worker for chain ${this.chain}`);
+    logger.info(`Started worker for chain ${this.chain}:${this.network}`);
     await this.connect();
     this.refreshSyncingNode();
   }
