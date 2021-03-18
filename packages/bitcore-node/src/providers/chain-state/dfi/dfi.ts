@@ -1,6 +1,8 @@
 import { InternalStateProvider } from '../internal/internal';
 import { CSP } from '../../../types/namespaces/ChainStateProvider';
 import { TransactionStorage } from '../../../models/transaction';
+import { BlockStorage } from '../../../models/block';
+import orderBy from 'lodash/orderBy';
 import { TransactionJSON } from '../../../types/Transaction';
 import {
   DefichainTransactionMintToken,
@@ -8,8 +10,10 @@ import {
   DefichainTransactionUtxosToAccount,
   DefichainTransactionAccountToUtxos,
   DefichainTransactionAccountToAccount,
-  DefichainTransactionAnyAccountsToAccounts,
+  DefichainTransactionAnyAccountsToAccounts
 } from '../../../types/namespaces/Defichain/Transaction';
+import uniq from 'lodash/uniq';
+import nodeCache from '../../../NodeCache';
 
 export class DFIStateProvider extends InternalStateProvider {
   constructor(chain: string = 'DFI') {
@@ -36,7 +40,7 @@ export class DFIStateProvider extends InternalStateProvider {
         isCustomTxApplied = (await this.getRPC(chain, network).getCustomTxApplied(txId, found.blockHeight)) as boolean;
         switch (found.txType) {
           case 'M': {
-            const tokensPromises = (found.customData as DefichainTransactionMintToken).minted.map((mint) => {
+            const tokensPromises = (found.customData as DefichainTransactionMintToken).minted.map(mint => {
               return this.getRPC(chain, network).getToken(mint.token);
             });
             const tokens = await Promise.all(tokensPromises);
@@ -49,11 +53,9 @@ export class DFIStateProvider extends InternalStateProvider {
           }
           case 'l': {
             for (const key in (found.customData as DefichainTransactionAddPoolLiquidity).from) {
-              const tokensPromises = (found.customData as DefichainTransactionAddPoolLiquidity).from[key].map(
-                (from) => {
-                  return this.getRPC(chain, network).getToken(from.token);
-                }
-              );
+              const tokensPromises = (found.customData as DefichainTransactionAddPoolLiquidity).from[key].map(from => {
+                return this.getRPC(chain, network).getToken(from.token);
+              });
               const tokens = await Promise.all(tokensPromises);
               (found.customData as DefichainTransactionAddPoolLiquidity).from[
                 key
@@ -65,7 +67,7 @@ export class DFIStateProvider extends InternalStateProvider {
           }
           case 'U': {
             for (const key in (found.customData as DefichainTransactionUtxosToAccount).to) {
-              const tokensPromises = (found.customData as DefichainTransactionUtxosToAccount).to[key].map((to) => {
+              const tokensPromises = (found.customData as DefichainTransactionUtxosToAccount).to[key].map(to => {
                 return this.getRPC(chain, network).getToken(to.token);
               });
               const tokens = await Promise.all(tokensPromises);
@@ -78,7 +80,7 @@ export class DFIStateProvider extends InternalStateProvider {
             break;
           }
           case 'b': {
-            const tokensPromises = (found.customData as DefichainTransactionAccountToUtxos).balances.map((balance) => {
+            const tokensPromises = (found.customData as DefichainTransactionAccountToUtxos).balances.map(balance => {
               return this.getRPC(chain, network).getToken(balance.token);
             });
             const tokens = await Promise.all(tokensPromises);
@@ -91,7 +93,7 @@ export class DFIStateProvider extends InternalStateProvider {
           }
           case 'B': {
             for (const key in (found.customData as DefichainTransactionAccountToAccount).to) {
-              const tokensPromises = (found.customData as DefichainTransactionAccountToAccount).to[key].map((to) => {
+              const tokensPromises = (found.customData as DefichainTransactionAccountToAccount).to[key].map(to => {
                 return this.getRPC(chain, network).getToken(to.token);
               });
               const tokens = await Promise.all(tokensPromises);
@@ -107,7 +109,7 @@ export class DFIStateProvider extends InternalStateProvider {
             for (let i = 0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).from.length; i++) {
               for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i]) {
                 const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).from[i][key].map(
-                  (from) => {
+                  from => {
                     return this.getRPC(chain, network).getToken(from.token);
                   }
                 );
@@ -122,7 +124,7 @@ export class DFIStateProvider extends InternalStateProvider {
             for (let i = 0; i < (found.customData as DefichainTransactionAnyAccountsToAccounts).to.length; i++) {
               for (const key in (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i]) {
                 const tokensPromises = (found.customData as DefichainTransactionAnyAccountsToAccounts).to[i][key].map(
-                  (to) => {
+                  to => {
                     return this.getRPC(chain, network).getToken(to.token);
                   }
                 );
@@ -145,14 +147,47 @@ export class DFIStateProvider extends InternalStateProvider {
   }
 
   async getAnchoredBlock(params: CSP.StreamBlocksParams) {
-    const { chain, network, res } = params;
-    const data = await this.getRPC(chain, network).getAnchoredBlock();
-    res.send(data);
+    const {
+      chain,
+      network,
+      res,
+      sinceBlock,
+      args,
+    } = params;
+    try {
+      const limit = args?.limit ?? 10
+      const cacheName = `${chain}-${network}-${sinceBlock}-${limit}`;
+      const CACHE_TTL_SECONDS = 60;
+      const cache = nodeCache.get(cacheName);
+      if(!cache) {
+        const data = await this.getRPC(chain, network).getAnchoredBlock();
+        if(!data.length) res.sendStatus(404);
+        const updatedData = orderBy(data, 'defiBlockHeight', 'desc');
+        const lowerLimit = sinceBlock ?? +updatedData[updatedData.length - 1].defiBlockHeight - 1;
+        const filteredData = updatedData.filter(el => el.defiBlockHeight > lowerLimit && el.active).splice(0, +limit);
+        const uniqId = uniq(filteredData.map(item => item.defiBlockHeight));
+        const blockData = await BlockStorage.collection.find({height: {$in: uniqId}}).sort({
+          height: -1
+        }).toArray();
+        const mergerObj = {};
+        blockData.forEach((item) => mergerObj[item.height] = item)
+        const response = filteredData.map(item => ({
+          ...item,
+          ...mergerObj[item.defiBlockHeight],
+          btcTxHash: item.btcTxHash,
+        }))
+        await nodeCache.set(cacheName, response, CACHE_TTL_SECONDS);
+        res.json(response);
+      }
+      res.json(cache);
+    } catch(err) {
+      res.status(500).send(err);
+    }
   }
-
   async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
     const { chain, network } = params;
     const data: any[] = await this.getRPC(chain, network).getAnchoredBlock();
-    return { total: data.length };
+    const updatedData = data.filter((item) => item.active)
+    return { total: updatedData.length };
   }
 }
