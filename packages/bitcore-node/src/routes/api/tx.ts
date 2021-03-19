@@ -35,7 +35,7 @@ router.get('/', function(req, res) {
   return ChainStateProvider.streamTransactions(payload);
 });
 
-router.get('/latest', async function(req, res) {
+router.get('/latest', async (req, res) => {
   try {
     let { chain, network } = req.params;
     chain = chain.toUpperCase();
@@ -128,13 +128,13 @@ router.get('/:txid/decoderaw', async (req, res) => {
   }
 });
 
-router.post('/send', async function(req, res) {
+router.post('/send', async (req, res) => {
   try {
     let { chain, network } = req.params;
-    let { rawTx } = req.body;
+    const { rawTx } = req.body;
     chain = chain.toUpperCase();
     network = network.toLowerCase();
-    let txid = await ChainStateProvider.broadcastTransaction({
+    const txid = await ChainStateProvider.broadcastTransaction({
       chain,
       network,
       rawTx
