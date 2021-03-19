@@ -37,6 +37,7 @@ export class TransactionPage {
   public rawTx: JSON;
   public loadingRawTx = true;
   public errorMessageRawTx: string;
+  public customTxType = CustomTx.customTxType;
 
   private txId: string;
   private chainNetwork: ChainNetwork;
