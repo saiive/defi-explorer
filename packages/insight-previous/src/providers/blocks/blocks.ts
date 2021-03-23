@@ -86,7 +86,7 @@ export class BlocksProvider {
       },
       reward: block.reward,
       btcTxHash: block.btcTxHash || null,
-      isAnchor: !!block.btcTxHash,
+      isAnchor: !!block.btcTxHash
     };
   }
 
@@ -95,7 +95,10 @@ export class BlocksProvider {
     return this.httpClient.get<ApiBlock>(heightUrl);
   }
 
-  public getBlocks(numBlocks: number = 10, anchorsOnly: boolean = false,): Observable<ApiBlock[]> {
+  public getBlocks(
+    numBlocks: number = 10,
+    anchorsOnly: boolean = false
+  ): Observable<ApiBlock[]> {
     const url = `${this.api.getUrl()}/block?limit=${numBlocks}&anchorsOnly=${anchorsOnly}`;
     return this.httpClient.get<ApiBlock[]>(url);
   }
@@ -106,7 +109,7 @@ export class BlocksProvider {
   public pageBlocks(
     since: number,
     numBlocks: number = 10,
-    anchorsOnly: boolean = false,
+    anchorsOnly: boolean = false
   ): Observable<ApiBlock[]> {
     const url = `${this.api.getUrl()}/block?since=${since}&limit=${numBlocks}&paging=height&direction=-1&anchorsOnly=${anchorsOnly}`;
     return this.httpClient.get<ApiBlock[]>(url);
@@ -118,7 +121,7 @@ export class BlocksProvider {
   }
 
   public getTotalAnchoredBlocks(): Observable<any> {
-    const url: string = this.api.getUrl() + '/block/total-anchored-blocks'
+    const url: string = this.api.getUrl() + '/block/total-anchored-blocks';
     return this.httpClient.get<ApiBlock>(url);
   }
 }
