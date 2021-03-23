@@ -94,7 +94,8 @@ export class P2pWorker {
       [this.bitcoreP2p.Inventory.TYPE.TX]: 100000
     };
     this.messages = new this.bitcoreP2p.Messages({
-      network: this.bitcoreLib.Networks.get(this.network)
+      network: this.bitcoreLib.Networks.get(this.network),
+      protocolVersion: 70016
     });
     this.pool = new this.bitcoreP2p.Pool({
       addrs: this.chainConfig.trustedPeers.map(peer => {

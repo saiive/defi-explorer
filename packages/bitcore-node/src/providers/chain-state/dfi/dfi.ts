@@ -5,12 +5,12 @@ import { BlockStorage } from '../../../models/block';
 import orderBy from 'lodash/orderBy';
 import { TransactionJSON } from '../../../types/Transaction';
 import {
-  DefichainTransactionMintToken,
-  DefichainTransactionAddPoolLiquidity,
-  DefichainTransactionUtxosToAccount,
-  DefichainTransactionAccountToUtxos,
   DefichainTransactionAccountToAccount,
-  DefichainTransactionAnyAccountsToAccounts
+  DefichainTransactionAccountToUtxos,
+  DefichainTransactionAddPoolLiquidity,
+  DefichainTransactionAnyAccountsToAccounts,
+  DefichainTransactionMintToken,
+  DefichainTransactionUtxosToAccount
 } from '../../../types/namespaces/Defichain/Transaction';
 import uniq from 'lodash/uniq';
 import nodeCache from '../../../NodeCache';

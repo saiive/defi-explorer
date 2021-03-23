@@ -39,10 +39,11 @@ export class RPC {
     );
   }
 
-  async asyncCall(method: string, params: any[]) {
+  async asyncCall<T = any>(method: string, params: any[]): Promise<T> {
     return new Promise((resolve, reject) => {
       this.callMethod(method, params, (err, data) => {
         if (err) {
+          // eslint-disable-next-line no-console
           console.log(err.message);
           return reject(err);
         }
@@ -120,6 +121,14 @@ export class RPC {
 
   async getToken(token: number): Promise<any> {
     return this.asyncCall('gettoken', [token]);
+  }
+  
+  async getRawTx(txId: string): Promise<string> {
+    return this.asyncCall<string>('getrawtransaction', [txId]);
+  }
+
+  async decodeRawTx(hex: string): Promise<JSON> {
+    return this.asyncCall<JSON>('decoderawtransaction', [hex]);
   }
 
   async getAnchoredBlock(

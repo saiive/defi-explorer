@@ -1,5 +1,6 @@
 import { Component, Injectable } from '@angular/core';
 import { IonicPage, NavParams } from 'ionic-angular';
+import { CustomTx } from 'bitcore-lib-dfi';
 import { keys } from 'lodash';
 import { ApiProvider, ChainNetwork } from '../../providers/api/api';
 import { CurrencyProvider } from '../../providers/currency/currency';
@@ -8,24 +9,10 @@ import { PriceProvider } from '../../providers/price/price';
 import { RedirProvider } from '../../providers/redir/redir';
 import { TxsProvider } from '../../providers/transactions/transactions';
 
-const CUSTOM_TX_TYPE = {
-  C: 'createMasternode',
-  R: 'resignMasternode',
-  T: 'createToken',
-  M: 'mintToken',
-  N: 'updateToken',
-  n: 'updateTokenAny',
-  p: 'createPoolPair',
-  u: 'updatePoolPair',
-  s: 'poolSwap',
-  l: 'addPoolLiquidity',
-  r: 'removePoolLiquidity',
-  U: 'utxosToAccount',
-  b: 'accountToUtxos',
-  B: 'accountToAccount',
-  G: 'setGovVariable',
-  a: 'AnyAccountsToAccounts'
-}
+const customTxName = Object.keys(CustomTx.customTxType).reduce((res, key) => {
+  res[CustomTx.customTxType[key]] = key;
+  return res;
+}, {})
 
 @Injectable()
 @IonicPage({
@@ -47,6 +34,10 @@ export class TransactionPage {
   public isSkipped: boolean;
   public keys: (object?: any) => string[];
   public JSON: JSON;
+  public rawTx: JSON;
+  public loadingRawTx = true;
+  public errorMessageRawTx: string;
+  public customTxType = CustomTx.customTxType;
 
   private txId: string;
   private chainNetwork: ChainNetwork;
@@ -66,6 +57,7 @@ export class TransactionPage {
     this.vout = navParams.get('vout');
     this.fromVout = navParams.get('fromVout') || undefined;
 
+
     const chain: string =
       navParams.get('chain') || this.apiProvider.getConfig().chain;
     const network: string =
@@ -78,6 +70,17 @@ export class TransactionPage {
     this.apiProvider.changeNetwork(this.chainNetwork);
     this.currencyProvider.setCurrency();
     this.priceProvider.setCurrency();
+  }
+
+  private loadRawTx(): void {
+    this.txProvider.getDecodeRawTx(this.txId).subscribe(data => {
+      this.rawTx = data;
+      this.loadingRawTx = false;
+    }, err => {
+      this.logger.error(err.message);
+      this.errorMessageRawTx = err.error || err.message;
+      this.loadingRawTx = false;
+    })
   }
 
   public ionViewDidLoad(): void {
@@ -96,6 +99,7 @@ export class TransactionPage {
           });
         this.isSkipped = !this.tx.isCustomTxApplied && this.tx.chain === 'DFI' && this.tx.isCustom;
         // Be aware that the tx component is loading data into the tx object
+        this.loadRawTx();
       },
       err => {
         this.logger.error(err.message);
@@ -114,6 +118,6 @@ export class TransactionPage {
   }
 
   public txType(type: string): string {
-    return CUSTOM_TX_TYPE[type];
+    return customTxName[type];
   }
 }
