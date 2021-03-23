@@ -64,6 +64,7 @@ function builder(options) {
       getaddr: 'GetAddr',
       anchorauth: 'AnchorAuth',
       anchorcnf: 'AnchorConformation',
+      anchorconf: 'AnchorConformation',
       getauths: 'GetAuths',
     },
     commands: {}

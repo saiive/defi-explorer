@@ -72,7 +72,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
       spentHeight: { $lt: SpentHeightIndicators.minimum },
       mintHeight: { $gt: SpentHeightIndicators.conflicting },
     };
-    let balance:any = await CoinStorage.getBalance({ query });
+    let balance: any = await CoinStorage.getBalance({ query });
     return balance;
   }
 
@@ -92,9 +92,13 @@ export class InternalStateProvider implements CSP.IChainStateService {
 
   streamBlocks(params: CSP.StreamBlocksParams) {
     const { req, res } = params;
-    const { query, options } = this.getBlocksQuery(params);
+    const { query, options, anchorsOnly } = this.getBlocksQuery(params);
     // @ts-ignore
-    Storage.apiStreamingFind(BlockStorage, query, options, req, res);
+    if (!anchorsOnly) {
+      Storage.apiStreamingFind(BlockStorage, query, options, req, res);
+    } else {
+      this.getAnchoredBlock(params);
+    }
   }
 
   async getTotalAnchoredBlocks(params: CSP.GetTotalAnchoredBlocks) {
@@ -110,7 +114,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
 
   async getBlocks(params: CSP.GetBlockParams) {
     const { query, options } = this.getBlocksQuery(params);
-    let cursor = BlockStorage.collection.find<IBlock>(query, options);//.addCursorFlag('noCursorTimeout', true);
+    let cursor = BlockStorage.collection.find<IBlock>(query, options); //.addCursorFlag('noCursorTimeout', true);
     if (options.sort) {
       cursor = cursor.sort(options.sort);
     }
@@ -126,6 +130,12 @@ export class InternalStateProvider implements CSP.IChainStateService {
       return { ...convertedBlock, confirmations };
     };
     return blocks.map(blockTransform);
+  }
+
+  getAnchoredBlock(params: CSP.StreamBlocksParams) {
+    const { req, res } = params;
+    const { query, options } = this.getBlocksQuery(params);
+    Storage.apiStreamingFind(BlockStorage, query, options, req, res);
   }
 
   private getBlocksQuery(params: CSP.GetBlockParams | CSP.StreamBlocksParams) {
@@ -176,7 +186,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     if (anchorsOnly) {
       query.btcTxHash = { $exists: true };
     }
-    return { query, options };
+    return { query, options, anchorsOnly };
   }
 
   async getBlock(params: CSP.GetBlockParams) {
@@ -318,7 +328,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const wallet = await WalletStorage.collection.findOne({ pubKey });
     const walletId = wallet!._id!;
     const query = { chain, network, wallets: walletId, spentHeight: { $gte: SpentHeightIndicators.minimum } };
-    const cursor = CoinStorage.collection.find(query);//.addCursorFlag('noCursorTimeout', true);
+    const cursor = CoinStorage.collection.find(query); //.addCursorFlag('noCursorTimeout', true);
     const seen = {};
     const stringifyWallets = (wallets: Array<ObjectId>) => wallets.map((w) => w.toHexString());
     const allMissingAddresses = new Array<string>();
@@ -402,10 +412,8 @@ export class InternalStateProvider implements CSP.IChainStateService {
       }
     }
 
-    const transactionStream = TransactionStorage.collection
-      .find(query)
-      .sort({ blockTimeNormalized: 1 })
-      // .addCursorFlag('noCursorTimeout', true);
+    const transactionStream = TransactionStorage.collection.find(query).sort({ blockTimeNormalized: 1 });
+    // .addCursorFlag('noCursorTimeout', true);
     const listTransactionsStream = new ListTransactionsStream(wallet);
     transactionStream.pipe(listTransactionsStream).pipe(res);
   }

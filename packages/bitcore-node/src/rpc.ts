@@ -15,9 +15,9 @@ export class RPC {
           jsonrpc: '1.0',
           id: Date.now(),
           method: method,
-          params: params
+          params: params,
         },
-        json: true
+        json: true,
       },
       (err, res) => {
         if (err) {
@@ -122,12 +122,22 @@ export class RPC {
   async getToken(token: number): Promise<any> {
     return this.asyncCall('gettoken', [token]);
   }
+  
   async getRawTx(txId: string): Promise<string> {
     return this.asyncCall<string>('getrawtransaction', [txId]);
   }
 
   async decodeRawTx(hex: string): Promise<JSON> {
     return this.asyncCall<JSON>('decoderawtransaction', [hex]);
+  }
+
+  async getAnchoredBlock(
+    minBtcHeight?: number,
+    maxBtcHeight?: number,
+    minConfs?: number,
+    maxConfs?: number
+  ): Promise<any> {
+    return this.asyncCall('spv_listanchors', [minBtcHeight, maxBtcHeight, minConfs, maxConfs]);
   }
 }
 
