@@ -35,7 +35,6 @@ export class InternalStateProvider implements CSP.IChainStateService {
       throw new Error(`RPC not configured for ${chain} ${network}`);
     }
     const { username, password, host, port } = RPC_PEER;
-    console.log("Using rpc ", RPC_PEER);
     return new RPC(username, password, host, port);
   }
 

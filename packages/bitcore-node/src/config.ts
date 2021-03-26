@@ -8,8 +8,6 @@ let program = parseArgv([], ['config']);
 function findConfig(): ConfigType | undefined {
   let foundConfig;
   const envConfigPath = process.env.BITCORE_CONFIG_PATH;
-  
-  logger.info("envConfigPath " + envConfigPath);
   const argConfigPath = program.config;
   const configFileName = 'bitcore.config.json';
   let bitcoreConfigPaths = [
@@ -17,8 +15,6 @@ function findConfig(): ConfigType | undefined {
     `../../../../${configFileName}`,
     `../../${configFileName}`
   ];
-
-  logger.info("bitcoreConfigPaths " + JSON.stringify(bitcoreConfigPaths));
   const overrideConfig = argConfigPath || envConfigPath;
   if (overrideConfig) {
     bitcoreConfigPaths.unshift(overrideConfig);
@@ -32,7 +28,6 @@ function findConfig(): ConfigType | undefined {
         foundConfig = bitcoreConfig.bitcoreNode;
       } catch (e) {
         foundConfig = undefined;
-        logger.error(e);
       }
     }
   }
@@ -86,7 +81,6 @@ const Config = function (): ConfigType {
   };
 
   let foundConfig = findConfig();
-  logger.info("found config " + foundConfig);
   
   const mergeCopyArray = (objVal, srcVal) => (objVal instanceof Array ? srcVal : undefined);
   config = _.mergeWith(config, foundConfig, mergeCopyArray);
@@ -102,13 +96,15 @@ const Config = function (): ConfigType {
             username: 'test',
             password: 'test'
           }
+        },
+        mainnet: {
+          chainSource: 'p2p',
+          trustedPeers: [{ host: '45.157.177.82', port: 8555 }],
         }
       }
     });
   }
   config = setTrustedPeers(config);
-  
-  logger.info("config is" + JSON.stringify(config));
   return config;
 };
 
