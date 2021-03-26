@@ -235,7 +235,7 @@ Peer.prototype._sendPong = function(nonce) {
 Peer.prototype._readMessage = function() {
   var message = this.messages.parseBuffer(this.dataBuffer);
   
-  console.log("read data....",  message, self.host, self.port);
+  console.log("read data....",  message, this.host, this.port);
   if (message) {
     this.emit(message.command, message);
     this._readMessage();
