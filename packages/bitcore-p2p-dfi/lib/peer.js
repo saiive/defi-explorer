@@ -168,7 +168,6 @@ Peer.prototype._addSocketEventHandlers = function() {
 
   this.socket.on('data', function(data) {
     self.dataBuffer.push(data);
-    console.log("read data....",  self.host, self.port);
 
     if (self.dataBuffer.length > Peer.MAX_RECEIVE_BUFFER) {
       // TODO: handle this case better
@@ -206,6 +205,8 @@ Peer.prototype.disconnect = function() {
  * @param {Message} message - A message instance
  */
 Peer.prototype.sendMessage = function(message) {
+  
+  console.log("send data....", message, self.host, self.port);
   this.socket.write(message.toBuffer());
 };
 
@@ -233,6 +234,8 @@ Peer.prototype._sendPong = function(nonce) {
  */
 Peer.prototype._readMessage = function() {
   var message = this.messages.parseBuffer(this.dataBuffer);
+  
+  console.log("read data....",  message, self.host, self.port);
   if (message) {
     this.emit(message.command, message);
     this._readMessage();
