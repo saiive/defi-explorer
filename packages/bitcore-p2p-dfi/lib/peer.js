@@ -175,6 +175,7 @@ Peer.prototype._addSocketEventHandlers = function () {
     try {
       self._readMessage();
     } catch (e) {
+      console.error("read message error", e);
       return self.disconnect();
     }
   });
@@ -197,7 +198,7 @@ Peer.prototype.disconnect = function () {
   this.status = Peer.STATUS.DISCONNECTED;
   this.socket.destroy();
   this.emit('disconnect');
-  
+
   var stack = new Error().stack;
   console.log(stack);
 
