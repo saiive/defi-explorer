@@ -139,6 +139,10 @@ export class P2pWorker {
     });
 
     this.pool.on('peerdisconnect', peer => {
+      
+      var stack = new Error().stack;
+      console.log(stack);
+
       logger.warn(`Not connected to peer ${peer.host}`, {
         chain: this.chain,
         network: this.network,
