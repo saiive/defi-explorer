@@ -161,7 +161,7 @@ Peer.prototype._addSocketEventHandlers = function() {
     self._onError(e);
   });
   this.socket.on('end', function(e){
-    console.log("socket end...", e, this.host, this.port);
+    console.log("socket end...", e, self.host, self.port);
     self.disconnect();
     
   });
@@ -179,7 +179,7 @@ Peer.prototype._addSocketEventHandlers = function() {
 
 Peer.prototype._onError = function(e) {
   this.emit('error', e);
-  console.log("socket error...", e, this.host, this.port);
+  console.log("socket error...", e, self.host, self.port);
   
   if (this.status !== Peer.STATUS.DISCONNECTED) {
     this.disconnect();
