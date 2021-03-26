@@ -44,7 +44,7 @@
           <ion-item *ngIf="tx.fee >= 0">
             Fee Rate
             <ion-note item-end>
-              {{ (tx.fee / tx.size) | number:'1.0-2' }} sats/byte
+              {{ (tx.fee / tx.size) | number:'1.0-2' }} fi/byte
             </ion-note>
           </ion-item>
           <ion-item>
@@ -82,7 +82,7 @@
                 {{ txType(tx.txType) }}
               </ion-note>
              </ion-item>
-            <ng-container *ngIf="tx.txType === 'C'">
+            <ng-container *ngIf="tx.txType === customTxType.createMasternode">
             <ion-item>
               Operator type
               <ion-note item-end>
@@ -96,7 +96,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'R'">
+            <ng-container *ngIf="tx.txType === customTxType.resignMasternode">
             <ion-item>
               NodeId
               <ion-note item-end>
@@ -104,7 +104,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'T'">
+            <ng-container *ngIf="tx.txType === customTxType.createToken">
             <ion-item>
               Symbol
               <ion-note item-end>
@@ -136,7 +136,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'M'">
+            <ng-container *ngIf="tx.txType === customTxType.mintToken">
             <ion-item>
               Minted
               <ion-note item-end>
@@ -146,7 +146,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'N'">
+            <ng-container *ngIf="tx.txType === customTxType.updateToken">
             <ion-item>
               Token Tx
               <ion-note item-end>
@@ -160,7 +160,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'n'">
+            <ng-container *ngIf="tx.txType === customTxType.updateTokenAny">
             <ion-item>
               Token tx
               <ion-note item-end>
@@ -213,7 +213,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'p'">
+            <ng-container *ngIf="tx.txType === customTxType.createPoolPair">
             <ion-item>
               Id token A
               <ion-note item-end>
@@ -251,7 +251,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'u'">
+            <ng-container *ngIf="tx.txType === customTxType.updatePoolPair">
             <ion-item>
               PollId
               <ion-note item-end>
@@ -277,7 +277,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 's'">
+            <ng-container *ngIf="tx.txType === customTxType.poolSwap">
             <ion-item>
               From
               <ion-note item-end>
@@ -318,7 +318,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'l'">
+            <ng-container *ngIf="tx.txType === customTxType.addPoolLiquidity">
             <ion-item>
               From
               <ion-note item-end>
@@ -334,7 +334,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'r'">
+            <ng-container *ngIf="tx.txType === customTxType.removePoolLiquidity">
             <ion-item>
               From
               <ion-note item-end>
@@ -354,7 +354,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'G'">
+            <ng-container *ngIf="tx.txType === customTxType.setGovVariable">
             <ion-item>
               Name
               <ion-note item-end>
@@ -362,7 +362,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'U'">
+            <ng-container *ngIf="tx.txType === customTxType.utxosToAccount">
             <ion-item>
               to
               <ion-note item-end>
@@ -372,7 +372,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'b'">
+            <ng-container *ngIf="tx.txType === customTxType.accountToUtxos">
               <ion-item>
                 From
                 <ion-note item-end>
@@ -394,7 +394,7 @@
                   </ion-note>
                 </ion-item>
             </ng-container>
-            <ng-container *ngIf="tx.txType === 'B'">
+            <ng-container *ngIf="tx.txType === customTxType.accountToAccount">
               <ion-item>
                 From
                 <ion-note item-end>
@@ -410,7 +410,7 @@
               </ion-note>
             </ion-item>
           </ng-container>
-            <ng-container *ngIf="tx.txType === 'a'">
+            <ng-container *ngIf="tx.txType === customTxType.anyAccountsToAccounts">
               <ion-item>
                 From
                 <ion-note item-end>
@@ -438,8 +438,16 @@
         <h2>Details</h2>
 
         <transaction [tx]="tx" [showCoins]="true"></transaction>
-      </div>
 
+        <ng-container>
+          <h2>Raw Transaction</h2>
+          <loader *ngIf="loadingRawTx" [type]="'title'"></loader>
+          <error [message]="errorMessageRawTx" *ngIf="!loadingRawTx && errorMessageRawTx"></error>
+          <div class='raw-tx' *ngIf='rawTx && !loadingRawTx'>
+            <pre [innerHTML]="rawTx | prettyjson"></pre>
+          </div>
+        </ng-container>
+      </div>
     </div>
 
   </ion-grid>

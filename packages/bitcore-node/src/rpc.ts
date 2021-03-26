@@ -15,9 +15,9 @@ export class RPC {
           jsonrpc: '1.0',
           id: Date.now(),
           method: method,
-          params: params
+          params: params,
         },
-        json: true
+        json: true,
       },
       (err, res) => {
         if (err) {
@@ -39,11 +39,12 @@ export class RPC {
     );
   }
 
-  async asyncCall(method: string, params: any[]) {
+  async asyncCall<T = any>(method: string, params: any[]): Promise<T> {
     return new Promise((resolve, reject) => {
       this.callMethod(method, params, (err, data) => {
         if (err) {
-          console.log(err.message)
+          // eslint-disable-next-line no-console
+          console.log(err.message);
           return reject(err);
         }
         return resolve(data);
@@ -165,6 +166,23 @@ export class RPC {
     query['no_rewards'] = noRewards;
 
     return this.asyncCall('listaccounthistory', [owner, query]);
+  }
+  
+  async getRawTx(txId: string): Promise<string> {
+    return this.asyncCall<string>('getrawtransaction', [txId]);
+  }
+
+  async decodeRawTx(hex: string): Promise<JSON> {
+    return this.asyncCall<JSON>('decoderawtransaction', [hex]);
+  }
+
+  async getAnchoredBlock(
+    minBtcHeight?: number,
+    maxBtcHeight?: number,
+    minConfs?: number,
+    maxConfs?: number
+  ): Promise<any> {
+    return this.asyncCall('spv_listanchors', [minBtcHeight, maxBtcHeight, minConfs, maxConfs]);
   }
 }
 

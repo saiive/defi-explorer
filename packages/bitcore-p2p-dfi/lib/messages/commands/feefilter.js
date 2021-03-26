@@ -6,21 +6,21 @@ var bitcore = require('bitcore-lib-dfi');
 var BufferUtil = bitcore.util.buffer;
 
 /**
- * Request information about active peers
+ * A message indicating that the node prefers to receive new block announcements
+ * via a `headers` message rather than an `inv` (BIP130).
  * @extends Message
- * @param {Object} options
  * @constructor
  */
-function FeefilterMessage(arg, options) {
+function FeeFilterMessage(arg, options) {
   Message.call(this, options);
   this.command = 'feefilter';
 }
-inherits(FeefilterMessage, Message);
+inherits(FeeFilterMessage, Message);
 
-FeefilterMessage.prototype.setPayload = function() {};
+FeeFilterMessage.prototype.setPayload = function() {};
 
-FeefilterMessage.prototype.getPayload = function() {
+FeeFilterMessage.prototype.getPayload = function() {
   return BufferUtil.EMPTY_BUFFER;
 };
 
-module.exports = FeefilterMessage;
+module.exports = FeeFilterMessage;

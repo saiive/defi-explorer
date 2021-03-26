@@ -82,7 +82,7 @@ export class CoinModel extends BaseModel<ICoin> {
   ) {
     const { pageNo } = params.query;
     const pageSize =
-      !params.query.pageSize || params.query.pageSize === NaN ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
+      !params.query.pageSize || isNaN(params.query.pageSize) ? RICH_LIST_PAGE_SIZE : params.query.pageSize;
     const cacheKey = `${pageNo}-${pageSize}`;
     const cache = nodeCache.get(cacheKey);
     const CACHE_TTL_SECONDS = 300;
@@ -153,7 +153,7 @@ export class CoinModel extends BaseModel<ICoin> {
     let { query } = params;
     const CACHE_TTL_SECONDS = 60;
     const cacheName = `${query.address}-balance`;
-    const cache = nodeCache.get(cacheName);
+    const cache = (nodeCache.get(cacheName) as { confirmed: number; unconfirmed: number; balance: number });
 
     if (!cache) {
       const result = await this.collection
@@ -324,20 +324,20 @@ export class CoinModel extends BaseModel<ICoin> {
 
   _apiTransform(coin: MongoBound<ICoin>, options?: { object: boolean }): any {
     const transform: CoinJSON = {
-      _id: valueOrDefault<any>(coin._id, new ObjectID()).toHexString(),
+      _id: valueOrDefault(coin._id, new ObjectID()).toHexString(),
       chain: valueOrDefault<string>(coin.chain, ''),
       network: valueOrDefault<string>(coin.network, ''),
       coinbase: valueOrDefault<boolean>(coin.coinbase, false),
       mintIndex: valueOrDefault<number>(coin.mintIndex, -1),
-      spentTxid: valueOrDefault<string>(coin.spentTxid, ''),
+      spentTxid: valueOrDefault(coin.spentTxid, ''),
       mintTxid: valueOrDefault<string>(coin.mintTxid, ''),
       mintHeight: valueOrDefault<number>(coin.mintHeight, -1),
-      spentHeight: valueOrDefault<number>(coin.spentHeight, SpentHeightIndicators.error),
+      spentHeight: valueOrDefault(coin.spentHeight, SpentHeightIndicators.error),
       address: valueOrDefault<string>(coin.address, ''),
-      script: valueOrDefault<Buffer>(coin.script, Buffer.alloc(0)).toString('hex'),
+      script: valueOrDefault(coin.script, Buffer.alloc(0)).toString('hex'),
       value: valueOrDefault<number>(coin.value, -1),
-      confirmations: valueOrDefault<number>(coin.confirmations, -1),
-      customTxOut: valueOrDefault<any>(CoinStorage.getCustomTxOut(coin), null),
+      confirmations: valueOrDefault(coin.confirmations, -1),
+      customTxOut: valueOrDefault(CoinStorage.getCustomTxOut(coin), null),
     };
     if (options && options.object) {
       return transform;

@@ -6,21 +6,21 @@ var bitcore = require('bitcore-lib-dfi');
 var BufferUtil = bitcore.util.buffer;
 
 /**
- * Request information about active peers
+ * A message indicating that the node prefers to receive new block announcements
+ * via a `headers` message rather than an `inv` (BIP130).
  * @extends Message
- * @param {Object} options
  * @constructor
  */
-function SendheadersMessage(arg, options) {
+function SendHeadersMessage(arg, options) {
   Message.call(this, options);
   this.command = 'sendheaders';
 }
-inherits(SendheadersMessage, Message);
+inherits(SendHeadersMessage, Message);
 
-SendheadersMessage.prototype.setPayload = function() {};
+SendHeadersMessage.prototype.setPayload = function() {};
 
-SendheadersMessage.prototype.getPayload = function() {
+SendHeadersMessage.prototype.getPayload = function() {
   return BufferUtil.EMPTY_BUFFER;
 };
 
-module.exports = SendheadersMessage;
+module.exports = SendHeadersMessage;

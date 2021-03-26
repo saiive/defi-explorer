@@ -145,5 +145,8 @@ class ChainStateProxy implements CSP.ChainStateProvider {
   async getAccount(params) {
     return this.get(params).getAccount(params);
   }
+  async getDecodeRawTx(params) {
+    return this.get(params).getDecodeRawTx(params);
+  }
 }
 export let ChainStateProvider = new ChainStateProxy();

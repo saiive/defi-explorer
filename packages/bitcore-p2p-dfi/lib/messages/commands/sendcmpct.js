@@ -6,21 +6,21 @@ var bitcore = require('bitcore-lib-dfi');
 var BufferUtil = bitcore.util.buffer;
 
 /**
- * Request information about active peers
+ * A message indicating that the node prefers to receive new block announcements
+ * via a `headers` message rather than an `inv` (BIP130).
  * @extends Message
- * @param {Object} options
  * @constructor
  */
-function SendcmpctMessage(arg, options) {
+function SendCmpctMessage(arg, options) {
   Message.call(this, options);
   this.command = 'sendcmpct';
 }
-inherits(SendcmpctMessage, Message);
+inherits(SendCmpctMessage, Message);
 
-SendcmpctMessage.prototype.setPayload = function() {};
+SendCmpctMessage.prototype.setPayload = function() {};
 
-SendcmpctMessage.prototype.getPayload = function() {
+SendCmpctMessage.prototype.getPayload = function() {
   return BufferUtil.EMPTY_BUFFER;
 };
 
-module.exports = SendcmpctMessage;
+module.exports = SendCmpctMessage;
