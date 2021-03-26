@@ -60,8 +60,6 @@ function Peer(options) {
 
   this.network = Networks.get(options.network) || Networks.defaultNetwork;
 
-  console.log("peer network is ", this.network);
-
   if (!this.port) {
     this.port = this.network.port;
   }
@@ -146,7 +144,7 @@ Peer.prototype.connect = function() {
   this.socket.on('connect', function(ev) {
     self.status = Peer.STATUS.CONNECTED;
     self.emit('connect');
-    console.log("peer connect");
+    
     self._sendVersion();
   });
 
@@ -163,7 +161,7 @@ Peer.prototype._addSocketEventHandlers = function() {
   });
   this.socket.on('end', function(e){
     self.disconnect();
-    console.log("socket end...", e);
+    
   });
 
   this.socket.on('data', function(data) {
@@ -179,7 +177,7 @@ Peer.prototype._addSocketEventHandlers = function() {
 
 Peer.prototype._onError = function(e) {
   this.emit('error', e);
-  console.log("Socket error", e);
+  
   if (this.status !== Peer.STATUS.DISCONNECTED) {
     this.disconnect();
   }
@@ -193,7 +191,7 @@ Peer.prototype.disconnect = function() {
   this.status = Peer.STATUS.DISCONNECTED;
   this.socket.destroy();
   this.emit('disconnect');
-  console.log("peer disconnect");
+  
 
   
   return this;
@@ -213,6 +211,7 @@ Peer.prototype.sendMessage = function(message) {
 Peer.prototype._sendVersion = function() {
   // todo: include sending local ip address
   var message = this.messages.Version({relay: this.relay});
+  
   this.versionSent = true;
   this.sendMessage(message);
 };

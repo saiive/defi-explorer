@@ -123,7 +123,6 @@ Pool.PeerEvents = ['version', 'inv', 'getdata', 'ping', 'pong', 'addr',
 Pool.prototype.connect = function connect() {
   this.keepalive = true;
   var self = this;
-  console.log("pool connect...", this.network);
   if (this.dnsSeed) {
     self._addAddrsFromSeeds();
   } else {
@@ -197,9 +196,6 @@ Pool.prototype._connectPeer = function _connectPeer(addr) {
       network: this.network,
       relay: self.relay
     });
-
-
-    console.log("connect to peer...", ip, port, this.network);
 
     peer.on('connect', function peerConnect() {
       self.emit('peerconnect', peer, addr);
