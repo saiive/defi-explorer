@@ -176,7 +176,7 @@ Peer.prototype._addSocketEventHandlers = function () {
       self._readMessage();
     } catch (e) {
       console.error("read message error", e);
-      return self.disconnect();
+      // return self.disconnect();
     }
   });
 };
@@ -241,8 +241,6 @@ Peer.prototype._sendPong = function (nonce) {
  */
 Peer.prototype._readMessage = function () {
   var message = this.messages.parseBuffer(this.dataBuffer);
-
-  console.log("readMessage", message);
 
   if (message) {
     this.emit(message.command, message);
