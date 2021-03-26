@@ -8,7 +8,7 @@ type TimedRequest = {
 } & express.Request;
 
 function LogObj(logOut: { [key: string]: string }) {
-  logger.debug(
+  logger.verbose(
     `${logOut.time} | ${logOut.ip} | ${logOut.phase} | ${logOut.took} | ${logOut.method} | ${logOut.status} | ${
       logOut.url
     }`

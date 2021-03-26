@@ -157,9 +157,9 @@ Peer.prototype._addSocketEventHandlers = function() {
 
   this.socket.on('error', function(e) {
     self._onError(e);
-    console.log("socket error...", e);
   });
   this.socket.on('end', function(e){
+    console.error("socket end...");
     self.disconnect();
     
   });
@@ -169,6 +169,7 @@ Peer.prototype._addSocketEventHandlers = function() {
 
     if (self.dataBuffer.length > Peer.MAX_RECEIVE_BUFFER) {
       // TODO: handle this case better
+      console.error("buffer overflow....");
       return self.disconnect();
     }
     try {
@@ -181,6 +182,7 @@ Peer.prototype._addSocketEventHandlers = function() {
 
 Peer.prototype._onError = function(e) {
   this.emit('error', e);
+  console.error("socket error...", e);
   
   if (this.status !== Peer.STATUS.DISCONNECTED) {
     this.disconnect();
