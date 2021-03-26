@@ -172,6 +172,6 @@ export type DefichainTransactionType = {
   toBuffer: () => Buffer;
   getAnchor: () => DefichainTransactionAnchor | null,
   checkCustom: () => { isCustom: boolean, br?: Buffer },
-  getCustom: (network: String) => DefichainTransactionCustom | null,
+  getCustom: () => DefichainTransactionCustom | null,
   nLockTime: number;
 };
