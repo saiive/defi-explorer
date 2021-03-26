@@ -37,7 +37,7 @@ export abstract class BaseModel<T> {
     }
   }
 
-  abstract async onConnect();
+  abstract onConnect();
 
   get collection(): Collection<MongoBound<T>> {
     if (this.storageService.db) {

@@ -96,7 +96,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const { query, options, anchorsOnly } = this.getBlocksQuery(params);
     // @ts-ignore
     if (!anchorsOnly) {
-      Storage.apiStreamingFind(BlockStorage, query, options, req, res);
+      Storage.apiStreamingFind(<any>BlockStorage, query, options, req, res);
     } else {
       this.getAnchoredBlock(params);
     }
@@ -136,7 +136,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
   getAnchoredBlock(params: CSP.StreamBlocksParams) {
     const { req, res } = params;
     const { query, options } = this.getBlocksQuery(params);
-    Storage.apiStreamingFind(BlockStorage, query, options, req, res);
+    Storage.apiStreamingFind(<any>BlockStorage, query, options, req, res);
   }
 
   private getBlocksQuery(params: CSP.GetBlockParams | CSP.StreamBlocksParams) {

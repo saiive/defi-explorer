@@ -16,6 +16,7 @@ export { IBlock };
 
 @LoggifyClass
 export class BlockModel extends BaseModel<IBlock> {
+
   constructor(storage?: StorageService) {
     super('blocks', storage);
   }
