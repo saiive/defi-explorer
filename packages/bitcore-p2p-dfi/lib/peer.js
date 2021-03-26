@@ -168,6 +168,7 @@ Peer.prototype._addSocketEventHandlers = function() {
 
   this.socket.on('data', function(data) {
     self.dataBuffer.push(data);
+    console.log("read data....",  self.host, self.port);
 
     if (self.dataBuffer.length > Peer.MAX_RECEIVE_BUFFER) {
       // TODO: handle this case better
