@@ -206,7 +206,7 @@ Peer.prototype.disconnect = function() {
  */
 Peer.prototype.sendMessage = function(message) {
   
-  console.log("send data....", message, self.host, self.port);
+  console.log("send data....", message, this.host, this.port);
   this.socket.write(message.toBuffer());
 };
 
