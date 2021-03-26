@@ -96,10 +96,6 @@ const Config = function (): ConfigType {
             username: 'test',
             password: 'test'
           }
-        },
-        mainnet: {
-          chainSource: 'p2p',
-          trustedPeers: [{ host: '45.157.177.82', port: 8555 }],
         }
       }
     });
