@@ -176,7 +176,7 @@ Peer.prototype._addSocketEventHandlers = function () {
       self._readMessage();
     } catch (e) {
       console.error("read message error", e);
-      // return self.disconnect();
+      return self.disconnect();
     }
   });
 };
