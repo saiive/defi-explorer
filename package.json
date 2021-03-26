@@ -61,6 +61,7 @@
     "typescript-eslint-parser": "^15.0.0"
   },
   "dependencies": {
-    "bitcore-lib-dfi": "https://github.com/DeFiCh-WalletApp/bitcore-lib-dfi.git"
+    "bitcore-lib-dfi": "https://github.com/DeFiCh-WalletApp/bitcore-lib-dfi.git",
+    "bech32": "=1.1.3"
   }
 }
