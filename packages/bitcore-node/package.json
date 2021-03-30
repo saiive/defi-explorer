@@ -80,6 +80,7 @@
     "bitcore-lib-cash": "^8.2.0",
     "bitcore-p2p": "^8.2.0",
     "bitcore-p2p-cash": "^8.2.0",
+    "bitcore-p2p-dfi": "^8.2.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "crypto-js": "^4.0.0",
