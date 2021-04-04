@@ -89,7 +89,7 @@ const Config = function (): ConfigType {
       DFI: {
         testnet: {
           chainSource: 'p2p',
-          trustedPeers: [{ host: '51.158.191.217', port: 18555 }],
+          trustedPeers: [{ host: '51.15.71.114', port: 18555 }],
           rpc: {
             host: '127.0.0.1',
             port: 18554,
