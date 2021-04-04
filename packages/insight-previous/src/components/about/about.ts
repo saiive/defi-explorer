@@ -93,7 +93,7 @@ export class AboutComponent implements OnInit, OnDestroy {
   public goToTxDecoder() {
     const chain = this.defaultProvider.getDefault('%CHAIN%');
     const network = this.defaultProvider.getDefault('%NETWORK%');
-    this.redirProvider.redir('tx-decoder', { chain, network });
+    this.redirProvider.redir('decode-tx', { chain, network });
   }
 
   public roundingValue(value: string | number) {

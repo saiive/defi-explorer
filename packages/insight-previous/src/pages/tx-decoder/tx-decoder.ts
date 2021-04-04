@@ -15,8 +15,8 @@ import { PriceProvider } from '../../providers/price/price';
 const thresholdRichListElement = 1000;
 
 @IonicPage({
-  name: 'tx-decoder',
-  segment: ':chain/:network/tx-decoder'
+  name: 'decode-tx',
+  segment: ':chain/:network/decode-tx'
 })
 @Component({
   selector: 'page-tx-decoder',
@@ -29,6 +29,7 @@ export class TxDecoderPage implements AfterViewInit, AfterViewChecked {
 
   private chainNetwork: ChainNetwork;
   public rawTx: JSON;
+  public rawTxError: any;
 
   constructor(
     private toastCtrl: ToastController,
@@ -73,6 +74,7 @@ export class TxDecoderPage implements AfterViewInit, AfterViewChecked {
         },
         err => {
           this.logger.error(err.message);
+          this.rawTxError = err.message;
           //this.presentToast(false, err.message);
         }
       );

@@ -1,5 +1,8 @@
-page-rich-list {
-  ion-infinite-scroll-content .infinite-loading {
-    padding-bottom: 6rem;
+
+page-tx-decoder {
+  .raw-tx {
+    padding: 15px;
+    background-color: #f7f7f7;
+    border: 1px solid #f3f3f3;
   }
 }

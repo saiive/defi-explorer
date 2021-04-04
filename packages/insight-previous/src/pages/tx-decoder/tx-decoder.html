@@ -32,6 +32,13 @@
         </div>
       </ng-container>
 
+      <ng-container *ngIf="rawTxError">
+        <h2>Raw Transaction</h2>
+        <div class='raw-tx-error'>
+          {{ rawTxError }}
+        </div>
+      </ng-container>
+
 
     </div>
 

@@ -2,7 +2,9 @@
   <ion-toolbar fixed color="dark">
     <div class="pages">
       <a *ngIf="chainNetwork" (click)="openPage('broadcast-tx')">Broadcast Transaction</a>
-       &middot; 
+      &middot;
+      <a *ngIf="chainNetwork" (click)="openPage('decode-tx')">Decode Transaction</a>
+      &middot;
       <a *ngIf="chainNetwork" (click)="openPage('messages')">Verify Message</a>
     </div>
     <div class="about">
