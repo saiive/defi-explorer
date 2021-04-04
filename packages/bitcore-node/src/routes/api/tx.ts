@@ -128,6 +128,25 @@ router.get('/:txid/decoderaw', async (req, res) => {
   }
 });
 
+
+router.post('/decode', async (req, res) => {
+  try {
+    let { chain, network } = req.params;
+    const { rawTx } = req.body;
+    chain = chain.toUpperCase();
+    network = network.toLowerCase();
+    const txid = await ChainStateProvider.getDecode({
+      chain,
+      network,
+      rawTx
+    });
+    return res.send({ txid });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).send(err.message);
+  }
+});
+
 router.post('/send', async (req, res) => {
   try {
     let { chain, network } = req.params;

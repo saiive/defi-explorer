@@ -170,7 +170,7 @@ export class RPC {
   
   async getRawTx(txId: string): Promise<string> {
     return this.asyncCall<string>('getrawtransaction', [txId]);
-  }
+  }  
 
   async decodeRawTx(hex: string): Promise<JSON> {
     return this.asyncCall<JSON>('decoderawtransaction', [hex]);

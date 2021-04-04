@@ -90,6 +90,12 @@ export class AboutComponent implements OnInit, OnDestroy {
     this.redirProvider.redir('rich-list', { chain, network });
   }
 
+  public goToTxDecoder() {
+    const chain = this.defaultProvider.getDefault('%CHAIN%');
+    const network = this.defaultProvider.getDefault('%NETWORK%');
+    this.redirProvider.redir('tx-decoder', { chain, network });
+  }
+
   public roundingValue(value: string | number) {
     return roundingDown(value);
   }

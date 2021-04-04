@@ -173,6 +173,7 @@ export declare namespace CSP {
     getLocatorHashes(params): Promise<any>;
     getAccount(params): Promise<any>;
     getDecodeRawTx(params): Promise<JSON>;
+    getDecode(params): Promise<JSON>;
   }
 
   type ChainStateServices = { [key: string]: IChainStateService };
