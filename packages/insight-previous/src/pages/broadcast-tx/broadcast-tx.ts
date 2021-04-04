@@ -57,7 +57,7 @@ export class BroadcastTxPage {
 
   public send(): void {
     const postData: any = {
-      rawtx: this.transaction
+      rawTx: this.transaction
     };
 
     this.httpClient
