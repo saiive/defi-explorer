@@ -60,7 +60,8 @@ function builder(options) {
       mempool: 'MemPool',
       getaddr: 'GetAddr',
       wtxidrelay: "WtxIdRelay",
-      sendaddrv2: "SendAddrV2"
+      sendaddrv2: "SendAddrV2",
+      sendheaders: "SendHeaders"
     },
     commands: {}
   };

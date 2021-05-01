@@ -11,16 +11,16 @@ var BufferUtil = bitcore.util.buffer;
  * @param {Object} options
  * @constructor
  */
-function SendAddrV2Message(arg, options) {
+function SendHeadersMessage(arg, options) {
   Message.call(this, options);
-  this.command = 'sendaddrv2';
+  this.command = 'sendheaders';
 }
-inherits(SendAddrV2Message, Message);
+inherits(SendHeadersMessage, Message);
 
-SendAddrV2Message.prototype.setPayload = function() {};
+SendHeadersMessage.prototype.setPayload = function() {};
 
-SendAddrV2Message.prototype.getPayload = function() {
+SendHeadersMessage.prototype.getPayload = function() {
   return BufferUtil.EMPTY_BUFFER;
 };
 
-module.exports = SendAddrV2Message;
+module.exports = SendHeadersMessage;
