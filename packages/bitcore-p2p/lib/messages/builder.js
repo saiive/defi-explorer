@@ -59,7 +59,8 @@ function builder(options) {
       getheaders: 'GetHeaders',
       mempool: 'MemPool',
       getaddr: 'GetAddr',
-      wtxidrelay: "WtxIdRelay"
+      wtxidrelay: "WtxIdRelay",
+      sendaddrv2: "SendAddrV2"
     },
     commands: {}
   };
