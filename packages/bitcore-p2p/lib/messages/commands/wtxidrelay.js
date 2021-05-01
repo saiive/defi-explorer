@@ -15,7 +15,7 @@ function WtxIdRelayMessage(arg, options) {
   Message.call(this, options);
   this.command = 'wtxidrelay';
 }
-inherits(GetaddrMessage, Message);
+inherits(WtxIdRelayMessage, Message);
 
 WtxIdRelayMessage.prototype.setPayload = function() {};
 
