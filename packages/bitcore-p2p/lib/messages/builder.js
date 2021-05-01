@@ -61,7 +61,8 @@ function builder(options) {
       getaddr: 'GetAddr',
       wtxidrelay: "WtxIdRelay",
       sendaddrv2: "SendAddrV2",
-      sendheaders: "SendHeaders"
+      sendheaders: "SendHeaders",
+      sendcmpct: "SendCmpct"
     },
     commands: {}
   };
