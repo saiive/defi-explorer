@@ -35,7 +35,7 @@ function builder(options) {
     inventoryCommands: [
       'getdata',
       'inv',
-      'notfound'
+      'notfound'  
     ],
     commandsMap: {
       version: 'Version',
@@ -58,7 +58,8 @@ function builder(options) {
       getblocks: 'GetBlocks',
       getheaders: 'GetHeaders',
       mempool: 'MemPool',
-      getaddr: 'GetAddr'
+      getaddr: 'GetAddr',
+      wtxidrelay: "WtxIdRelay"
     },
     commands: {}
   };
