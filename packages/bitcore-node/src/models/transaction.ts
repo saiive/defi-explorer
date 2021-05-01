@@ -367,6 +367,11 @@ export class TransactionModel extends BaseModel<ITransaction> {
     chain: string;
     network: string;
   }) {
+    if(params.chain != "DFI") 
+    {
+      return void 0;
+    }
+    
     let customOps = new Array<CustomOp>();
     for (let tx of params.txs) {
       if (tx.checkCustom().isCustom) {
