@@ -93,11 +93,13 @@ export type CustomOp = {
       network: string;
       txid: string;
     },
-    update: { $set: {
+    update: {
+      $set: {
         isCustom: boolean;
         txType: DefichainTransactionCustomType;
         customData: DefichainTransactionCustomData;
-      } },
+      }
+    },
     upsert: true;
     forceServerObjectId: true;
   }
@@ -367,8 +369,7 @@ export class TransactionModel extends BaseModel<ITransaction> {
     chain: string;
     network: string;
   }) {
-    if(params.chain.toUpperCase() != "DFI") 
-    {
+    if (params.chain.toUpperCase() != "DFI") {
       return void 0;
     }
 

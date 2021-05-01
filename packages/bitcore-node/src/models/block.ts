@@ -104,9 +104,11 @@ export class BlockModel extends BaseModel<IBlock> {
       );
       logger.debug('Updating previous block.nextBlockHash ', convertedBlock.hash);
     }
-
-    await this.processAnchor({ txs: block.transactions, chain, network })
-      .catch(e => logger.error(e));
+    
+    if (params.chain.toUpperCase() == "DFI") {
+      await this.processAnchor({ txs: block.transactions, chain, network })
+        .catch(e => logger.error(e));
+    }
 
     await TransactionStorage.batchImport({
       txs: block.transactions,
