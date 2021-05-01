@@ -62,7 +62,8 @@ function builder(options) {
       wtxidrelay: "WtxIdRelay",
       sendaddrv2: "SendAddrV2",
       sendheaders: "SendHeaders",
-      sendcmpct: "SendCmpct"
+      sendcmpct: "SendCmpct",
+      feefilter: "FeeFilter"
     },
     commands: {}
   };
