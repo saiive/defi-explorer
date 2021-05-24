@@ -11,7 +11,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '7f83da82-924a-4dd6-8981-61e84b6c78ab'
+  dockerRegistryServiceConnection: '3921c1d1-a9db-4a6a-ab5a-d5c1831052af'
   imageRepository: 'bitcorenode'
   containerRegistry: 'defiwallet.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
