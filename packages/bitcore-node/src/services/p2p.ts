@@ -95,7 +95,7 @@ export class P2pWorker {
     };
     this.messages = new this.bitcoreP2p.Messages({
       network: this.bitcoreLib.Networks.get(this.network),
-      protocolVersion: 70016
+      protocolVersion: 70017
     });
     this.pool = new this.bitcoreP2p.Pool({
       addrs: this.chainConfig.trustedPeers.map(peer => {
