@@ -122,7 +122,7 @@
           <ion-grid class="grid--table">
             <ion-col class="heading" col-12>
               <h5>
-                Rewards
+                Emissions
               </h5>
             </ion-col>
             <ion-row>
@@ -130,15 +130,7 @@
                 Total
               </ion-col>
               <ion-col col-6 text-right>
-                {{ quickStats.rewards.total }}
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col col-6>
-                Community
-              </ion-col>
-              <ion-col col-6 text-right>
-                {{ quickStats.rewards.community }}
+                {{ roundingValue(quickStats.rewards.total) }}
               </ion-col>
             </ion-row>
             <ion-row>
@@ -146,7 +138,71 @@
                 Minter
               </ion-col>
               <ion-col col-6 text-right>
-                {{ quickStats.rewards.minter }}
+                {{ roundingValue(quickStats.rewards.minter) }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6>
+                Community
+              </ion-col>
+              <ion-col col-6 text-right>
+                {{ roundingValue(quickStats.rewards.community) }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6>
+                Anchor
+              </ion-col>
+              <ion-col col-6 text-right>
+                {{ roundingValue(quickStats.rewards.anchor) }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6>
+                Liquidity Subsidy
+              </ion-col>
+              <ion-col col-6 text-right>
+                {{ roundingValue(quickStats.rewards.liquidity) }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6>
+                Swap Subsidy
+              </ion-col>
+              <ion-col col-6 text-right>
+                {{ roundingValue(quickStats.rewards.swap) }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6>
+                Unallocated
+              </ion-col>
+              <ion-col col-6 text-right>
+                {{ roundingValue(quickStats.rewards.futures + quickStats.rewards.options + quickstats.rewards.unallocated) }}
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="grid--table">
+            <ion-col class="heading" col-12>
+              <h5>Burn Info</h5>
+            </ion-col>
+            <ion-row>
+              <ion-col col-6> Address </ion-col>
+              <ion-col col-6 text-right>
+                {{ quickStats.burnInfo.address }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6> Burn Amount (DFI) </ion-col>
+              <ion-col col-6 text-right>
+                {{ roundingValue(quickStats.burnInfo.amount) }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-6> Burn Amount (Tokens) </ion-col>
+              <ion-col col-6 text-right>
+                {{ JSON.stringify(quickStats.burnInfo.tokens, null, 2).replace('[', '').replace(']', '').replaceAll(',', '').replaceAll('"', '').replaceAll('@', ' ') }}
               </ion-col>
             </ion-row>
           </ion-grid>
