@@ -20,10 +20,10 @@
           </a>
         </ion-col>
         <ion-col *ngIf="showTimeAs === 'age'">
-          {{ block.time | amFromUnix | amTimeAgo }}
+          {{ block.timeNormalized | amFromUnix | amTimeAgo }}
         </ion-col>
         <ion-col *ngIf="showTimeAs === 'timestamp'">
-          {{ block.time * 1000 | date:'medium' }}
+          {{ block.timeNormalized * 1000 | date:'medium' }}
         </ion-col>
         <ion-col text-right>
           {{ block.txlength }}
