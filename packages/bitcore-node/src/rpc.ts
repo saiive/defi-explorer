@@ -4,7 +4,7 @@ type CallbackType = (err: any, data?: any) => any;
 
 @LoggifyClass
 export class RPC {
-  constructor(private username: string, private password: string, private host: string, private port: number) {}
+  constructor(private username: string, private password: string, private host: string, private port: number) { }
 
   public callMethod(method: string, params: any, callback: CallbackType) {
     request(
@@ -140,14 +140,14 @@ export class RPC {
   }
 
   async listPoolShares(start: number, including_start: boolean, limit: number): Promise<any> {
-    return this.asyncCall('listpoolshares', [{start, including_start, limit}, true, false]);
+    return this.asyncCall('listpoolshares', [{ start, including_start, limit }, true, false]);
   }
   async getPoolPair(poolID: string): Promise<any> {
     return this.asyncCall('getpoolpair', [poolID]);
   }
 
   async testPoolSwap(from: string, tokenFrom: string, amountForm: number, to: string, tokenTo: string, maxPrice: number): Promise<any> {
-    return this.asyncCall('testpoolswap', [{'from': from, 'tokenFrom': tokenFrom, 'amountFrom': amountForm, 'to': to, 'tokenTo': tokenTo}]);
+    return this.asyncCall('testpoolswap', [{ 'from': from, 'tokenFrom': tokenFrom, 'amountFrom': amountForm, 'to': to, 'tokenTo': tokenTo }]);
   }
 
   async listAccountHistory(owner: string, token: string, limit: number, maxBlockHeight: number, noRewards: boolean): Promise<any> {
@@ -167,13 +167,19 @@ export class RPC {
 
     return this.asyncCall('listaccounthistory', [owner, query]);
   }
-  
+
   async getRawTx(txId: string): Promise<string> {
     return this.asyncCall<string>('getrawtransaction', [txId]);
-  }  
+  }
 
   async decodeRawTx(hex: string): Promise<JSON> {
     return this.asyncCall<JSON>('decoderawtransaction', [hex]);
+  }
+
+  async sendtoaddress(address: string, value: string | number) : Promise<JSON> {
+    var txId = this.asyncCall<string>('sendtoaddress', [address, value]);
+    var retObj = {txId};
+    return <any>retObj;
   }
 
   async getAnchoredBlock(

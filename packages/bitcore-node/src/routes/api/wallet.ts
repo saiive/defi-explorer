@@ -246,6 +246,25 @@ router.get('/:pubKey', authenticate, async function(req: AuthenticatedRequest, r
   }
 });
 
+router.post('/rpc/sendtoaddress', async (req, res) => {
+  try {
+    let { chain, network } = req.params;
+    const { address, amount } = req.body;
+    chain = chain.toUpperCase();
+    network = network.toLowerCase();
+    const txid = await ChainStateProvider.sendtoaddress({
+      chain,
+      network,
+      address, 
+      amount
+    });
+    return res.send(txid);
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).send(err.message);
+  }
+});
+
 module.exports = {
   router: router,
   path: '/wallet'

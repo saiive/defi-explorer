@@ -20,6 +20,7 @@ import { SpentHeightIndicators, CoinJSON } from '../../../types/Coin';
 import { Config } from '../../../services/config';
 import { STATS_URL } from '../../../constants/config';
 import nodeCache from '../../../NodeCache';
+import { networkMap } from '../../../networkAddressMapping';
 
 @LoggifyClass
 export class InternalStateProvider implements CSP.IChainStateService {
@@ -28,7 +29,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     this.chain = chain;
     this.chain = this.chain.toUpperCase();
   }
-
+  
   getRPC(chain: string, network: string) {
     const RPC_PEER = Config.get().chains[chain][network].rpc;
     if (!RPC_PEER) {
@@ -653,4 +654,10 @@ export class InternalStateProvider implements CSP.IChainStateService {
     const { chain, network, rawTx } = params;
     return await this.getRPC(chain, network).decodeRawTx(rawTx);
   }
+
+  async sendtoaddress(params): Promise<JSON> {
+    const { chain, network, address, amount } = params;
+    return await this.getRPC(chain, network).sendtoaddress(address, amount);
+  }
+
 }

@@ -174,6 +174,7 @@ export declare namespace CSP {
     getAccount(params): Promise<any>;
     getDecodeRawTx(params): Promise<JSON>;
     getDecode(params): Promise<JSON>;
+    sendtoaddress(params: {  chain; network; address: string; amount: number | string }): Promise<JSON>;
   }
 
   type ChainStateServices = { [key: string]: IChainStateService };
