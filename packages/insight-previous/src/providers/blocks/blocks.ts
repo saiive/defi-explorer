@@ -75,10 +75,10 @@ export class BlocksProvider {
       bits: '0x' + block.bits.toString(16),
       hash: block.hash,
       time: new Date(block.time).getTime() / 1000,
+      timeNormalized: new Date(block.timeNormalized).getTime() / 1000,
       tx: {
         length: block.transactionCount
       },
-      timeNormalized: new Date(block.timeNormalized).getTime() / 1000,
       txlength: block.transactionCount,
       previousblockhash: block.previousBlockHash,
       nextblockhash: block.nextBlockHash,

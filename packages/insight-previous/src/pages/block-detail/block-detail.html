@@ -45,7 +45,7 @@
                 <ion-item>
                   Timestamp
                   <ion-note item-end >
-                    {{ (block.height>0) ? (block.time * 1000 | date:'medium') : '-' }}
+                    {{ (block.height>0) ? (block.timeNormalized * 1000 | date:'medium') : '-' }}
                   </ion-note>
                 </ion-item>
                 <ion-item>
