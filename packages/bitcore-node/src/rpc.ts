@@ -177,9 +177,7 @@ export class RPC {
   }
 
   async sendtoaddress(address: string, value: string | number) : Promise<JSON> {
-    var txId = this.asyncCall<string>('sendtoaddress', [address, value]);
-    var retObj = {txId};
-    return <any>retObj;
+    return this.asyncCall<JSON>('sendtoaddress', [address, value]);
   }
 
   async getAnchoredBlock(
