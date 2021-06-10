@@ -29,7 +29,7 @@ export class InternalStateProvider implements CSP.IChainStateService {
     this.chain = chain;
     this.chain = this.chain.toUpperCase();
   }
-  
+
   getRPC(chain: string, network: string) {
     const RPC_PEER = Config.get().chains[chain][network].rpc;
     if (!RPC_PEER) {
@@ -656,8 +656,13 @@ export class InternalStateProvider implements CSP.IChainStateService {
   }
 
   async sendtoaddress(params): Promise<JSON> {
-    const { chain, network, address, amount } = params;
-    return await this.getRPC(chain, network).sendtoaddress(address, amount);
+    try {
+      const { chain, network, address, amount } = params;
+      return await this.getRPC(chain, network).sendtoaddress(address, amount);
+    }
+    catch {
+      return <any>null;
+    }
   }
 
 }
