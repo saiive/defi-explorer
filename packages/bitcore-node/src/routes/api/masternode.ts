@@ -1,11 +1,9 @@
-import { Request, Response, Router } from 'express';
+import { Request, Router } from 'express';
 import { ChainNetwork } from '../../types/ChainNetwork';
 import { IWallet } from '../../models/wallet';
 import { ChainStateProvider } from '../../providers/chain-state';
 import { MongoBound } from '../../models/base';
 const router = Router({ mergeParams: true });
-const secp256k1 = require('secp256k1');
-const bitcoreLib = require('bitcore-lib');
 
 type VerificationPayload = {
   message: string;
@@ -24,7 +22,7 @@ type AuthenticatedRequest<Q = any> = {
 } & PreAuthRequest<Q>;
 
 
-router.get('/listmasternodes', async (req: AuthenticatedRequest, res) => {
+router.get('/list/:start/:includingStart/:limit', async (req: AuthenticatedRequest, res) => {
   try {
     let { chain, network, start, includingStart, limit } = req.params;
     let payload = {
@@ -33,6 +31,19 @@ router.get('/listmasternodes', async (req: AuthenticatedRequest, res) => {
       start, 
       includingStart, 
       limit
+    };
+    return ChainStateProvider.listmasternodes(payload);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
+router.get('/list', async (req: AuthenticatedRequest, res) => {
+  try {
+    let { chain, network, } = req.params;
+    let payload = {
+      chain,
+      network
     };
     return ChainStateProvider.listmasternodes(payload);
   } catch (err) {
