@@ -157,5 +157,9 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return this.get(params).sendtoaddress(params);
   }
 
+  async listmasternodes(params) {
+    return this.get(params).listmasternodes(params);
+  }
+
 }
 export let ChainStateProvider = new ChainStateProxy();

@@ -180,6 +180,10 @@ export class RPC {
     return this.asyncCall<JSON>('sendtoaddress', [address, value]);
   }
 
+  async listmasternodes(start: string, includingStart: boolean, limit: number) : Promise<JSON> {
+    return this.asyncCall<JSON>('listmasternodes', [start, includingStart, limit]);
+  }
+
   async getAnchoredBlock(
     minBtcHeight?: number,
     maxBtcHeight?: number,

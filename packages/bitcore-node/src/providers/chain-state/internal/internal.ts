@@ -665,4 +665,9 @@ export class InternalStateProvider implements CSP.IChainStateService {
     }
   }
 
+  async listmasternodes(params) {
+    const { chain, network, start, includingStart, limit } = params;
+    return await this.getRPC(chain, network).listmasternodes(start, includingStart, limit);
+  }
+
 }
