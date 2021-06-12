@@ -151,6 +151,18 @@ export class BlockModel extends BaseModel<IBlock> {
     const height = (previousBlock && previousBlock.height + 1) || 1;
     logger.debug('Setting blockheight', height);
 
+    let medianTime = blockTime;
+    if(height > 11) {
+      let timeAccum = blockTime;
+      let currBlockHash = header.prevHash;
+      for(let i = 0;i < 10;i++) {
+        const pBlock = await this.collection.findOne({ hash: currBlockHash, chain, network });
+        timeAccum += pBlock.time;
+        currBlockHash = pBlock.previousBlockHash;
+      }
+      medianTime = timeAccum / 11;
+    }
+
     const convertedBlock: IBlock = {
       chain,
       network,
@@ -160,7 +172,7 @@ export class BlockModel extends BaseModel<IBlock> {
       nextBlockHash: '',
       previousBlockHash: header.prevHash,
       merkleRoot: header.merkleRoot,
-      time: new Date(blockTime),
+      time: new Date(medianTime),
       timeNormalized: new Date(blockTimeNormalized),
       bits: header.bits,
       transactionCount: block.transactions.length,
