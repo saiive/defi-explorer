@@ -67,7 +67,7 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
 
   private processBlocks(blocks:AppBlock[]): AppBlock[] {
     return blocks.slice(0, this.numBlocks).map((block, i) => {
-      return {...block, medianTime: blocks.slice(i, i + BLOCK_AVERAGE_COUNT).map(x => x.time)
+      return {...block, medianTime: blocks.slice(i + 1, i + 1 + BLOCK_AVERAGE_COUNT).map(x => x.time)
         .reduce((a, c) => a + c) / BLOCK_AVERAGE_COUNT };
     })
   }
