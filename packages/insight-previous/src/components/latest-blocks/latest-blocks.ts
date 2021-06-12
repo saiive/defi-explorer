@@ -2,7 +2,6 @@ import { Component, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ApiProvider } from '../../providers/api/api';
 import {
-  ApiBlock,
   AppBlock,
   BlocksProvider
 } from '../../providers/blocks/blocks';
