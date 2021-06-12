@@ -77,7 +77,7 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
       }
       x.medianTime = medianTime / BLOCK_AVERAGE_COUNT;
       return x;
-    })
+    }).slice(0, this.numBlocks)
   }
 
   private loadBlocks(): void {
