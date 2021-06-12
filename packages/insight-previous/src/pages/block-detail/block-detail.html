@@ -49,12 +49,6 @@
                   </ion-note>
                 </ion-item>
                 <ion-item>
-                  Normalized Timestamp
-                  <ion-note item-end >
-                    {{ (block.height>0) ? (block.timeNormalized * 1000 | date:'medium') : '-' }}
-                  </ion-note>
-                </ion-item>
-                <ion-item>
                   Merkle Root
                   <ion-note item-end> {{ block.merkleroot }} </ion-note>
                 </ion-item>

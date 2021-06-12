@@ -51,6 +51,7 @@ export interface AppBlock {
   btcTxHash: string;
   isAnchor: boolean;
   timeNormalized: number;
+  medianTime?: number;
 }
 
 @Injectable()
