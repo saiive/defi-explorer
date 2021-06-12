@@ -10,6 +10,8 @@ import { DefaultProvider } from '../../providers/default/default';
 import { Logger } from '../../providers/logger/logger';
 import { RedirProvider } from '../../providers/redir/redir';
 
+const BLOCK_AVERAGE_COUNT = 11;
+
 @Component({
   selector: 'latest-blocks',
   templateUrl: 'latest-blocks.html'
@@ -63,14 +65,29 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
     }
   }
 
+  private processBlocks(blocks:AppBlock[]): AppBlock[] {
+    return blocks.map((x, i) => {
+      if(i >= (blocks.length - BLOCK_AVERAGE_COUNT)) {
+        return x;
+      }
+
+      let medianTime = 0;
+      for(let j = i;j < (i + BLOCK_AVERAGE_COUNT) && j < blocks.length;j++) {
+        medianTime += blocks[j].time;
+      }
+      x.medianTime = medianTime / BLOCK_AVERAGE_COUNT;
+      return x;
+    })
+  }
+
   private loadBlocks(): void {
     this.subscriber = this.blocksProvider
-      .getBlocks(this.numBlocks, this.showAnchoredBlocksButton)
+      .getBlocks(this.numBlocks + BLOCK_AVERAGE_COUNT, this.showAnchoredBlocksButton)
       .subscribe(
         response => {
-          const blocks = response.map(block =>
+          const blocks = this.processBlocks(response.map(block =>
             this.blocksProvider.toAppBlock(block)
-          );
+          ));
           this.blocks = blocks;
           if (this.showAnchoredBlocksButton) {
             this.enableInfiniteLoader = this.blocks.length <= this.totalBlocks;
@@ -93,12 +110,12 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
     const since: number =
       this.blocks.length > 0 ? this.blocks[this.blocks.length - 1].height : 0;
     return this.blocksProvider
-      .pageBlocks(since, this.numBlocks, this.showAnchoredBlocksButton)
+      .pageBlocks(since, this.numBlocks + BLOCK_AVERAGE_COUNT, this.showAnchoredBlocksButton)
       .subscribe(
         response => {
-          const blocks = response.map(block =>
+          const blocks = this.processBlocks(response.map(block =>
             this.blocksProvider.toAppBlock(block)
-          );
+          ));
           this.blocks = this.blocks.concat(blocks);
           if (this.showAnchoredBlocksButton) {
             this.enableInfiniteLoader = this.blocks.length <= this.totalBlocks;

@@ -21,7 +21,6 @@ export interface ApiBlock {
   minedBy: string;
   version: number;
   time: Date;
-  medianTime: Date;
   timeNormalized: Date;
   btcTxHash?: string;
 }
@@ -36,7 +35,6 @@ export interface AppBlock {
   difficulty: number;
   bits: string;
   virtualSize: number;
-  medianTime: number;
   hash: string;
   time: number;
   tx: {
@@ -53,6 +51,7 @@ export interface AppBlock {
   btcTxHash: string;
   isAnchor: boolean;
   timeNormalized: number;
+  medianTime?: number;
 }
 
 @Injectable()
@@ -78,7 +77,6 @@ export class BlocksProvider {
       hash: block.hash,
       time: new Date(block.time).getTime() / 1000,
       timeNormalized: new Date(block.timeNormalized).getTime() / 1000,
-      medianTime: new Date(block.medianTime).getTime() / 1000,
       tx: {
         length: block.transactionCount
       },
