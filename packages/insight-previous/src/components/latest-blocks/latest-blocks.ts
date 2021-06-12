@@ -66,18 +66,10 @@ export class LatestBlocksComponent implements OnInit, OnDestroy {
   }
 
   private processBlocks(blocks:AppBlock[]): AppBlock[] {
-    return blocks.map((x, i) => {
-      if(i >= (blocks.length - BLOCK_AVERAGE_COUNT)) {
-        return x;
-      }
-
-      let medianTime = 0;
-      for(let j = i;j < (i + BLOCK_AVERAGE_COUNT) && j < blocks.length;j++) {
-        medianTime += blocks[j].time;
-      }
-      x.medianTime = medianTime / BLOCK_AVERAGE_COUNT;
-      return x;
-    }).slice(0, this.numBlocks)
+    return blocks.slice(0, this.numBlocks).map((block, i) => {
+      return {...block, medianTime: blocks.slice(i + 1, i + 1 + BLOCK_AVERAGE_COUNT).map(x => x.time)
+        .reduce((a, c) => a + c) / BLOCK_AVERAGE_COUNT };
+    })
   }
 
   private loadBlocks(): void {
