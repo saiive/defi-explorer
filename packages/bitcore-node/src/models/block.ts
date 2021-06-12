@@ -157,7 +157,7 @@ export class BlockModel extends BaseModel<IBlock> {
       let currBlockHash = header.prevHash;
       for(let i = 0;i < 10;i++) {
         const pBlock = await this.collection.findOne({ hash: currBlockHash, chain, network });
-        timeAccum += pBlock.time;
+        timeAccum += pBlock.time.getTime();
         currBlockHash = pBlock.previousBlockHash;
       }
       medianTime = timeAccum / 11;
@@ -172,7 +172,8 @@ export class BlockModel extends BaseModel<IBlock> {
       nextBlockHash: '',
       previousBlockHash: header.prevHash,
       merkleRoot: header.merkleRoot,
-      time: new Date(medianTime),
+      time: new Date(blockTime),
+      medianTime: new Date(medianTime),
       timeNormalized: new Date(blockTimeNormalized),
       bits: header.bits,
       transactionCount: block.transactions.length,

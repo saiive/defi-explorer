@@ -17,4 +17,5 @@ export type IBlock = {
   processed: boolean;
   // anchor...
   btcTxHash?: string,
+  medianTime?: Date;
 };
