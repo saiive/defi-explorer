@@ -157,8 +157,12 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return this.get(params).sendtoaddress(params);
   }
 
+  async listallmasternodes(params) {
+    return await (this.get(params)).listallmasternodes(params);
+  }
+
   async listmasternodes(params) {
-    return this.get(params).listmasternodes(params);
+    return await (this.get(params)).listmasternodes(params);
   }
 
 }

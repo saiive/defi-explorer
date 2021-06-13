@@ -3,6 +3,7 @@ import { ChainNetwork } from '../../types/ChainNetwork';
 import { IWallet } from '../../models/wallet';
 import { ChainStateProvider } from '../../providers/chain-state';
 import { MongoBound } from '../../models/base';
+import { CacheMiddleware, CacheTimes } from '../middleware';
 const router = Router({ mergeParams: true });
 
 type VerificationPayload = {
@@ -22,30 +23,43 @@ type AuthenticatedRequest<Q = any> = {
 } & PreAuthRequest<Q>;
 
 
-router.get('/list/:start/:includingStart/:limit', async (req: AuthenticatedRequest, res) => {
+router.get('/list/:start/:includingStart/:limit', CacheMiddleware(CacheTimes.Hour), async (req: AuthenticatedRequest, res) => {
   try {
     let { chain, network, start, includingStart, limit } = req.params;
+    let limitNum, including_startBool;
+
+    if (limit) {
+      limitNum = parseInt(limit as string);
+    }
+
+    if (includingStart !== undefined) {
+      including_startBool = includingStart.toString().toLowerCase() === 'true';
+    }
+
     let payload = {
       chain,
       network,
-      start, 
-      includingStart, 
-      limit
+      start: start,
+      includingStart: including_startBool,
+      limit: limitNum
     };
-    return ChainStateProvider.listmasternodes(payload);
+    var result = await ChainStateProvider.listmasternodes(payload);
+    return res.send(result || {});
   } catch (err) {
     return res.status(500).send(err);
   }
 });
 
-router.get('/list', async (req: AuthenticatedRequest, res) => {
+router.get('/list', CacheMiddleware(CacheTimes.Hour), async (req: AuthenticatedRequest, res) => {
   try {
     let { chain, network, } = req.params;
     let payload = {
       chain,
       network
     };
-    return ChainStateProvider.listmasternodes(payload);
+    var result = await ChainStateProvider.listallmasternodes(payload);
+
+    return res.send(result || {});
   } catch (err) {
     return res.status(500).send(err);
   }

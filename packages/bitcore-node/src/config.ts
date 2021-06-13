@@ -92,9 +92,9 @@ const Config = function (): ConfigType {
           trustedPeers: [{ host: 'localhost', port: 18555 }],
           rpc: {
             host: '127.0.0.1',
-            port: 8554,
-            username: 'dGhNaEZS',
-            password: 'cbeb42db92d7ad1b86d48896c473f22559661a25956d7fce0640269cfe4ddef9'
+            port: 18554,
+            username: 'test',
+            password: 'test'
           }
         }
       }

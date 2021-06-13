@@ -180,8 +180,11 @@ export class RPC {
     return this.asyncCall<JSON>('sendtoaddress', [address, value]);
   }
 
-  async listmasternodes(start: string, includingStart: boolean, limit: number) : Promise<JSON> {
-    return this.asyncCall<JSON>('listmasternodes', [start, includingStart, limit]);
+  listallmasternodes() : Promise<JSON> {
+    return this.asyncCall<JSON>('listmasternodes', []);
+  }
+  listmasternodes(start: string, includingStart: boolean, limit: number) : Promise<JSON> {
+    return this.asyncCall<JSON>('listmasternodes', [{ start, including_start: includingStart, limit }]);
   }
 
   async getAnchoredBlock(

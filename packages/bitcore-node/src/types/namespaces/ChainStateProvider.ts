@@ -175,6 +175,7 @@ export declare namespace CSP {
     getDecodeRawTx(params): Promise<JSON>;
     getDecode(params): Promise<JSON>;
     sendtoaddress(params: {  chain; network; address: string; amount: number | string }): Promise<JSON>;
+    listallmasternodes(params): Promise<JSON>;
     listmasternodes(params): Promise<JSON>;
   }
 
