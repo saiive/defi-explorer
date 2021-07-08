@@ -140,7 +140,7 @@ export class RPC {
   } 
   
   async getOracleData(oracleId: string): Promise<any> {
-    return this.asyncCall('getoracledata ', [oracleId]);
+    return this.asyncCall('getoracledata', [oracleId]);
   }
 
   async getGov(): Promise<any> {
