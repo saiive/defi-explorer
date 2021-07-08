@@ -156,6 +156,19 @@ export class DFIStateProvider extends InternalStateProvider {
     return await this.getRPC(chain, network).listTokens();
   }
 
+  async listPrices(params: any): Promise<any> {
+    const { chain, network } = params;
+    return await this.getRPC(chain, network).listTokens();
+  }  
+  async listOracles(params: any): Promise<any> {
+    const { chain, network } = params;
+    return await this.getRPC(chain, network).listOracles();
+  } 
+   async getOracleData(params: any): Promise<any> {
+    const { chain, network, oracleId } = params;
+    return await this.getRPC(chain, network).getOracleData(oracleId);
+  }
+
   async getToken(params: any): Promise<any> {
     const { chain, network, token } = params;
     return await this.getRPC(chain, network).getToken(token);

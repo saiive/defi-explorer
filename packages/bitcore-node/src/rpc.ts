@@ -129,6 +129,18 @@ export class RPC {
 
   async listTokens(): Promise<any> {
     return this.asyncCall('listtokens', []);
+  }  
+  
+  async listPrices(): Promise<any> {
+    return this.asyncCall('listprices', []);
+  }  
+  
+  async listOracles(): Promise<any> {
+    return this.asyncCall('listOracles', []);
+  } 
+  
+  async getOracleData(oracleId: string): Promise<any> {
+    return this.asyncCall('getoracledata ', [oracleId]);
   }
 
   async getGov(): Promise<any> {
