@@ -136,7 +136,7 @@ export class RPC {
   }  
   
   async listOracles(): Promise<any> {
-    return this.asyncCall('listOracles', []);
+    return this.asyncCall('listoracles', []);
   } 
   
   async getOracleData(oracleId: string): Promise<any> {

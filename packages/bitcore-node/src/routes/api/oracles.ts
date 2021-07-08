@@ -31,7 +31,7 @@ router.get('/oracles', async function (req, res) {
     }
 });
 
-router.get('/:oracleId', async function (req, res) {
+router.get('/data/:oracleId', async function (req, res) {
     let { oracleId, chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
