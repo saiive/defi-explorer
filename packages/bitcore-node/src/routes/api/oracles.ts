@@ -3,7 +3,7 @@ const router = express.Router({ mergeParams: true });
 import { ChainStateProvider } from '../../providers/chain-state';
 import { DFIStateProvider } from '../../providers/chain-state/dfi/dfi';
 
-router.get('/listprices', async function (req, res) {
+router.get('/prices', async function (req, res) {
     let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -17,7 +17,7 @@ router.get('/listprices', async function (req, res) {
     }
 });
 
-router.get('/listoracles', async function (req, res) {
+router.get('/oracles', async function (req, res) {
     let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
