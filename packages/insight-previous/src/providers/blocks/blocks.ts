@@ -50,6 +50,8 @@ export interface AppBlock {
   reward: number;
   btcTxHash: string;
   isAnchor: boolean;
+  timeNormalized: number;
+  medianTime?: number;
 }
 
 @Injectable()
@@ -74,6 +76,7 @@ export class BlocksProvider {
       bits: '0x' + block.bits.toString(16),
       hash: block.hash,
       time: new Date(block.time).getTime() / 1000,
+      timeNormalized: new Date(block.timeNormalized).getTime() / 1000,
       tx: {
         length: block.transactionCount
       },

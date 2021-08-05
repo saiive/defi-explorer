@@ -159,12 +159,12 @@ export class DFIStateProvider extends InternalStateProvider {
   async listPrices(params: any): Promise<any> {
     const { chain, network } = params;
     return await this.getRPC(chain, network).listPrices();
-  }  
+  }
   async listOracles(params: any): Promise<any> {
     const { chain, network } = params;
     return await this.getRPC(chain, network).listOracles();
-  } 
-   async getOracleData(params: any): Promise<any> {
+  }
+  async getOracleData(params: any): Promise<any> {
     const { chain, network, oracleId } = params;
     return await this.getRPC(chain, network).getOracleData(oracleId);
   }
@@ -178,6 +178,44 @@ export class DFIStateProvider extends InternalStateProvider {
     const { chain, network } = params;
 
     return await this.getRPC(chain, network).getGov();
+  }
+  async getAnchoredBlock(params: CSP.StreamBlocksParams) {
+    const {
+      chain,
+      network,
+      res,
+      sinceBlock,
+      args,
+    } = params;
+    try {
+      const limit = args?.limit ?? 10
+      const cacheName = `${chain}-${network}-${sinceBlock}-${limit}`;
+      const CACHE_TTL_SECONDS = 60;
+      const cache = nodeCache.get(cacheName);
+      if (!cache) {
+        const data = await this.getRPC(chain, network).getAnchoredBlock();
+        if (!data.length) res.sendStatus(404);
+        const updatedData = orderBy(data, 'anchorHeight', 'desc');
+        const lowerLimit = sinceBlock ?? +updatedData[updatedData.length - 1].anchorHeight - 1;
+        const filteredData = updatedData.filter(el => el.anchorHeight > lowerLimit && el.active).splice(0, +limit);
+        const uniqId = uniq(filteredData.map(item => item.anchorHeight));
+        const blockData = await BlockStorage.collection.find({ height: { $in: uniqId } }).sort({
+          height: -1
+        }).toArray();
+        const mergerObj = {};
+        blockData.forEach((item) => mergerObj[item.height] = item)
+        const response = filteredData.map(item => ({
+          ...item,
+          ...mergerObj[item.anchorHeight],
+          btcTxHash: item.btcTxHash,
+        }))
+        await nodeCache.set(cacheName, response, CACHE_TTL_SECONDS);
+        res.json(response);
+      }
+      res.json(cache);
+    } catch (err) {
+      res.status(500).send(err);
+    }
   }
 
   async listPoolPairs(params: any): Promise<any> {
@@ -193,7 +231,7 @@ export class DFIStateProvider extends InternalStateProvider {
   }
 
   async getPoolPair(params: any): Promise<any> {
-    const { chain, network, poolID} = params;
+    const { chain, network, poolID } = params;
 
     return await this.getRPC(chain, network).getPoolPair(poolID);
   }
