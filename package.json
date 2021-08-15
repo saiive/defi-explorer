@@ -61,7 +61,7 @@
     "typescript-eslint-parser": "^15.0.0"
   },
   "dependencies": {
-    "bitcore-lib-dfi": "https://github.com/saiive/bitcore-lib-dfi.git",
-    "bech32": "=1.1.3"
+    "bech32": "=1.1.3",
+    "bitcore-lib-dfi": "https://github.com/saiive/bitcore-lib-dfi.git"
   }
 }
