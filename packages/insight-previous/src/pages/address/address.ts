@@ -23,6 +23,8 @@ export class AddressPage {
   public nroTransactions = 0;
   public errorMessage: string;
 
+  public accountBalance: any[] = [];
+
   private addrStr: string;
   private chainNetwork: ChainNetwork;
 
@@ -73,6 +75,21 @@ export class AddressPage {
         this.loading = false;
       }
     );
+
+    this.addrProvider.getAddressAccountBalance(this.addrStr).subscribe(data => {
+      data.forEach((entry) => {
+        let account = entry.split("@");
+        if (account[1] != "$DFI") {
+
+          this.accountBalance.push({
+            raw: entry,
+            value: parseInt((parseFloat(account[0]) * 100000000).toString()),
+            token: account[1]
+          });
+        }
+      });
+
+    });
   }
 
   public getConvertedNumber(n: number): number {

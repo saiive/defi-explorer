@@ -35,6 +35,11 @@ export class AddressProvider {
       this.api.getUrl() + `/address/${addrStr}/balance`
     );
   }
+  public getAddressAccountBalance(addrStr?: string): Observable<string[]> {
+    return this.httpClient.get<string[]>(
+      this.api.getUrl() + `/address/${addrStr}/account`
+    );
+  }
 
   public getAddressActivity(addrStr?: string): Observable<ApiCoin[]> {
     return this.httpClient.get<ApiCoin[]>(

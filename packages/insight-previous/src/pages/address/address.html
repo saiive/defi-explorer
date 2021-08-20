@@ -29,12 +29,28 @@
                     {{ getConvertedNumber(address.confirmed) | number:'1.0-8' }} {{ currencyProvider.currencySymbol }}
                   </ion-note>
                 </ion-item>
+
                 <ion-item *ngIf="address.unconfirmed > 0">
                   Unconfirmed Balance
                   <ion-note item-end>
                     {{ getConvertedNumber(address.unconfirmed) | number:'1.0-8' }} {{ currencyProvider.currencySymbol }}
                   </ion-note>
                 </ion-item>
+                <ng-container *ngIf="accountBalance && accountBalance.length > 0">
+                  <ion-item>
+                    <ion-list class="list--summary">
+                      <ion-item>
+                        Account balance
+                      </ion-item>
+                      <ion-item *ngFor="let balance of accountBalance">
+                        {{balance.token}}
+                        <ion-note item-end>
+                          {{ getConvertedNumber(balance.value) | number:'1.0-8' }} {{ balance.token }}
+                        </ion-note>
+                      </ion-item>
+                    </ion-list>
+                  </ion-item>
+                </ng-container>
                 <ion-item>
                   Nro. Transactions
                   <ion-note item-end>
