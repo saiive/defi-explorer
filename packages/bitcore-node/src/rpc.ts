@@ -129,16 +129,16 @@ export class RPC {
 
   async listTokens(): Promise<any> {
     return this.asyncCall('listtokens', []);
-  }  
-  
+  }
+
   async listPrices(): Promise<any> {
     return this.asyncCall('listprices', []);
-  }  
-  
+  }
+
   async listOracles(): Promise<any> {
     return this.asyncCall('listoracles', []);
-  } 
-  
+  }
+
   async getOracleData(oracleId: string): Promise<any> {
     return this.asyncCall('getoracledata', [oracleId]);
   }
@@ -188,15 +188,27 @@ export class RPC {
     return this.asyncCall<JSON>('decoderawtransaction', [hex]);
   }
 
-  async sendtoaddress(address: string, value: string | number) : Promise<JSON> {
+  async sendtoaddress(address: string, value: string | number): Promise<JSON> {
     return this.asyncCall<JSON>('sendtoaddress', [address, value]);
   }
 
-  listallmasternodes() : Promise<JSON> {
+  listallmasternodes(): Promise<JSON> {
     return this.asyncCall<JSON>('listmasternodes', []);
   }
-  listmasternodes(start: string, includingStart: boolean, limit: number) : Promise<JSON> {
+  listmasternodes(start: string, includingStart: boolean, limit: number): Promise<JSON> {
     return this.asyncCall<JSON>('listmasternodes', [{ start, including_start: includingStart, limit }]);
+  }
+
+  icxListOrders(token: number, chain: number, orderTx: String, limit: number, closed: boolean = false): Promise<JSON> {
+    return this.asyncCall<JSON>('icx_listorders', [{ token, chain, orderTx, limit, closed }]);
+  }
+
+  icxGetOrder(orderTx: String): Promise<JSON> {
+    return this.asyncCall<JSON>('icx_listorders', [orderTx]);
+  }
+
+  icxListHtlcs(offerTx: String, limit: number, closed: boolean = false): Promise<JSON> {
+    return this.asyncCall<JSON>('icx_listhtlcs', [{ offerTx, limit, closed }]);
   }
 
   async getAnchoredBlock(

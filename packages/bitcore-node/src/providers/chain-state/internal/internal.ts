@@ -671,9 +671,26 @@ export class InternalStateProvider implements CSP.IChainStateService {
   }
 
   async listallmasternodes(params) {
-    const { chain, network} = params;
+    const { chain, network } = params;
     return await this.getRPC(chain, network).listallmasternodes();
+  }
+
+  async icxListOrders(params: any): Promise<any> {
+    const { chain, network, token, chainId: chainId, orderTx, limit, closed } = params;
+
+    return await this.getRPC(chain, network).icxListOrders(token, chainId, orderTx, limit, closed);
+  }
+  async icxGetOrder(params: any): Promise<any> {
+    const { chain, network, orderTx } = params;
+
+    return await this.getRPC(chain, network).icxGetOrder(orderTx);
 
   }
+  async icxListHtlcs(params: any): Promise<any> {
+    const { chain, network, offerTx, limit, closed } = params;
+    return await this.getRPC(chain, network).icxListHtlcs(offerTx, limit, closed);
+
+  }
+
 
 }

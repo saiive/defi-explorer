@@ -11,7 +11,7 @@ export class DefaultProvider {
     '%QUICK_STATS_API%': string;
   } = {
     //@ts-ignore
-    '%CHAIN%': process.env.CHAIN || 'BTC',
+    '%CHAIN%': process.env.CHAIN || 'DFI',
     //@ts-ignore
     '%API_PREFIX%': process.env.API_PREFIX || '/api',
     //@ts-ignore

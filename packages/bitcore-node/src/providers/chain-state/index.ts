@@ -165,5 +165,23 @@ class ChainStateProxy implements CSP.ChainStateProvider {
     return await (this.get(params)).listmasternodes(params);
   }
 
+  async icxListOrders(params: any): Promise<any> {
+    const { token, chainId: chainId, orderTx, limit, closed } = params;
+
+    return await (this.get(params)).icxListOrders(token, chainId, orderTx, limit, closed);
+  }
+  async icxGetOrder(params: any): Promise<any> {
+    const { orderTx } = params;
+
+    return await (this.get(params)).icxGetOrder(orderTx);
+
+  }
+  async icxListHtlcs(params: any): Promise<any> {
+    const { offerTx, limit, closed } = params;
+
+    return await (this.get(params)).icxListHtlcs(offerTx, limit, closed);
+
+  }
+
 }
 export let ChainStateProvider = new ChainStateProxy();

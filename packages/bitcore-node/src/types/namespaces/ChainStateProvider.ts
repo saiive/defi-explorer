@@ -177,6 +177,10 @@ export declare namespace CSP {
     sendtoaddress(params: {  chain; network; address: string; amount: number | string }): Promise<JSON>;
     listallmasternodes(params): Promise<JSON>;
     listmasternodes(params): Promise<JSON>;
+
+    icxListOrders(token: number, chain: number, orderTx: String, limit: number, closed: boolean): Promise<JSON>;
+    icxGetOrder(orderTx: String): Promise<JSON>;
+    icxListHtlcs(offerTx: String, limit: number, closed: boolean): Promise<JSON>;
   }
 
   type ChainStateServices = { [key: string]: IChainStateService };
