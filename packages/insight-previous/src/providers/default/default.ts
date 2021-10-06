@@ -13,7 +13,7 @@ export class DefaultProvider {
     //@ts-ignore
     '%CHAIN%': process.env.CHAIN || 'DFI',
     //@ts-ignore
-    '%API_PREFIX%': process.env.API_PREFIX || '/api',
+    '%API_PREFIX%': process.env.API_PREFIX || '/api/v1',
     //@ts-ignore
     '%NETWORK%': process.env.NETWORK || 'mainnet',
     //@ts-ignore

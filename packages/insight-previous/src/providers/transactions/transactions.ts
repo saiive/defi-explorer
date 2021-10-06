@@ -272,6 +272,7 @@ export class TxsProvider {
       isCustomTxApplied: tx.isCustomTxApplied || false,
       chain: tx.chain,
     };
+
   }
 
   public toAppCoin(coin: ApiCoin): AppCoin {
@@ -287,21 +288,22 @@ export class TxsProvider {
   }
 
   public getTxs(args?: { blockHash?: string }): Observable<ApiTx[]> {
-    let queryString = '';
+    
+    let url: string = this.api.getUrl() + '/tx';
+
     if (args.blockHash) {
-      queryString += `?blockHash=${args.blockHash}`;
+      url = this.api.getUrl() + '/tx/block/' + args.blockHash;
     }
-    const url: string = this.api.getUrl() + '/tx' + queryString;
     return this.httpClient.get<ApiTx[]>(url);
   }
 
   public getTx(hash: string): Observable<ApiTx> {
-    const url: string = this.api.getUrl() + '/tx/' + hash;
+    const url: string = this.api.getUrl() + '/tx/id/' + hash;
     return this.httpClient.get<ApiTx>(url);
   }
 
   public getCoins(txId: string): Observable<CoinsApiResponse> {
-    const url: string = this.api.getUrl() + '/tx/' + txId + '/coins';
+    const url: string = this.api.getUrl() + '/tx/id/' + txId + '/coins';
     return this.httpClient.get<CoinsApiResponse>(url);
   }
 

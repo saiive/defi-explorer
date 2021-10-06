@@ -61,7 +61,7 @@ export class ApiProvider {
     const prefix: string = this.defaults.getDefault('%API_PREFIX%');
     const chain: string = this.networkSettings.value.selectedNetwork.chain;
     const network: string = this.networkSettings.value.selectedNetwork.network;
-    const apiPrefix = `${prefix}/${chain}/${network}`;
+    const apiPrefix = `${prefix}/${network}/${chain}`;
     return apiPrefix;
   }
 

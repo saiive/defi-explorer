@@ -30,10 +30,10 @@
     "build:prod": "npm run ionic:build --prod",
     "serve:prod": "npm run clean && npm run build:prod && npm run serve ",
     "serve": "serve www -l tcp://0.0.0.0:5000",
-    "ionic:build": "ionic-app-scripts build",
+    "ionic:build": "ionic-app-scripts build --watch",
     "ionic:serve": "ionic-app-scripts serve --port 8200",
     "postinstall": "./node_modules/.bin/webdriver-manager update --gecko false",
-    "start": "npm run ionic:serve",
+    "start": "npm run ionic:serve --watch --verbose",
     "test": "ng test --watch=false --code-coverage --no-progress",
     "fix:prettier": "prettier '{*,**/*}.{js,ts,md,json,css}' --write",
     "fix:tslint": "tslint --type-check --fix --project ."
