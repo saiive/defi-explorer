@@ -25,6 +25,19 @@
 	"prettier": {
 		"singleQuote": true
 	},
+	"scripts": {
+	  "clean": "ionic-app-scripts clean",
+	  "build:prod": "npm run ionic:build --prod",
+	  "serve:prod": "npm run clean && npm run build:prod && npm run serve",
+	  "serve": "serve www",
+	  "ionic:build": "ionic-app-scripts build",
+	  "ionic:serve": "ionic-app-scripts serve --port 8200",
+	  "postinstall": "./node_modules/.bin/webdriver-manager update --gecko false",
+	  "start": "npm run ionic:serve",
+	  "test": "ng test --watch=false --code-coverage --no-progress",
+	  "fix:prettier": "prettier '{*,**/*}.{js,ts,md,json,css}' --write",
+	  "fix:tslint": "tslint --type-check --fix --project ."
+	},
 	"dependencies": {
 		"@angular/animations": "5",
 		"@angular/common": "5.2.10",

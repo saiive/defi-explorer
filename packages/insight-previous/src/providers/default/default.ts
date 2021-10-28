@@ -13,7 +13,7 @@ export class DefaultProvider {
     //@ts-ignore
     '%CHAIN%': process.env.CHAIN || 'DFI',
     //@ts-ignore
-    '%API_PREFIX%': process.env.API_PREFIX || 'https://supernode.saiive.live/api/',
+    '%API_PREFIX%': process.env.API_PREFIX || 'https://supernode.saiive.live/api',
     //@ts-ignore
     '%NETWORK%': process.env.NETWORK || 'mainnet',
     //@ts-ignore
