@@ -11,6 +11,7 @@
     "insight": "cd packages/insight && npm start",
     "insight-previous": "cd ./packages/insight-previous && npm start",
     "insight-previous:prod": "cd ./packages/insight-previous && npm run serve:prod",
+    "insight-previous:build": "cd ./packages/insight-previous && npm run build:prod",
     "node": "cd packages/bitcore-node && npm start",
     "bws": "cd packages/bitcore-wallet-service && npm start",
     "compile": "./node_modules/.bin/lerna run compile",
