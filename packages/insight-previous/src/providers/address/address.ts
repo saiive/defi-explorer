@@ -32,18 +32,18 @@ export class AddressProvider {
 
   public getAddressBalance(addrStr?: string): Observable<ApiAddr> {
     return this.httpClient.get<ApiAddr>(
-      this.api.getUrl() + `/address/${addrStr}/balance`
+      this.api.getUrl() + `/balance/${addrStr}`
     );
   }
   public getAddressAccountBalance(addrStr?: string): Observable<string[]> {
     return this.httpClient.get<string[]>(
-      this.api.getUrl() + `/address/${addrStr}/account`
+      this.api.getUrl() + `/account/${addrStr}`
     );
   }
 
   public getAddressActivity(addrStr?: string): Observable<ApiCoin[]> {
     return this.httpClient.get<ApiCoin[]>(
-      this.api.getUrl() + `/address/${addrStr}/txs?limit=1000`
+      this.api.getUrl() + `/txs/${addrStr}?limit=1000`
     );
   }
 

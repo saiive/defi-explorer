@@ -38,13 +38,13 @@ export class SearchProvider {
   }
   private searchTx(txid: string): Observable<{ tx: any }> {
     return this.httpClient
-      .get<{ tx: any }>(this.apiURL + '/tx/' + txid)
+      .get<{ tx: any }>(this.apiURL + '/tx/id' + txid)
       .pipe(map(res => ({ tx: res })));
   }
   private searchAddr(addr: string): Observable<{ addr: any }> {
     const address = this.extractAddress(addr);
     return this.httpClient
-      .get<{ addr: any }>(this.apiURL + '/address/' + address)
+      .get<{ addr: any }>(this.apiURL + '/account/' + address)
       .pipe(map(res => ({ addr: res })));
   }
 
