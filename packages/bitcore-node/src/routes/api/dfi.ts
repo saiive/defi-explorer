@@ -86,6 +86,7 @@ router.get('/listauctionhistory/:address', async function (req, res) {
         network,
         address
     });
+    return res.send(result || {});
 });
 
 router.get('/listaccounthistory/:owner/:token', async function (req, res) {

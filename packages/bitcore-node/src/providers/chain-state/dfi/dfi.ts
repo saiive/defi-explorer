@@ -243,7 +243,7 @@ export class DFIStateProvider extends InternalStateProvider {
   }
 
   async listAuctionHistory(params: any) : Promise<any> {
-    const { chain, network, owner, address } = params;
+    const { chain, network,  address } = params;
 
     return await this.getRPC(chain, network).listAuctionHistory(address);
   }
