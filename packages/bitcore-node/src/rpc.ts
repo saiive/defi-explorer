@@ -185,7 +185,7 @@ export class RPC {
   }
   
   async listAuctionHistory(address: string): Promise<string> {
-    return this.asyncCall<string>('listauctionhistory ', [address]);
+    return this.asyncCall<string>('listauctionhistory', [address]);
   }
 
   async decodeRawTx(hex: string): Promise<JSON> {
