@@ -33,8 +33,8 @@ router.get('/listpoolpairs', async function (req, res) {
 });
 
 router.get('/listpoolshares', async function (req, res) {
-    let {chain, network} = req.params;
-    let {start, including_start, limit} = req.query;
+    let { chain, network } = req.params;
+    let { start, including_start, limit } = req.query;
     let startNum, limitNum, including_startBool;
 
     try {
@@ -50,7 +50,7 @@ router.get('/listpoolshares', async function (req, res) {
             including_startBool = including_start.toString().toLowerCase() === 'true';
         }
 
-        const chainProvider = ChainStateProvider.get({chain});
+        const chainProvider = ChainStateProvider.get({ chain });
         let result = await (<DFIStateProvider>chainProvider).listPoolShares({
             chain,
             network,
@@ -78,10 +78,19 @@ router.get('/getpoolpair/:poolID', async function (req, res) {
         return res.status(500).send(err);
     }
 });
+router.get('/listauctionhistory/:address', async function (req, res) {
+    let { chain, network, address } = req.params;
+    const chainProvider = ChainStateProvider.get({ chain });
+    let result = await (<DFIStateProvider>chainProvider).listAuctionHistory({
+        chain,
+        network,
+        address
+    });
+});
 
 router.get('/listaccounthistory/:owner/:token', async function (req, res) {
     let { chain, network, owner, token } = req.params;
-    let {maxBlockHeight, limit, no_rewards} = req.query;
+    let { maxBlockHeight, limit, no_rewards } = req.query;
     let maxBlockHeightNum, limitNum, noRewardsBool;
 
     try {
@@ -114,28 +123,28 @@ router.get('/listaccounthistory/:owner/:token', async function (req, res) {
 });
 
 router.post('/testpoolswap', async function (req, res) {
-  try {
-    let { chain, network } = req.params;
-    let { from, tokenFrom, amountFrom, to, tokenTo, maxPrice } = req.body;
+    try {
+        let { chain, network } = req.params;
+        let { from, tokenFrom, amountFrom, to, tokenTo, maxPrice } = req.body;
 
-    chain = chain.toUpperCase();
-    network = network.toLowerCase();
-    const chainProvider = ChainStateProvider.get({ chain });
-    let result = await (<DFIStateProvider>chainProvider).testPoolSwap({
-        chain,
-        network,
-        from,
-        tokenFrom,
-        amountFrom,
-        to,
-        tokenTo,
-        maxPrice
-    });
-    return res.send(result || {} );
-  } catch (err) {
-    logger.error(err);
-    return res.status(500).send(err.message);
-  }
+        chain = chain.toUpperCase();
+        network = network.toLowerCase();
+        const chainProvider = ChainStateProvider.get({ chain });
+        let result = await (<DFIStateProvider>chainProvider).testPoolSwap({
+            chain,
+            network,
+            from,
+            tokenFrom,
+            amountFrom,
+            to,
+            tokenTo,
+            maxPrice
+        });
+        return res.send(result || {});
+    } catch (err) {
+        logger.error(err);
+        return res.status(500).send(err.message);
+    }
 });
 
 module.exports = {

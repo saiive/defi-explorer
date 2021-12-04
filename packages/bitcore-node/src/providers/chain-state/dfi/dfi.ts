@@ -242,6 +242,12 @@ export class DFIStateProvider extends InternalStateProvider {
     return await this.getRPC(chain, network).listAccountHistory(owner, token, limit, maxBlockHeight, noRewards);
   }
 
+  async listAuctionHistory(params: any) : Promise<any> {
+    const { chain, network, owner, address } = params;
+
+    return await this.getRPC(chain, network).listAuctionHistory(address);
+  }
+
   async testPoolSwap(params: any): Promise<any> {
     const { chain, network, from, tokenFrom, amountFrom, to, tokenTo, maxPrice } = params;
 
