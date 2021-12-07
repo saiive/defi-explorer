@@ -56,8 +56,17 @@ router.get('/vaults', async function (req, res) {
         let result = await (<DFIStateProvider>chainProvider).genericRcp("listvaults", {
             chain,
             network,
-            rpcParams: []
+            rpcParams: [{ verbose: true }]
         });
+
+        for (var vault of result) {
+            vault.loanScheme = await (<DFIStateProvider>chainProvider).genericRcp("getloanscheme", {
+                chain,
+                network,
+                rpcParams: [vault.loanSchemeId]
+            });
+        }
+
         return res.send(result || {});
     } catch (err) {
         return res.status(500).send(err);
@@ -128,7 +137,7 @@ router.get('/vaults/:id', async function (req, res) {
 
 
 router.get('/auctions', async function (req, res) {
-    let { chain, network} = req.params;
+    let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
         let result = await (<DFIStateProvider>chainProvider).genericRcp("listauctions", {

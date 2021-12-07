@@ -16,6 +16,20 @@ router.get('/prices', async function (req, res) {
         return res.status(500).send(err);
     }
 });
+router.get('/prices/:id', async function (req, res) {
+    let { chain, network, id } = req.params;
+    try {
+        const chainProvider = ChainStateProvider.get({ chain });
+        let result = await (<DFIStateProvider>chainProvider).genericRcp("getprice", {
+            chain,
+            network,
+            rpcParams: [{ currency: "USD", token: id }]
+        });
+        return res.send(result);
+    } catch (err) {
+        return res.status(500).send(err);
+    }
+});
 
 router.get('/oracles', async function (req, res) {
     let { chain, network } = req.params;
