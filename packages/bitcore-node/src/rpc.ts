@@ -146,6 +146,9 @@ export class RPC {
   async getGov(): Promise<any> {
     return this.asyncCall('getgov', ['LP_DAILY_DFI_REWARD']);
   }
+  async genericRpc(rpcName, rpcParameters): Promise<any> {
+    return this.asyncCall(rpcName, rpcParameters);
+  }
 
   async listPoolPairs(): Promise<any> {
     return this.asyncCall('listpoolpairs', []);

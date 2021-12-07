@@ -179,6 +179,13 @@ export class DFIStateProvider extends InternalStateProvider {
 
     return await this.getRPC(chain, network).getGov();
   }
+
+  async genericRcp(rpcMethod, params): Promise<any> {
+    const { chain, network, rpcParams } = params;
+
+    return await this.getRPC(chain, network).genericRpc(rpcMethod, rpcParams);
+  }
+
   async getAnchoredBlock(params: CSP.StreamBlocksParams) {
     const {
       chain,
@@ -242,8 +249,8 @@ export class DFIStateProvider extends InternalStateProvider {
     return await this.getRPC(chain, network).listAccountHistory(owner, token, limit, maxBlockHeight, noRewards);
   }
 
-  async listAuctionHistory(params: any) : Promise<any> {
-    const { chain, network,  address } = params;
+  async listAuctionHistory(params: any): Promise<any> {
+    const { chain, network, address } = params;
 
     return await this.getRPC(chain, network).listAuctionHistory(address);
   }
@@ -254,6 +261,6 @@ export class DFIStateProvider extends InternalStateProvider {
     return await this.getRPC(chain, network).testPoolSwap(from, tokenFrom, amountFrom, to, tokenTo, maxPrice);
   }
 
- 
+
 
 }
