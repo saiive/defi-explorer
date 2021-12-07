@@ -4,7 +4,7 @@ import { ChainStateProvider } from '../../providers/chain-state';
 import { DFIStateProvider } from '../../providers/chain-state/dfi/dfi';
 import logger from "../../logger";
 
-router.get('/scheme', async function (req, res) {
+router.get('/schemes', async function (req, res) {
     let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -19,7 +19,7 @@ router.get('/scheme', async function (req, res) {
     }
 });
 
-router.get('/collateral', async function (req, res) {
+router.get('/collaterals', async function (req, res) {
     let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -34,7 +34,7 @@ router.get('/collateral', async function (req, res) {
     }
 });
 
-router.get('/token', async function (req, res) {
+router.get('/tokens', async function (req, res) {
     let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -49,7 +49,7 @@ router.get('/token', async function (req, res) {
     }
 });
 
-router.get('/vault', async function (req, res) {
+router.get('/vaults', async function (req, res) {
     let { chain, network } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -65,7 +65,7 @@ router.get('/vault', async function (req, res) {
 });
 
 
-router.get('/scheme/:id', async function (req, res) {
+router.get('/schemes/:id', async function (req, res) {
     let { chain, network, id } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -80,7 +80,7 @@ router.get('/scheme/:id', async function (req, res) {
     }
 });
 
-router.get('/collateral/:id', async function (req, res) {
+router.get('/collaterals/:id', async function (req, res) {
     let { chain, network, id } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -95,7 +95,7 @@ router.get('/collateral/:id', async function (req, res) {
     }
 });
 
-router.get('/token/:id', async function (req, res) {
+router.get('/tokens/:id', async function (req, res) {
     let { chain, network, id } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -111,7 +111,7 @@ router.get('/token/:id', async function (req, res) {
 });
 
 
-router.get('/vault/:id', async function (req, res) {
+router.get('/vaults/:id', async function (req, res) {
     let { chain, network, id } = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
@@ -127,7 +127,7 @@ router.get('/vault/:id', async function (req, res) {
 });
 
 
-router.get('/auction', async function (req, res) {
+router.get('/auctions', async function (req, res) {
     let { chain, network} = req.params;
     try {
         const chainProvider = ChainStateProvider.get({ chain });
