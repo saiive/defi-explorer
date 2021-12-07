@@ -2,6 +2,7 @@ import express = require('express');
 const router = express.Router({ mergeParams: true });
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ChainStateProvider } from '../../providers/chain-state';
+import { DFIStateProvider } from '../../providers/chain-state/dfi/dfi';
 import queue from '../../worker/queue';
 
 router.get('/:address/txs', function (req: express.Request<ParamsDictionary, any, any, any>, res) {
@@ -56,6 +57,21 @@ router.get('/:ownerAddress/account', async function (req, res) {
       ownerAddress
     });
     return res.send(result || { confirmed: 0, unconfirmed: 0, balance: 0 });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+});
+
+router.get('/:ownerAddress/vault', async function (req, res) {
+  let { ownerAddress, chain, network } = req.params;
+  try {
+    const chainProvider = ChainStateProvider.get({ chain });
+    let result = await (<DFIStateProvider>chainProvider).genericRcp("listvaults", {
+      chain,
+      network,
+      rpcParams: [{ ownerAddress: ownerAddress }]
+    });
+    return res.send(result);
   } catch (err) {
     return res.status(500).send(err);
   }
