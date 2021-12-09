@@ -22,7 +22,7 @@ router.get('/prices', async function (req, res) {
         let result = await (<DFIStateProvider>chainProvider).genericRcp("listlatestrawprices", {
             chain,
             network,
-            rpcParams: []
+            rpcParams: [{ start: 0, including_start: true, limit: 1000 }]
         });
         return res.send(result || {});
     } catch (err) {
