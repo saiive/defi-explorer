@@ -59,14 +59,6 @@ router.get('/vaults', async function (req, res) {
             rpcParams: [{ verbose: true }]
         });
 
-        for (var vault of result) {
-            vault.loanScheme = await (<DFIStateProvider>chainProvider).genericRcp("getloanscheme", {
-                chain,
-                network,
-                rpcParams: [vault.loanSchemeId]
-            });
-        }
-
         return res.send(result || {});
     } catch (err) {
         return res.status(500).send(err);
