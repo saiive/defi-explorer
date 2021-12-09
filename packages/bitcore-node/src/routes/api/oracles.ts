@@ -15,6 +15,19 @@ router.get('/prices', async function (req, res) {
     } catch (err) {
         return res.status(500).send(err);
     }
+});router.get('/pricesraw', async function (req, res) {
+    let { chain, network, id } = req.params;
+    try {
+        const chainProvider = ChainStateProvider.get({ chain });
+        let result = await (<DFIStateProvider>chainProvider).genericRcp("listlatestrawprices", {
+            chain,
+            network,
+            rpcParams: [id]
+        });
+        return res.send(result || {});
+    } catch (err) {
+        return res.status(500).send(err);
+    }
 });
 router.get('/prices/:id', async function (req, res) {
     let { chain, network, id } = req.params;
