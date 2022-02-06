@@ -3,6 +3,7 @@ const router = express.Router({ mergeParams: true });
 import { ChainStateProvider } from '../../providers/chain-state';
 import { DFIStateProvider } from '../../providers/chain-state/dfi/dfi';
 import logger from "../../logger";
+import { print } from 'util';
 
 router.get('/schemes', async function (req, res) {
     let { chain, network } = req.params;
